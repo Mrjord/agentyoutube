@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { getStats, getRecentVideos, getRecentScripts } from '@/lib/db/queries';
 import { V1_USER_ID } from '@/lib/constants';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';

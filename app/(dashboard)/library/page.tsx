@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { getRecentVideos, getTopPatterns } from '@/lib/db/queries';
 import { Badge } from '@/components/ui/badge';
 

@@ -1,4 +1,9 @@
-import { describe, it, expect } from 'vitest';
+import { vi, describe, it, expect } from 'vitest';
+
+vi.mock('@/lib/db/queries', () => ({
+  getPatternsByToneAndDuration: vi.fn(),
+}));
+
 import { formatPatternsForPrompt } from '@/lib/retention/retrieve-patterns';
 import type { Pattern } from '@/lib/db/schema';
 
