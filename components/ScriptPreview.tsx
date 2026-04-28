@@ -14,6 +14,7 @@ const SECTION_COLORS: Record<string, string> = {
   'RE-HOOK': 'border-orange-500 bg-orange-50',
   CONCLUSION: 'border-indigo-500 bg-indigo-50',
   SCORE: 'border-amber-500 bg-amber-50',
+  NOTES: 'border-gray-300 bg-gray-50',
 };
 
 const LABEL_COLORS: Record<string, string> = {
@@ -25,10 +26,13 @@ const LABEL_COLORS: Record<string, string> = {
   'RE-HOOK': 'text-orange-700',
   CONCLUSION: 'text-indigo-700',
   SCORE: 'text-amber-700',
+  NOTES: 'text-gray-500',
 };
 
 function getSectionKey(label: string): string {
   const upper = label.toUpperCase();
+  if (upper.startsWith('NOTES')) return 'NOTES';
+  if (upper.startsWith('SCORE')) return 'NOTES';
   for (const key of Object.keys(SECTION_COLORS)) {
     if (upper.startsWith(key)) return key;
   }
@@ -133,14 +137,24 @@ export function ScriptPreview({ text }: Props) {
         const key = getSectionKey(section.label);
         const borderBg = SECTION_COLORS[key];
         const labelColor = LABEL_COLORS[key];
+        const isNotes = key === 'NOTES';
         return (
-          <div key={i} className={`border-l-4 rounded-r-lg p-4 ${borderBg}`}>
-            <p className={`text-xs font-bold uppercase tracking-widest mb-2 ${labelColor}`}>
-              {section.label}
-            </p>
-            <p className="text-sm leading-relaxed text-gray-800">
-              {renderSegments(section.content)}
-            </p>
+          <div key={i}>
+            {isNotes && (
+              <div className="flex items-center gap-3 my-6">
+                <div className="flex-1 border-t border-dashed border-gray-300" />
+                <span className="text-xs text-gray-400 uppercase tracking-widest">Notes créateur</span>
+                <div className="flex-1 border-t border-dashed border-gray-300" />
+              </div>
+            )}
+            <div className={`border-l-4 rounded-r-lg p-4 ${borderBg} ${isNotes ? 'opacity-75' : ''}`}>
+              <p className={`text-xs font-bold uppercase tracking-widest mb-2 ${labelColor}`}>
+                {section.label}
+              </p>
+              <p className={`text-sm leading-relaxed ${isNotes ? 'text-gray-500' : 'text-gray-800'}`}>
+                {renderSegments(section.content)}
+              </p>
+            </div>
           </div>
         );
       })}
