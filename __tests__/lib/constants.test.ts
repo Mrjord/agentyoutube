@@ -17,8 +17,11 @@ describe('getDurationBucket', () => {
 });
 
 describe('computeViralityScore', () => {
-  it('computes views multiplied by like ratio', () => {
-    expect(computeViralityScore(500_000, 25_000)).toBe(25_000);
+  it('gives higher score to high engagement (views × likeRate²)', () => {
+    // 500K views, 5% like rate → 500K × 0.05² × 10K = 12,500,000
+    expect(computeViralityScore(500_000, 25_000)).toBe(12_500_000);
+    // 500K views, 2% like rate → 500K × 0.02² × 10K = 2,000,000 (lower)
+    expect(computeViralityScore(500_000, 10_000)).toBe(2_000_000);
   });
   it('returns 0 for zero views', () => {
     expect(computeViralityScore(0, 100)).toBe(0);

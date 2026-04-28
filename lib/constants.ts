@@ -33,13 +33,16 @@ export function getDurationBucket(seconds: number): 'short' | 'medium' | 'long' 
 
 export function computeViralityScore(viewCount: number, likeCount: number): number {
   if (viewCount === 0) return 0;
-  // views × like_ratio simplifies to likeCount; kept as ranking proxy
-  return likeCount;
+  // views × likeRate² rewards both volume and high engagement disproportionately
+  const likeRate = likeCount / viewCount;
+  return Math.round(viewCount * likeRate * likeRate * 10_000);
 }
 
-// Max videos per cron run. Vercel Hobby has 60s function timeout.
-// Set to 5 for Hobby (~12s/video), 30 for Pro (maxDuration=300).
-export const MAX_VIDEOS_PER_RUN = 10;
+// Max videos analyzed per cron run (Anthropic cost guard).
+// Each video ~$0.03 Sonnet 4.6. 50 videos ≈ $1.50/run, 6 runs/day ≈ $9/day.
+// YouTube free quota: 10,000 units/day. Each full run uses ~102 units × 15 keywords = 1,530.
+// 6 runs/day = 9,180 units — safely within the 10,000 free limit.
+export const MAX_VIDEOS_PER_RUN = 50;
 
 export const SEED_KEYWORDS: Array<{ keyword: string; language: string }> = [
   { keyword: 'devenir riche 2025', language: 'fr' },
