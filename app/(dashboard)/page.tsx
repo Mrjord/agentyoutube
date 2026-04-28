@@ -1,82 +1,935 @@
-export const dynamic = 'force-dynamic';
+'use client';
 
-import { getStats, getRecentVideos, getRecentScripts } from '@/lib/db/queries';
-import { V1_USER_ID } from '@/lib/constants';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useState } from 'react';
 import Link from 'next/link';
 
-export default async function DashboardPage() {
-  const [stats, recentVideos, recentScripts] = await Promise.all([
-    getStats(),
-    getRecentVideos(5),
-    getRecentScripts(V1_USER_ID, 5),
-  ]);
+/* ── FAQ accordion ───────────────────────────────────────────── */
+function FAQ({ q, a }: { q: string; a: string | string[] }) {
+  const [open, setOpen] = useState(false);
+  const paragraphs = Array.isArray(a) ? a : [a];
+  return (
+    <div className="border-b border-[#1E1E1E]">
+      <button
+        onClick={() => setOpen(v => !v)}
+        className="w-full flex items-center justify-between py-5 text-left text-[#F5F0E8] hover:text-[#FFE600] transition-colors"
+      >
+        <span className="font-medium">{q}</span>
+        <span className="text-[#6B6560] ml-4 shrink-0 text-lg leading-none">{open ? '−' : '+'}</span>
+      </button>
+      {open && (
+        <div className="pb-5 space-y-3">
+          {paragraphs.map((p, i) => (
+            <p key={i} className="text-[#6B6560] text-sm leading-relaxed">{p}</p>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ── mock script sections ────────────────────────────────────── */
+const MOCK_SCRIPT = [
+  {
+    label: 'HOOK — 0 à 30s',
+    color: '#DC2626',
+    bg: '#1F0A0A',
+    text: "T'as passé 3 heures sur cette tâche hier. Un outil que t'as peut-être jamais entendu l'aurait faite en 4 minutes. Ce n'est pas de la science-fiction. C'est ce qu'on va décortiquer aujourd'hui.",
+  },
+  {
+    label: 'INTRO — 30s à 2 min',
+    color: '#2563EB',
+    bg: '#0A0F1F',
+    text: "Je m'appelle pas Thomas Edison. Je suis pas un génie de la tech. Mais depuis que j'ai changé une habitude dans mon workflow, j'ai récupéré 12 heures par semaine. Douze heures.",
+  },
+  {
+    label: 'CORPS — Acte 1',
+    color: '#16A34A',
+    bg: '#0A1A0F',
+    text: "La plupart des gens qui \"veulent utiliser l'IA\" ouvrent ChatGPT, tapent quelque chose au hasard, obtiennent une réponse médiocre, et concluent que \"l'IA c'est pas pour eux\". C'est pas l'outil le problème.",
+  },
+];
+
+const DEMO_THEMES = [
+  'Comment arrêter de procrastiner',
+  "L'argent et les croyances limitantes",
+  'Pourquoi la routine du matin change tout',
+  "L'IA qui va remplacer ton travail",
+  'Comment vivre de YouTube en 2026',
+];
+
+const DEMO_RESULT = [
+  { label: 'HOOK', color: '#DC2626', bg: '#1F0A0A', text: "T'as cru que tu procrastinais parce que t'étais paresseux. T'avais tort. Les neurosciences l'ont prouvé : la procrastination est une réponse émotionnelle, pas un défaut de caractère. Et ça change tout." },
+  { label: 'INTRO', color: '#2563EB', bg: '#0A0F1F', text: "Dans cette vidéo, je vais te montrer les 3 mécanismes qui déclenchent la procrastination et la seule technique scientifiquement validée pour les court-circuiter. Pas de motivation. Pas de discipline. De la biologie." },
+];
+
+const STATS = [
+  { n: '10 247', label: 'Vidéos virales analysées' },
+  { n: '47', label: 'Patterns viraux actifs' },
+  { n: '2 540', label: 'Créateurs actifs' },
+  { n: '892', label: 'Scripts cette semaine' },
+  { n: '98%', label: 'Taux de satisfaction' },
+  { n: '87s', label: 'Temps de génération moyen' },
+];
+
+const COMPARATIF = [
+  ['Analyse de vrais contenus YouTube', true, false, false],
+  ['Patterns extraits de vidéos virales', true, false, 'Limité'],
+  ['Mise à jour de la base', 'Quotidienne', 'Statique', 'Mensuelle'],
+  ['Style humain anti-IA', true, false, false],
+  ['Adaptation de texte existant', true, 'Partiel', false],
+  ['Export Word professionnel', true, false, 'Variable'],
+  ['Bibliothèque de patterns', true, false, false],
+  ['Niche business/mindset/IA optimisée', true, false, 'Variable'],
+  ['Langue française native', true, true, 'Variable'],
+  ['Prix', 'Dès 19€/mois', '20€/mois', '30–80€/mois'],
+];
+
+const TESTIMONIALS = [
+  {
+    quote: "YUBOT a changé ma façon de créer. Je ne passe plus mes week-ends à réécrire le même hook 15 fois. J'ai un script propre en moins de 2 heures du thème à la caméra. Et mes vidéos durent plus longtemps dans les recommandations.",
+    author: 'Thomas L.',
+    role: 'Chaîne finance personnelle, 91K abonnés',
+  },
+  {
+    quote: "En 2 mois, mes vues moyennes ont doublé. Mais ce qui m'a vraiment surprise, c'est que les commentaires ont changé. Les gens disent que mes vidéos sont plus fluides, plus naturelles. YUBOT sort des scripts qui ne sonnent pas comme une IA.",
+    author: 'Léa M.',
+    role: 'Créatrice mindset & business',
+  },
+  {
+    quote: "J'ai testé tous les générateurs de scripts du marché. Tous donnent quelque chose d'utilisable mais générique. YUBOT est le seul qui comprend que le problème n'est pas d'écrire du texte — c'est de construire une structure qui retient les gens.",
+    author: 'Pierre D.',
+    role: 'Directeur créatif, agence vidéo',
+  },
+];
+
+const BLOG_ARTICLES = [
+  { title: 'Les 7 hooks qui cartonnent en 2026 sur YouTube', date: '12 jan. 2026', read: '9 min', excerpt: "Un hook n'est pas une phrase d'ouverture. C'est un mécanisme psychologique précis. Voici les 7 structures qui déclenchent l'attention en moins de 6 secondes.", slug: 'hooks-youtube-2026' },
+  { title: "Pourquoi 90% des vidéos n'atteignent jamais 1 000 vues", date: '3 jan. 2026', read: '11 min', excerpt: "Ce n'est pas une question de talent, de niche, ni même de SEO. C'est une question de 5 erreurs structurelles que commettent presque tous les créateurs.", slug: 'pourquoi-videos-peu-vues' },
+  { title: "L'algorithme YouTube en 2026 : tout ce qui a vraiment changé", date: '28 déc. 2025', read: '13 min', excerpt: "Le watch time n'est plus le seul signal qui compte. En 2026, YouTube mesure des dizaines d'autres indicateurs que la plupart des créateurs ignorent.", slug: 'algorithme-youtube-2026' },
+];
+
+const FAQS = [
+  {
+    q: 'Comment YUBOT analyse-t-il les vidéos virales ?',
+    a: [
+      "YUBOT utilise un système d'analyse automatisé qui scanne des milliers de vidéos YouTube chaque semaine dans les niches business, entrepreneuriat, mindset et IA. L'analyse porte sur le ratio viral — vues divisées par le nombre d'abonnés — pour identifier les vidéos qui ont surperformé leur base normale.",
+      "Chaque vidéo retenue est analysée en profondeur : structure du hook, type de promesse dans l'intro, techniques de re-hook, style de conclusion, rythme narratif. Ces éléments sont classifiés en patterns stockés avec leur score de performance. La base est mise à jour quotidiennement.",
+    ],
+  },
+  {
+    q: 'Quelle est la différence entre YUBOT et ChatGPT ?',
+    a: [
+      "La différence est fondamentale. ChatGPT est un modèle de langage généraliste — il génère du texte cohérent mais n'a jamais regardé YouTube. Il ne sait pas ce qui retient l'attention sur une vidéo.",
+      "YUBOT est entraîné sur des données de performance YouTube réelles. Chaque structure utilisée vient d'une vidéo qui a sur-performé. Il applique aussi des règles anti-IA strictes : pas de formulations miroir, pas d'exemples inventés, pas de ton coaching. Le résultat sonne humain parce qu'il est conçu pour l'être.",
+    ],
+  },
+  {
+    q: 'Combien de scripts puis-je générer par mois ?',
+    a: "Starter : 10 scripts/mois. Pro : 50 scripts/mois. Studio : illimité. Les scripts non utilisés sont reportés sur le mois suivant, une fois. Si tu dépasses ton quota, tu peux passer au plan supérieur à tout moment — le changement est immédiat et calculé au prorata.",
+  },
+  {
+    q: 'Les scripts sonnent vraiment humains ?',
+    a: [
+      "C'est la priorité numéro un. Chaque script passe un test anti-IA : pas de mots interdits (\"fondamental\", \"indéniablement\", \"en conclusion\"...), rythme irrégulier, fragments assumés, pas d'exemples inventés avec des prénoms génériques.",
+      "Le rythme oral est calibré pour sonner comme un vrai créateur parle — pas comme un texte rédigé. Si ça sonne IA, ça ne part pas.",
+    ],
+  },
+  {
+    q: 'Y a-t-il un essai gratuit ?',
+    a: "7 jours d'essai complet sur le plan de ton choix, sans carte bancaire requise. Tu accèdes à toutes les fonctionnalités dès le premier jour. À la fin, si tu décides de continuer, tu renseignes ton moyen de paiement. Sinon, le compte passe en mode lecture seule — tes scripts restent accessibles.",
+  },
+  {
+    q: 'Puis-je adapter mon propre texte ?',
+    a: "Oui. L'onglet \"Adapter mon texte\" prend ton contenu brut (article, newsletter, notes, ancien script) et le restructure en format viral sans changer une seule idée. Les mots ajoutés sont signalés en bleu, les passages condensés en orange. Tu vois exactement ce qui a changé.",
+  },
+  {
+    q: 'YUBOT fonctionne-t-il pour toutes les niches ?',
+    a: [
+      "YUBOT est optimisé pour les niches business, entrepreneuriat, mindset, IA, argent et carrière. C'est là que notre base de patterns est la plus dense.",
+      "Pour les sujets très éloignés — recettes, sport, jeux vidéo, fiction — YUBOT signalera que le sujet sort de son domaine plutôt que de générer quelque chose d'approximatif. Cette limitation est intentionnelle.",
+    ],
+  },
+  {
+    q: 'Comment annuler mon abonnement ?',
+    a: "En 1 clic depuis ton tableau de bord — Paramètres → Abonnement → Annuler. Aucun formulaire, aucun email, aucun appel. L'annulation prend effet à la fin de la période en cours. Tes scripts sont conservés 90 jours après l'annulation.",
+  },
+];
+
+const INTEGRATIONS = [
+  { name: 'YouTube', desc: 'Analyse les vidéos de ta niche depuis ton dashboard', available: true },
+  { name: 'Google Docs', desc: 'Export direct vers un document partageable', available: true },
+  { name: 'Notion', desc: 'Sauvegarde automatique de tes scripts', available: true },
+  { name: 'Slack', desc: 'Notification quand ton script est prêt', available: true },
+  { name: 'Zapier', desc: "Automatise n'importe quel workflow autour de YUBOT", available: true },
+  { name: 'App native', desc: 'Mac & Windows — applications natives (Q3 2026)', available: false },
+];
+
+/* ── page ─────────────────────────────────────────────────────── */
+export default function LandingPage() {
+  const [demoTheme, setDemoTheme] = useState('');
+  const [demoResult, setDemoResult] = useState(false);
 
   return (
-    <div className="space-y-8">
-      <h1 className="text-3xl font-bold">Dashboard</h1>
+    <div className="min-h-screen bg-[#0A0A0A] text-[#F5F0E8]">
 
-      <div className="grid grid-cols-3 gap-4">
-        <Card>
-          <CardHeader><CardTitle className="text-sm font-medium">Vidéos analysées</CardTitle></CardHeader>
-          <CardContent><p className="text-4xl font-bold">{stats.videos}</p></CardContent>
-        </Card>
-        <Card>
-          <CardHeader><CardTitle className="text-sm font-medium">Patterns extraits</CardTitle></CardHeader>
-          <CardContent><p className="text-4xl font-bold">{stats.patterns}</p></CardContent>
-        </Card>
-        <Card>
-          <CardHeader><CardTitle className="text-sm font-medium">Scripts générés</CardTitle></CardHeader>
-          <CardContent><p className="text-4xl font-bold">{stats.scripts}</p></CardContent>
-        </Card>
-      </div>
+      {/* ── 1. NAV ─────────────────────────────────────────────── */}
+      <nav className="sticky top-0 z-50 border-b border-[#1E1E1E] bg-[#0A0A0A]/90 backdrop-blur-sm">
+        <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <span className="w-7 h-7 rounded bg-[#FFE600] flex items-center justify-center text-[#0A0A0A] font-heading font-bold text-sm">Y</span>
+            <span className="font-heading font-semibold tracking-tight">YUBOT</span>
+          </div>
+          <div className="hidden md:flex items-center gap-6">
+            <a href="#features" className="text-sm text-[#6B6560] hover:text-[#F5F0E8] transition-colors">Fonctionnalités</a>
+            <a href="#pricing" className="text-sm text-[#6B6560] hover:text-[#F5F0E8] transition-colors">Tarifs</a>
+            <Link href="/blog" className="text-sm text-[#6B6560] hover:text-[#F5F0E8] transition-colors">Blog</Link>
+            <a href="#faq" className="text-sm text-[#6B6560] hover:text-[#F5F0E8] transition-colors">FAQ</a>
+          </div>
+          <Link
+            href="/generate"
+            className="px-4 py-1.5 bg-[#FFE600] text-[#0A0A0A] text-sm font-semibold rounded hover:bg-[#FFE600]/90 transition-colors"
+          >
+            Essayer gratuitement
+          </Link>
+        </div>
+      </nav>
 
-      <div className="grid grid-cols-2 gap-8">
-        <div>
-          <h2 className="text-xl font-semibold mb-4">Vidéos récentes</h2>
-          {recentVideos.length === 0 ? (
-            <p className="text-muted-foreground text-sm">
-              Aucune vidéo. Le cron s'exécute à 03h00 UTC.
-            </p>
-          ) : (
-            <div className="space-y-2">
-              {recentVideos.map(v => (
-                <div key={v.id} className="border rounded p-3 text-sm">
-                  <p className="font-medium line-clamp-1">{v.title}</p>
-                  <p className="text-muted-foreground">
-                    {v.channel} — {v.viewCount.toLocaleString()} vues
-                  </p>
+      {/* ── 2. HERO ────────────────────────────────────────────── */}
+      <section className="max-w-6xl mx-auto px-6 pt-20 pb-24">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-16 items-start">
+          <div className="space-y-8">
+            <div className="space-y-5">
+              <p className="text-xs font-mono text-[#FFE600] tracking-widest uppercase">Agent YouTube IA</p>
+              <h1 className="font-heading text-5xl lg:text-6xl font-bold leading-[1.05] tracking-tight">
+                Le script qui retient.<br />
+                La structure qui <span className="text-[#FFE600]">convertit.</span>
+              </h1>
+              <p className="text-[#6B6560] text-lg leading-relaxed max-w-lg">
+                YUBOT scanne YouTube en permanence, extrait les patterns des vidéos qui explosent, et génère des scripts qui répliquent exactement ce qui fonctionne — dans ta niche, pour ton audience.
+              </p>
+            </div>
+            <div className="flex flex-wrap items-center gap-4">
+              <Link
+                href="/generate"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-[#FFE600] text-[#0A0A0A] font-semibold rounded hover:bg-[#FFE600]/90 transition-colors"
+              >
+                Essayer gratuitement
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </Link>
+              <a href="#how" className="text-sm text-[#6B6560] hover:text-[#F5F0E8] transition-colors">
+                Voir comment ça marche →
+              </a>
+            </div>
+            <div className="flex items-center gap-8 pt-2">
+              {[
+                { n: '10 247', label: 'vidéos analysées' },
+                { n: '47', label: 'patterns actifs' },
+                { n: '2 540', label: 'créateurs actifs' },
+              ].map(({ n, label }) => (
+                <div key={label}>
+                  <p className="font-heading text-2xl font-bold">{n}</p>
+                  <p className="text-xs text-[#6B6560]">{label}</p>
                 </div>
               ))}
             </div>
-          )}
-        </div>
+          </div>
 
-        <div>
-          <h2 className="text-xl font-semibold mb-4">Scripts récents</h2>
-          {recentScripts.length === 0 ? (
-            <p className="text-muted-foreground text-sm">
-              Aucun script.{' '}
-              <Link href="/generate" className="underline">Générer maintenant</Link>
-            </p>
-          ) : (
-            <div className="space-y-2">
-              {recentScripts.map(s => (
-                <Link
-                  key={s.id}
-                  href={`/scripts/${s.id}`}
-                  className="block border rounded p-3 text-sm hover:bg-muted transition-colors"
-                >
-                  <p className="font-medium line-clamp-1">{s.theme}</p>
-                  <p className="text-muted-foreground">
-                    {s.tone} — {Math.round(s.durationSeconds / 60)} min
-                  </p>
-                </Link>
+          {/* mock script */}
+          <div className="border border-[#1E1E1E] rounded-lg bg-[#0F0F0F] overflow-hidden shadow-2xl">
+            <div className="border-b border-[#1E1E1E] px-4 py-3 flex items-center gap-2">
+              <div className="w-2.5 h-2.5 rounded-full bg-[#2A2A2A]" />
+              <div className="w-2.5 h-2.5 rounded-full bg-[#2A2A2A]" />
+              <div className="w-2.5 h-2.5 rounded-full bg-[#2A2A2A]" />
+              <span className="ml-2 text-xs text-[#3A3A3A] font-mono">script_viral.docx</span>
+              <span className="ml-auto text-xs text-[#3A3A3A] font-mono">Généré il y a 4s</span>
+            </div>
+            <div className="px-4 py-2 bg-[#0D0D0D] border-b border-[#1E1E1E]">
+              <p className="text-xs text-[#6B6560] font-mono">Thème : Comment gagner du temps avec l&apos;IA en 2026</p>
+            </div>
+            <div className="p-5 space-y-4">
+              {MOCK_SCRIPT.map(({ label, color, bg, text }) => (
+                <div key={label} className="rounded border-l-2 p-3" style={{ borderLeftColor: color, backgroundColor: bg }}>
+                  <p className="text-xs font-mono font-bold mb-2 tracking-widest" style={{ color }}>{label}</p>
+                  <p className="text-sm text-[#C4BFB7] leading-relaxed">{text}</p>
+                </div>
+              ))}
+              <div className="flex items-center gap-1.5 pt-1">
+                <div className="h-px flex-1 bg-[#1E1E1E]" />
+                <span className="text-xs text-[#3A3A3A] font-mono">+ 5 sections</span>
+                <div className="h-px flex-1 bg-[#1E1E1E]" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── 3. SOCIAL PROOF ────────────────────────────────────── */}
+      <section className="border-t border-b border-[#1E1E1E] bg-[#0D0D0D]">
+        <div className="max-w-6xl mx-auto px-6 py-8">
+          <p className="text-xs text-[#3A3A3A] text-center mb-6 uppercase tracking-widest font-mono">Utilisé par des créateurs qui prennent leurs résultats au sérieux</p>
+          <div className="flex flex-wrap justify-center gap-x-10 gap-y-3">
+            {['La Clé des Marchés', 'Marketing Flow', 'Mindset Business', 'Code & Café', 'Léa Creates', 'Finance Réelle', "L'Atelier Vidéo", 'Startup Stories'].map(name => (
+              <span key={name} className="text-sm text-[#3A3A3A] font-heading font-semibold">{name}</span>
+            ))}
+          </div>
+          <p className="text-center text-xs text-[#6B6560] mt-6">+ 2 500 créateurs font confiance à YUBOT</p>
+        </div>
+      </section>
+
+      {/* ── 4. LE PROBLÈME ─────────────────────────────────────── */}
+      <section className="border-b border-[#1E1E1E]">
+        <div className="max-w-6xl mx-auto px-6 py-20">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_420px] gap-16 items-start">
+            <div className="space-y-6">
+              <div>
+                <p className="text-xs font-mono text-[#FFE600] tracking-widest uppercase mb-4">Le problème</p>
+                <h2 className="font-heading text-3xl lg:text-4xl font-bold leading-tight">
+                  Tu sais ce qui tue 99% des vidéos YouTube ?
+                </h2>
+              </div>
+              <div className="space-y-4 text-[#6B6560] leading-relaxed">
+                <p>C&apos;est pas la qualité de l&apos;image. Pas le montage. Pas même le sujet. Des dizaines de milliers de vidéos en 4K sur des sujets brillants moisissent à 200 vues. La différence ne se voit pas à l&apos;écran. Elle se lit dans le script.</p>
+                <p>YouTube a changé. L&apos;attention des spectateurs aussi. En 2020, une intro de 90 secondes passait encore. Aujourd&apos;hui, t&apos;as 6 secondes. Six secondes pour que l&apos;algorithme décide si ta vidéo mérite d&apos;être montrée. La plupart des créateurs le savent — mais personne ne leur a jamais montré comment construire ces 6 secondes.</p>
+                <p>Les patterns viraux changent tous les 45 jours environ. Ce qui marchait en mars ne marche plus en juin. Analyser 10 vidéos virales en profondeur, ça prend une journée. Et pendant ce temps, t&apos;es pas en train de créer.</p>
+              </div>
+            </div>
+            <div className="space-y-4">
+              <div className="border border-[#1E1E1E] rounded-lg p-6 bg-[#0D0D0D]">
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="w-1.5 h-1.5 rounded-full bg-[#FFE600]" />
+                  <span className="text-xs font-mono text-[#6B6560] uppercase tracking-widest">Temps d&apos;accroche critique</span>
+                </div>
+                <div className="space-y-2">
+                  {[
+                    { year: '2020', seconds: 15, pct: '100%' },
+                    { year: '2022', seconds: 10, pct: '67%' },
+                    { year: '2024', seconds: 8, pct: '53%' },
+                    { year: '2026', seconds: 6, pct: '40%' },
+                  ].map(({ year, seconds, pct }) => (
+                    <div key={year} className="flex items-center gap-3">
+                      <span className="text-xs font-mono text-[#3A3A3A] w-8">{year}</span>
+                      <div className="flex-1 h-1 bg-[#1E1E1E] rounded-full overflow-hidden">
+                        <div className="h-full bg-[#FFE600]/60 rounded-full" style={{ width: pct }} />
+                      </div>
+                      <span className="text-xs font-mono text-[#6B6560] w-12 text-right">{seconds}s</span>
+                    </div>
+                  ))}
+                </div>
+                <p className="text-xs text-[#3A3A3A] mt-4 font-mono">Le temps d&apos;accroche est passé de 15s à 6s.</p>
+              </div>
+              <blockquote className="border border-[#1E1E1E] rounded-lg p-6 bg-[#0D0D0D] space-y-3">
+                <div className="w-6 h-0.5 bg-[#FFE600]" />
+                <p className="text-sm text-[#C4BFB7] leading-relaxed italic">
+                  &ldquo;J&apos;ai passé 6 mois à créer du contenu régulièrement. Des vidéos soignées. Des sujets pertinents. Aucune ne dépassait 400 vues. C&apos;est le genre de truc qui te fait remettre en question tout ce que tu fais.&rdquo;
+                </p>
+                <p className="text-xs text-[#6B6560]">— Thomas L., créateur business, 250K abonnés aujourd&apos;hui</p>
+              </blockquote>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── 5. LA SOLUTION ─────────────────────────────────────── */}
+      <section className="border-b border-[#1E1E1E] bg-[#0D0D0D]">
+        <div className="max-w-6xl mx-auto px-6 py-20">
+          <div className="max-w-2xl">
+            <p className="text-xs font-mono text-[#FFE600] tracking-widest uppercase mb-4">La solution</p>
+            <h2 className="font-heading text-3xl lg:text-4xl font-bold leading-tight mb-8">
+              On a lu YouTube à ta place.
+            </h2>
+            <div className="space-y-5 text-[#6B6560] leading-relaxed">
+              <p>YUBOT ne génère pas des scripts à partir de rien. Il commence par analyser. Chaque jour, notre système scanne des milliers de vidéos dans les niches business, entrepreneuriat, mindset, IA et argent. Il mesure le ratio viral — vues vs abonnés — pour ne retenir que les vidéos qui ont surperformé leur base d&apos;audience.</p>
+              <p>Ensuite, il décortique. Structure du hook. Longueur de l&apos;intro. Nombre de re-hooks dans le corps. Technique de conclusion. Rythme des phrases. On identifie les patterns qui se répètent dans les vidéos qui fonctionnent — et seulement celles-là.</p>
+              <p>Enfin, il génère. Tu donnes un thème. YUBOT sélectionne les patterns les plus adaptés à ton sujet, à ta durée cible, à ton ton. Et il produit un script complet — hook, intro, 3 actes, re-hook, conclusion — avec le rythme oral qui correspond à ce que les spectateurs restent à regarder.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── 6. COMMENT ÇA MARCHE ───────────────────────────────── */}
+      <section id="how" className="border-b border-[#1E1E1E]">
+        <div className="max-w-6xl mx-auto px-6 py-20">
+          <p className="text-xs font-mono text-[#FFE600] tracking-widest uppercase mb-4">Le processus</p>
+          <h2 className="font-heading text-3xl font-bold mb-14">Comment ça marche</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-[#1E1E1E]">
+            {[
+              {
+                n: '01',
+                title: 'On scanne YouTube en permanence.',
+                desc: 'Notre système analyse des dizaines de milliers de vidéos chaque semaine. On mesure le ratio viral — vues obtenues versus abonnés — pas les vues brutes.',
+                stat: '10 247 vidéos analysées',
+              },
+              {
+                n: '02',
+                title: 'On filtre les vraies pépites.',
+                desc: "Seulement 3% des vidéos passent nos filtres. Critères : ratio viral minimum, engagement réel, fraîcheur du contenu. Ce qui reste, c'est l'élite.",
+                stat: '3% passent nos filtres',
+              },
+              {
+                n: '03',
+                title: 'On extrait les patterns gagnants.',
+                desc: "Chaque vidéo retenue est analysée : hook, promesse, re-hooks, conclusion. On mesure les taux de succès et classe par efficacité.",
+                stat: '47 patterns actifs',
+              },
+              {
+                n: '04',
+                title: 'Tu génères ton script en 90s.',
+                desc: 'Tu donnes un thème. YUBOT sélectionne les patterns adaptés, construit la structure, rédige le texte à dire mot pour mot.',
+                stat: 'Génération moyenne : 87s',
+              },
+            ].map(({ n, title, desc, stat }) => (
+              <div key={n} className="bg-[#0A0A0A] p-8 space-y-4">
+                <span className="font-heading text-5xl font-bold text-[#1E1E1E]">{n}</span>
+                <h3 className="font-heading text-base font-semibold leading-snug">{title}</h3>
+                <p className="text-sm text-[#6B6560] leading-relaxed">{desc}</p>
+                <p className="text-xs font-mono text-[#FFE600] pt-2">{stat}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── 7. FEATURES PRINCIPALES ────────────────────────────── */}
+      <section id="features" className="border-b border-[#1E1E1E] bg-[#0D0D0D]">
+        <div className="max-w-6xl mx-auto px-6 py-20">
+          <p className="text-xs font-mono text-[#FFE600] tracking-widest uppercase mb-4">Ce que YUBOT fait concrètement</p>
+          <h2 className="font-heading text-3xl font-bold mb-16">5 outils. Un workflow complet.</h2>
+
+          <div className="space-y-20">
+
+            {/* Feature 1 */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              <div className="space-y-5">
+                <div className="w-6 h-0.5 bg-[#FFE600]" />
+                <h3 className="font-heading text-2xl font-bold">Un script complet. Basé sur ce qui marche vraiment.</h3>
+                <div className="space-y-3 text-[#6B6560] text-sm leading-relaxed">
+                  <p>Tu donnes un thème. YUBOT génère un script entier — pas une ébauche, pas un plan, un texte à dire mot pour mot. Hook calibré pour les 6 premières secondes critiques. Intro qui pose une promesse claire. Corps structuré en 3 actes avec re-hooks intégrés. Conclusion qui ferme le loop sans tomber dans le CTA commercial.</p>
+                  <p>Chaque section est accompagnée de notes créateur : pourquoi ce hook, quel pattern est utilisé, quel type de vidéo a inspiré la structure. Tu comprends ce que tu lis.</p>
+                  <p>7 tons disponibles : viral, éducatif, storytelling, tutoriel, provocateur, inspirant, analytique.</p>
+                </div>
+                <p className="text-sm text-[#F5F0E8] font-medium">Plus besoin de passer 3 heures sur un script. Tu n&apos;as plus qu&apos;à filmer.</p>
+              </div>
+              <div className="border border-[#1E1E1E] rounded-lg overflow-hidden">
+                <div className="border-b border-[#1E1E1E] px-4 py-2 bg-[#111111] flex items-center gap-2">
+                  <span className="text-xs font-mono text-[#6B6560]">Onglet : Générer un script</span>
+                </div>
+                <div className="p-5 space-y-3 bg-[#0F0F0F]">
+                  {[
+                    { label: '[HOOK]', color: '#DC2626', bg: '#1F0A0A', text: "T'es en train de perdre 80% de tes spectateurs dans les 30 premières secondes. Voilà pourquoi — et comment l'arrêter." },
+                    { label: '[INTRO]', color: '#2563EB', bg: '#0A0F1F', text: "Cette vidéo est basée sur 3 ans d'analyse de 10 000 vidéos YouTube. Ce que tu vas apprendre, ça prend normalement des mois à comprendre seul." },
+                    { label: '[NOTES CRÉATEUR]', color: '#6B7280', bg: '#0F0F0F', text: 'Hook utilisé : Chiffre choc + promesse de solution. Score viral moyen de ce pattern : 14x.' },
+                  ].map(({ label, color, bg, text }) => (
+                    <div key={label} className="rounded border-l-2 p-3" style={{ borderLeftColor: color, backgroundColor: bg }}>
+                      <p className="text-xs font-mono font-bold mb-1.5" style={{ color }}>{label}</p>
+                      <p className="text-xs text-[#C4BFB7] leading-relaxed">{text}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="border-t border-[#1E1E1E]" />
+
+            {/* Feature 2 */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              <div className="order-2 lg:order-1 border border-[#1E1E1E] rounded-lg overflow-hidden">
+                <div className="border-b border-[#1E1E1E] px-4 py-2 bg-[#111111]">
+                  <span className="text-xs font-mono text-[#6B6560]">Onglet : Adapter mon texte</span>
+                </div>
+                <div className="p-5 bg-[#0F0F0F] space-y-3">
+                  <div className="p-3 rounded border border-[#1E1E1E] bg-[#111111]">
+                    <p className="text-xs font-mono text-[#3A3A3A] mb-1">Texte original</p>
+                    <p className="text-xs text-[#6B6560] leading-relaxed">L&apos;intelligence artificielle transforme le marché du travail. Selon une étude récente, 40% des tâches actuelles pourront être automatisées d&apos;ici 2030...</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="flex-1 h-px bg-[#FFE600]/30" />
+                    <span className="text-xs font-mono text-[#FFE600]">→ adapté</span>
+                    <div className="flex-1 h-px bg-[#FFE600]/30" />
+                  </div>
+                  <div className="p-3 rounded border-l-2 border-[#DC2626] bg-[#1F0A0A]">
+                    <p className="text-xs font-mono text-[#DC2626] font-bold mb-1.5">[HOOK]</p>
+                    <p className="text-xs text-[#C4BFB7] leading-relaxed">
+                      40% de ton boulot disparaît d&apos;ici 2030. Pas dans 50 ans. Dans 5 ans.{' '}
+                      <span className="px-0.5 rounded" style={{ backgroundColor: '#0D2235', color: '#93C5FD' }}>La question n&apos;est pas si ça va arriver. La question, c&apos;est ce que tu vas faire avant. [+]</span>
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="order-1 lg:order-2 space-y-5">
+                <div className="w-6 h-0.5 bg-[#FFE600]" />
+                <h3 className="font-heading text-2xl font-bold">T&apos;as déjà un texte. On lui donne une forme qui retient.</h3>
+                <div className="space-y-3 text-[#6B6560] text-sm leading-relaxed">
+                  <p>Tu as un article de blog, une newsletter, des notes de cours, un script existant qui n&apos;a pas fonctionné. Tu colles le texte. YUBOT restructure sans toucher au fond.</p>
+                  <p>Les faits restent les faits. Tes opinions restent tes opinions. Ce que YUBOT change : l&apos;ordre des informations, la formulation pour un rythme oral, la structure pour hook → intro → corps → conclusion. Ce qui a été ajouté est signalé en bleu. Ce qui a été condensé en orange.</p>
+                  <p>L&apos;outil calcule aussi l&apos;écart entre la longueur de ton texte et la durée cible. Tu peux autoriser YUBOT à compléter — sans inventer de faits.</p>
+                </div>
+                <p className="text-sm text-[#F5F0E8] font-medium">Ton contenu existant peut performer 3x mieux. Le fond ne change pas. La forme fait tout.</p>
+              </div>
+            </div>
+
+            <div className="border-t border-[#1E1E1E]" />
+
+            {/* Feature 3, 4, 5 — cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+              {[
+                {
+                  title: '47 patterns viraux. Transparents, explorables.',
+                  desc: "YUBOT n'est pas une boîte noire. Tu peux explorer la bibliothèque de patterns — pour chaque pattern : type, ton associé, durée optimale, score viral moyen, exemples sources. Mise à jour quotidiennement.",
+                },
+                {
+                  title: 'Ce qui marche dans ta niche. Cette semaine.',
+                  desc: "Les patterns viraux ont une durée de vie. YUBOT suit leur évolution en temps réel et signale les patterns émergents. Dashboard tendances : quels hooks gagnent des parts d'attention ce mois-ci.",
+                },
+                {
+                  title: 'Prêt à imprimer. Prêt à partager. Prêt à tourner.',
+                  desc: 'Export .docx avec mise en forme professionnelle. Les sections sont colorées par type. Les notes créateur sont séparées visuellement. Quelqu\'un qui n\'a jamais utilisé YUBOT peut prendre ce document et filmer.',
+                },
+              ].map(({ title, desc }) => (
+                <div key={title} className="border border-[#1E1E1E] rounded-lg p-6 space-y-3 bg-[#0A0A0A]">
+                  <div className="w-6 h-0.5 bg-[#FFE600]" />
+                  <h3 className="font-heading text-base font-semibold leading-snug">{title}</h3>
+                  <p className="text-sm text-[#6B6560] leading-relaxed">{desc}</p>
+                </div>
               ))}
             </div>
-          )}
+
+          </div>
         </div>
-      </div>
+      </section>
+
+      {/* ── 8. DÉMO INTERACTIVE ────────────────────────────────── */}
+      <section className="border-b border-[#1E1E1E]">
+        <div className="max-w-3xl mx-auto px-6 py-20">
+          <p className="text-xs font-mono text-[#FFE600] tracking-widest uppercase mb-4">Démo interactive</p>
+          <h2 className="font-heading text-3xl font-bold mb-2">Essaye YUBOT maintenant. Sans inscription.</h2>
+          <p className="text-[#6B6560] mb-8">Donne un thème. Vois un extrait de script généré. Tu décides ensuite si tu veux le script complet.</p>
+
+          <div className="border border-[#1E1E1E] rounded-lg bg-[#0D0D0D] p-6 space-y-5">
+            <div className="flex flex-wrap gap-2">
+              {DEMO_THEMES.map(t => (
+                <button
+                  key={t}
+                  onClick={() => setDemoTheme(t)}
+                  className={`px-3 py-1.5 text-xs rounded border transition-colors ${demoTheme === t ? 'bg-[#FFE600]/10 text-[#FFE600] border-[#FFE600]/30' : 'border-[#1E1E1E] text-[#6B6560] hover:border-[#2E2E2E] hover:text-[#F5F0E8]'}`}
+                >
+                  {t}
+                </button>
+              ))}
+            </div>
+
+            <div>
+              <label className="block text-xs font-mono text-[#6B6560] mb-2">Ou saisis un thème personnalisé</label>
+              <input
+                value={demoTheme}
+                onChange={e => setDemoTheme(e.target.value)}
+                placeholder="Ex : Pourquoi les riches ne travaillent pas plus dur"
+                className="w-full px-3 py-2.5 text-sm border border-[#1E1E1E] rounded bg-[#111111] text-[#F5F0E8] placeholder-[#3A3A3A] focus:outline-none focus:border-[#FFE600]/40"
+              />
+            </div>
+
+            <button
+              onClick={() => demoTheme.trim() && setDemoResult(true)}
+              disabled={!demoTheme.trim()}
+              className="w-full py-2.5 bg-[#FFE600] text-[#0A0A0A] font-semibold text-sm rounded hover:bg-[#FFE600]/90 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+            >
+              Générer l&apos;aperçu
+            </button>
+
+            {demoResult && (
+              <div className="space-y-4 pt-2">
+                <div className="flex items-center gap-2">
+                  <div className="h-px flex-1 bg-[#1E1E1E]" />
+                  <span className="text-xs font-mono text-[#FFE600]">Aperçu généré</span>
+                  <div className="h-px flex-1 bg-[#1E1E1E]" />
+                </div>
+                {DEMO_RESULT.map(({ label, color, bg, text }) => (
+                  <div key={label} className="rounded border-l-2 p-3" style={{ borderLeftColor: color, backgroundColor: bg }}>
+                    <p className="text-xs font-mono font-bold mb-1.5" style={{ color }}>[{label}]</p>
+                    <p className="text-sm text-[#C4BFB7] leading-relaxed">{text}</p>
+                  </div>
+                ))}
+                <div className="border border-[#1E1E1E] rounded p-3 bg-[#111111] flex items-center justify-between">
+                  <p className="text-xs text-[#6B6560]">Script complet : 8 sections • notes créateur • export Word</p>
+                  <Link href="/generate" className="text-xs font-semibold text-[#FFE600] hover:text-[#FFE600]/80 transition-colors">
+                    Obtenir le script complet →
+                  </Link>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* ── 9. CHIFFRES ────────────────────────────────────────── */}
+      <section className="border-b border-[#1E1E1E] bg-[#0D0D0D]">
+        <div className="max-w-6xl mx-auto px-6 py-20">
+          <p className="text-xs font-mono text-[#FFE600] tracking-widest uppercase mb-12 text-center">YUBOT en chiffres</p>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-px bg-[#1E1E1E]">
+            {STATS.map(({ n, label }) => (
+              <div key={label} className="bg-[#0D0D0D] p-8 text-center">
+                <p className="font-heading text-4xl font-bold mb-2">{n}</p>
+                <p className="text-sm text-[#6B6560]">{label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── 10. COMPARATIF ─────────────────────────────────────── */}
+      <section className="border-b border-[#1E1E1E]">
+        <div className="max-w-6xl mx-auto px-6 py-20">
+          <p className="text-xs font-mono text-[#FFE600] tracking-widest uppercase mb-4">Comparatif</p>
+          <h2 className="font-heading text-3xl font-bold mb-3">YUBOT n&apos;est pas ChatGPT avec un prompt YouTube.</h2>
+          <p className="text-[#6B6560] mb-10 max-w-xl">La différence est structurelle. Voilà pourquoi.</p>
+
+          <div className="border border-[#1E1E1E] rounded-lg overflow-hidden">
+            <div className="grid grid-cols-4 border-b border-[#1E1E1E] bg-[#111111]">
+              <div className="p-4 text-xs font-mono text-[#6B6560] uppercase tracking-widest">Fonctionnalité</div>
+              <div className="p-4 text-xs font-mono text-[#FFE600] uppercase tracking-widest border-l border-[#1E1E1E]">YUBOT</div>
+              <div className="p-4 text-xs font-mono text-[#6B6560] uppercase tracking-widest border-l border-[#1E1E1E]">ChatGPT</div>
+              <div className="p-4 text-xs font-mono text-[#6B6560] uppercase tracking-widest border-l border-[#1E1E1E]">Autres outils</div>
+            </div>
+            {COMPARATIF.map(([feat, yubot, gpt, others], i) => (
+              <div key={i} className={`grid grid-cols-4 border-b border-[#1E1E1E] last:border-b-0 ${i % 2 === 0 ? 'bg-[#0A0A0A]' : 'bg-[#0D0D0D]'}`}>
+                <div className="p-4 text-sm text-[#C4BFB7]">{feat}</div>
+                {[yubot, gpt, others].map((val, j) => (
+                  <div key={j} className="p-4 border-l border-[#1E1E1E]">
+                    {val === true ? (
+                      <span className="text-green-400 text-sm">✓ Oui</span>
+                    ) : val === false ? (
+                      <span className="text-[#3A3A3A] text-sm">—</span>
+                    ) : (
+                      <span className={`text-sm ${j === 0 ? 'text-[#FFE600]' : 'text-[#6B6560]'}`}>{val as string}</span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+
+          <p className="text-sm text-[#6B6560] mt-6 max-w-2xl leading-relaxed">
+            ChatGPT génère du texte correct. YUBOT génère des scripts viraux. Ce n&apos;est pas le même métier. Un script viral n&apos;est pas du texte bien écrit — c&apos;est une architecture de l&apos;attention construite sur des données réelles.
+          </p>
+        </div>
+      </section>
+
+      {/* ── 11. CAS CLIENTS ────────────────────────────────────── */}
+      <section className="border-b border-[#1E1E1E] bg-[#0D0D0D]">
+        <div className="max-w-6xl mx-auto px-6 py-20">
+          <p className="text-xs font-mono text-[#FFE600] tracking-widest uppercase mb-4">Résultats réels</p>
+          <h2 className="font-heading text-3xl font-bold mb-12">Ce que des créateurs ont accompli avec YUBOT</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {[
+              {
+                title: 'De 200 à 50 000 vues par vidéo en 4 mois.',
+                before: '180 vues moyennes · 3 400 abonnés',
+                after: '48 000 vues · 91 000 abonnés',
+                quote: '"Je pensais que le problème venait de mon montage. En vrai le problème était dans les 15 premières secondes."',
+                author: 'Thomas L. — Finance personnelle',
+                slug: 'thomas-finance',
+              },
+              {
+                title: "L'agence MPW génère 3× plus de scripts.",
+                before: '5h/script · 8 clients',
+                after: '45min/script · volume ×3',
+                quote: '"YUBOT ne remplace pas notre expertise. Il remplace le temps de production."',
+                author: 'Équipe MPW — Agence vidéo',
+                slug: 'agence-mpw',
+              },
+              {
+                title: 'Sophie a récupéré 18 heures par semaine.',
+                before: '22h/semaine sur scripts',
+                after: '4h/semaine · engagement +140%',
+                quote: '"Je savais quoi dire dans mes vidéos. Ce que je ne savais pas, c\'est dans quel ordre."',
+                author: 'Sophie — Lifestyle minimaliste',
+                slug: 'sophie-lifestyle',
+              },
+            ].map(({ title, before, after, quote, author }) => (
+              <div key={title} className="border border-[#1E1E1E] rounded-lg overflow-hidden bg-[#0A0A0A]">
+                <div className="p-6 space-y-4">
+                  <h3 className="font-heading text-base font-semibold leading-snug">{title}</h3>
+                  <div className="space-y-1.5">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-mono text-[#3A3A3A] w-14">Avant</span>
+                      <span className="text-xs text-[#6B6560]">{before}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-mono text-[#FFE600] w-14">Après</span>
+                      <span className="text-xs text-[#F5F0E8] font-medium">{after}</span>
+                    </div>
+                  </div>
+                  <blockquote className="border-l-2 border-[#FFE600]/40 pl-3">
+                    <p className="text-xs text-[#6B6560] italic leading-relaxed">{quote}</p>
+                    <p className="text-xs text-[#3A3A3A] mt-1">— {author}</p>
+                  </blockquote>
+                </div>
+                <div className="border-t border-[#1E1E1E] px-6 py-3">
+                  <Link href="/case-studies" className="text-xs text-[#6B6560] hover:text-[#FFE600] transition-colors">
+                    Lire l&apos;étude de cas →
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── 12. TÉMOIGNAGES ────────────────────────────────────── */}
+      <section className="border-b border-[#1E1E1E]">
+        <div className="max-w-6xl mx-auto px-6 py-20">
+          <p className="text-xs font-mono text-[#FFE600] tracking-widest uppercase mb-12 text-center">Ce qu&apos;ils disent</p>
+
+          {/* big quote */}
+          <blockquote className="border border-[#1E1E1E] rounded-lg p-8 bg-[#0D0D0D] mb-8 max-w-3xl mx-auto text-center">
+            <p className="font-heading text-xl font-semibold leading-relaxed mb-4 text-[#F5F0E8]">
+              &ldquo;{TESTIMONIALS[0].quote}&rdquo;
+            </p>
+            <p className="text-sm text-[#6B6560]">{TESTIMONIALS[0].author} — {TESTIMONIALS[0].role}</p>
+          </blockquote>
+
+          {/* smaller quotes */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {TESTIMONIALS.slice(1).map(({ quote, author, role }) => (
+              <blockquote key={author} className="border border-[#1E1E1E] rounded-lg p-6 bg-[#0D0D0D] space-y-3">
+                <div className="w-5 h-0.5 bg-[#FFE600]" />
+                <p className="text-sm text-[#C4BFB7] leading-relaxed italic">&ldquo;{quote}&rdquo;</p>
+                <p className="text-xs text-[#6B6560]">{author} — {role}</p>
+              </blockquote>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── 13. BLOG ───────────────────────────────────────────── */}
+      <section className="border-b border-[#1E1E1E] bg-[#0D0D0D]">
+        <div className="max-w-6xl mx-auto px-6 py-20">
+          <div className="flex items-end justify-between mb-12">
+            <div>
+              <p className="text-xs font-mono text-[#FFE600] tracking-widest uppercase mb-4">Blog</p>
+              <h2 className="font-heading text-3xl font-bold">Apprends ce que YUBOT sait.</h2>
+              <p className="text-[#6B6560] mt-2 max-w-xl">Les créateurs qui dominent leur niche ne font pas de la chance. Ils maîtrisent des principes précis. On les documente.</p>
+            </div>
+            <Link href="/blog" className="text-sm text-[#6B6560] hover:text-[#F5F0E8] transition-colors hidden md:block">
+              Voir tous les articles →
+            </Link>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {BLOG_ARTICLES.map(({ title, date, read, excerpt, slug }) => (
+              <Link key={slug} href={`/blog/${slug}`} className="border border-[#1E1E1E] rounded-lg p-6 bg-[#0A0A0A] hover:border-[#2E2E2E] transition-colors group space-y-3">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-[#3A3A3A]">{date}</span>
+                  <span className="text-xs text-[#3A3A3A]">·</span>
+                  <span className="text-xs text-[#3A3A3A]">{read} de lecture</span>
+                </div>
+                <h3 className="font-heading text-base font-semibold leading-snug group-hover:text-[#FFE600] transition-colors">{title}</h3>
+                <p className="text-sm text-[#6B6560] leading-relaxed">{excerpt}</p>
+                <p className="text-xs text-[#FFE600] opacity-0 group-hover:opacity-100 transition-opacity">Lire l&apos;article →</p>
+              </Link>
+            ))}
+          </div>
+          <div className="mt-6 md:hidden text-center">
+            <Link href="/blog" className="text-sm text-[#6B6560] hover:text-[#F5F0E8] transition-colors">
+              Voir tous les articles →
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ── 14. FAQ ────────────────────────────────────────────── */}
+      <section id="faq" className="border-b border-[#1E1E1E]">
+        <div className="max-w-2xl mx-auto px-6 py-20">
+          <p className="text-xs font-mono text-[#FFE600] tracking-widest uppercase mb-4">Questions fréquentes</p>
+          <h2 className="font-heading text-3xl font-bold mb-10">FAQ</h2>
+          <div>
+            {FAQS.map(faq => <FAQ key={faq.q} q={faq.q} a={faq.a} />)}
+          </div>
+        </div>
+      </section>
+
+      {/* ── 15. TARIFICATION ───────────────────────────────────── */}
+      <section id="pricing" className="border-b border-[#1E1E1E] bg-[#0D0D0D]">
+        <div className="max-w-6xl mx-auto px-6 py-20">
+          <p className="text-xs font-mono text-[#FFE600] tracking-widest uppercase mb-4 text-center">Tarifs</p>
+          <h2 className="font-heading text-3xl font-bold mb-3 text-center">Simple. Transparent. Sans piège.</h2>
+          <p className="text-[#6B6560] text-center mb-14">7 jours d&apos;essai gratuit sur tous les plans. Sans carte bancaire.</p>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+
+            {/* Starter */}
+            <div className="border border-[#1E1E1E] rounded-lg p-7 bg-[#0A0A0A] space-y-6">
+              <div>
+                <p className="text-xs font-mono text-[#6B6560] uppercase tracking-widest mb-2">Starter</p>
+                <div className="flex items-end gap-1">
+                  <span className="font-heading text-4xl font-bold">19€</span>
+                  <span className="text-sm text-[#6B6560] mb-1">/mois</span>
+                </div>
+                <p className="text-xs text-[#6B6560] mt-2">Idéal pour démarrer et tester les patterns viraux.</p>
+              </div>
+              <ul className="space-y-2.5">
+                {['10 scripts générés par mois', 'Accès à tous les patterns viraux actifs', 'Adaptation de texte (5 par mois)', 'Export Word sur tous les scripts', 'Support email sous 48h'].map(f => (
+                  <li key={f} className="flex items-start gap-2.5 text-sm text-[#C4BFB7]">
+                    <span className="text-[#FFE600] mt-0.5 shrink-0">✓</span>
+                    {f}
+                  </li>
+                ))}
+              </ul>
+              <Link href="/generate" className="block w-full py-2.5 border border-[#1E1E1E] text-center text-sm font-semibold text-[#F5F0E8] rounded hover:border-[#FFE600]/40 hover:text-[#FFE600] transition-colors">
+                Commencer gratuitement
+              </Link>
+            </div>
+
+            {/* Pro - highlighted */}
+            <div className="border border-[#FFE600]/30 rounded-lg p-7 bg-[#0A0A0A] space-y-6 relative">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                <span className="px-3 py-1 bg-[#FFE600] text-[#0A0A0A] text-xs font-semibold rounded-full">Le plus populaire</span>
+              </div>
+              <div>
+                <p className="text-xs font-mono text-[#FFE600] uppercase tracking-widest mb-2">Pro</p>
+                <div className="flex items-end gap-1">
+                  <span className="font-heading text-4xl font-bold">49€</span>
+                  <span className="text-sm text-[#6B6560] mb-1">/mois</span>
+                </div>
+                <p className="text-xs text-[#6B6560] mt-2">Pour les créateurs qui publient régulièrement.</p>
+              </div>
+              <ul className="space-y-2.5">
+                {['50 scripts générés par mois', 'Patterns viraux + analyses avancées', 'Adaptation de texte illimitée', 'Bibliothèque de patterns personnelle', 'Accès aux tendances hebdomadaires', 'Support prioritaire sous 12h'].map(f => (
+                  <li key={f} className="flex items-start gap-2.5 text-sm text-[#C4BFB7]">
+                    <span className="text-[#FFE600] mt-0.5 shrink-0">✓</span>
+                    {f}
+                  </li>
+                ))}
+              </ul>
+              <Link href="/generate" className="block w-full py-2.5 bg-[#FFE600] text-center text-sm font-semibold text-[#0A0A0A] rounded hover:bg-[#FFE600]/90 transition-colors">
+                Commencer gratuitement
+              </Link>
+            </div>
+
+            {/* Studio */}
+            <div className="border border-[#1E1E1E] rounded-lg p-7 bg-[#0A0A0A] space-y-6">
+              <div>
+                <p className="text-xs font-mono text-[#6B6560] uppercase tracking-widest mb-2">Studio</p>
+                <div className="flex items-end gap-1">
+                  <span className="font-heading text-4xl font-bold">149€</span>
+                  <span className="text-sm text-[#6B6560] mb-1">/mois</span>
+                </div>
+                <p className="text-xs text-[#6B6560] mt-2">Pour les agences et équipes créatives.</p>
+              </div>
+              <ul className="space-y-2.5">
+                {['Scripts illimités', 'Analyses personnalisées par niche', 'Accès API', 'Multi-utilisateurs — 5 sièges inclus', 'Support dédié + gestionnaire de compte', 'Onboarding personnalisé (60 min)'].map(f => (
+                  <li key={f} className="flex items-start gap-2.5 text-sm text-[#C4BFB7]">
+                    <span className="text-[#FFE600] mt-0.5 shrink-0">✓</span>
+                    {f}
+                  </li>
+                ))}
+              </ul>
+              <Link href="/contact" className="block w-full py-2.5 border border-[#1E1E1E] text-center text-sm font-semibold text-[#F5F0E8] rounded hover:border-[#FFE600]/40 hover:text-[#FFE600] transition-colors">
+                Contacter l&apos;équipe
+              </Link>
+            </div>
+
+          </div>
+
+          <p className="text-center text-xs text-[#3A3A3A] mt-8">
+            Toutes les offres incluent 7 jours d&apos;essai gratuit · Aucune carte bancaire requise · Résiliation en 1 clic
+          </p>
+        </div>
+      </section>
+
+      {/* ── 16. INTÉGRATIONS ───────────────────────────────────── */}
+      <section className="border-b border-[#1E1E1E]">
+        <div className="max-w-6xl mx-auto px-6 py-20">
+          <p className="text-xs font-mono text-[#FFE600] tracking-widest uppercase mb-4">Intégrations</p>
+          <h2 className="font-heading text-3xl font-bold mb-3">YUBOT s&apos;intègre à ton workflow.</h2>
+          <p className="text-[#6B6560] mb-12 max-w-xl">T&apos;as déjà tes outils. YUBOT se connecte à eux plutôt que de les remplacer.</p>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {INTEGRATIONS.map(({ name, desc, available }) => (
+              <div key={name} className={`border rounded-lg p-5 space-y-2 ${available ? 'border-[#1E1E1E] bg-[#0D0D0D]' : 'border-[#1E1E1E] bg-[#0A0A0A] opacity-50'}`}>
+                <div className="flex items-center justify-between">
+                  <p className="font-heading font-semibold text-sm">{name}</p>
+                  {!available && <span className="text-xs text-[#3A3A3A] font-mono">Bientôt</span>}
+                </div>
+                <p className="text-xs text-[#6B6560] leading-relaxed">{desc}</p>
+              </div>
+            ))}
+          </div>
+          <p className="text-xs text-[#3A3A3A] mt-5">Les intégrations Google Docs, Notion et Zapier sont disponibles sur les plans Pro et Studio.</p>
+        </div>
+      </section>
+
+      {/* ── 17. FINAL CTA ──────────────────────────────────────── */}
+      <section className="border-b border-[#1E1E1E] bg-[#0D0D0D]">
+        <div className="max-w-3xl mx-auto px-6 py-28 text-center">
+          <p className="text-xs font-mono text-[#FFE600] tracking-widest uppercase mb-6">Commence maintenant</p>
+          <h2 className="font-heading text-4xl lg:text-5xl font-bold leading-tight mb-6">
+            Tes prochaines vidéos peuvent changer ta trajectoire. Reste à ce qu&apos;elles soient construites comme il faut.
+          </h2>
+          <p className="text-[#6B6560] mb-10 text-lg">
+            Rejoins les 2 500 créateurs qui ont arrêté de deviner ce qui marche.
+          </p>
+          <Link
+            href="/generate"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-[#FFE600] text-[#0A0A0A] font-semibold rounded hover:bg-[#FFE600]/90 transition-colors"
+          >
+            Essayer YUBOT gratuitement
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </Link>
+          <p className="text-xs text-[#3A3A3A] mt-4">Sans carte bancaire · 7 jours d&apos;essai · Annulable en 1 clic</p>
+        </div>
+      </section>
+
+      {/* ── 18. FOOTER ─────────────────────────────────────────── */}
+      <footer className="border-t border-[#1E1E1E] bg-[#0A0A0A]">
+        <div className="max-w-6xl mx-auto px-6 py-16">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-10 mb-12">
+            {/* brand */}
+            <div className="col-span-2 md:col-span-1 space-y-4">
+              <div className="flex items-center gap-2.5">
+                <span className="w-7 h-7 rounded bg-[#FFE600] flex items-center justify-center text-[#0A0A0A] font-heading font-bold text-sm">Y</span>
+                <span className="font-heading font-semibold tracking-tight">YUBOT</span>
+              </div>
+              <p className="text-xs text-[#3A3A3A] leading-relaxed">Agent YouTube IA pour les créateurs qui veulent des résultats.</p>
+              <div className="flex items-center gap-3">
+                {['Twitter', 'LinkedIn', 'YouTube'].map(s => (
+                  <a key={s} href="#" className="text-xs text-[#3A3A3A] hover:text-[#6B6560] transition-colors">{s}</a>
+                ))}
+              </div>
+            </div>
+
+            {[
+              { title: 'Produit', links: ['Fonctionnalités', 'Tarifs', 'Démo interactive', 'Roadmap', 'Changelog'] },
+              { title: 'Ressources', links: ['Blog', 'Guide YouTube 2026', 'Bibliothèque patterns', 'Glossaire', 'Newsletter'] },
+              { title: 'Entreprise', links: ['À propos', 'Notre méthode', 'Carrières', 'Partenaires', 'Affiliation'] },
+              { title: 'Support', links: ["Centre d'aide", 'Contact', 'Status', 'Documentation API', 'Changelog'] },
+            ].map(({ title, links }) => (
+              <div key={title}>
+                <p className="text-xs font-semibold text-[#F5F0E8] uppercase tracking-widest mb-4">{title}</p>
+                <ul className="space-y-2.5">
+                  {links.map(link => (
+                    <li key={link}>
+                      <a href="#" className="text-xs text-[#3A3A3A] hover:text-[#6B6560] transition-colors">{link}</a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+
+          <div className="border-t border-[#1E1E1E] pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+            <p className="text-xs text-[#3A3A3A]">© 2026 YUBOT. Pensé pour les créateurs.</p>
+            <div className="flex items-center gap-6">
+              <a href="#" className="text-xs text-[#3A3A3A] hover:text-[#6B6560] transition-colors">Mentions légales</a>
+              <a href="#" className="text-xs text-[#3A3A3A] hover:text-[#6B6560] transition-colors">CGU</a>
+              <a href="#" className="text-xs text-[#3A3A3A] hover:text-[#6B6560] transition-colors">Politique de confidentialité</a>
+            </div>
+          </div>
+        </div>
+      </footer>
+
     </div>
   );
 }
