@@ -59,32 +59,32 @@ export function AdaptStream() {
     <div className="space-y-6">
       {/* Textarea */}
       <div className="space-y-2">
-        <label className="text-sm font-medium">Colle ton texte ici</label>
+        <label className="text-sm font-medium text-[#F5F0E8]">Colle ton texte ici</label>
         <textarea
-          className="w-full h-48 p-3 text-sm border rounded-lg resize-y font-mono bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+          className="w-full h-48 p-3 text-sm border border-[#1E1E1E] rounded resize-y font-mono bg-[#111111] text-[#F5F0E8] placeholder-[#3A3A3A] focus:outline-none focus:border-[#FFE600]/40 focus:ring-1 focus:ring-[#FFE600]/20 transition-colors"
           placeholder="Colle ton texte brut ici..."
           value={text}
           onChange={e => setText(e.target.value)}
         />
         {wordCount > 0 && (
-          <p className="text-xs text-muted-foreground">
-            Ton texte : <strong>{wordCount} mots</strong> (~{originalMinutes} min de vidéo)
+          <p className="text-xs text-[#6B6560]">
+            Ton texte : <strong className="text-[#F5F0E8]">{wordCount} mots</strong> (~{originalMinutes} min de vidéo)
           </p>
         )}
       </div>
 
       {/* Duration */}
       <div className="space-y-2">
-        <label className="text-sm font-medium">Durée cible de la vidéo</label>
+        <label className="text-sm font-medium text-[#F5F0E8]">Durée cible de la vidéo</label>
         <div className="flex flex-wrap gap-2">
           {DURATION_OPTIONS.filter(d => d !== '30s' && d !== '60s').map(d => (
             <button
               key={d}
               onClick={() => setDuration(d)}
-              className={`px-3 py-1.5 text-sm rounded-full border transition-colors ${
+              className={`px-3 py-1.5 text-sm rounded border transition-colors ${
                 duration === d
-                  ? 'bg-primary text-primary-foreground border-primary'
-                  : 'border-border hover:bg-accent'
+                  ? 'bg-[#FFE600]/10 text-[#FFE600] border-[#FFE600]/30'
+                  : 'border-[#1E1E1E] text-[#6B6560] hover:text-[#F5F0E8] hover:border-[#2E2E2E]'
               }`}
             >
               {d}
@@ -92,9 +92,9 @@ export function AdaptStream() {
           ))}
         </div>
         {wordCount > 0 && (
-          <p className="text-xs text-muted-foreground">
-            Durée cible : <strong>{targetMinutes} min</strong> (~{targetWords} mots) —{' '}
-            <span className={gap > 50 ? 'text-amber-600' : gap < -50 ? 'text-orange-600' : 'text-green-600'}>
+          <p className="text-xs text-[#6B6560]">
+            Durée cible : <strong className="text-[#F5F0E8]">{targetMinutes} min</strong> (~{targetWords} mots) —{' '}
+            <span className={gap > 50 ? 'text-amber-400' : gap < -50 ? 'text-orange-400' : 'text-green-400'}>
               {gap > 0 ? `+${gap} mots à ajouter` : gap < 0 ? `${Math.abs(gap)} mots à condenser` : 'longueur idéale'}
             </span>
           </p>
@@ -107,9 +107,9 @@ export function AdaptStream() {
           type="checkbox"
           checked={allowCompletion}
           onChange={e => setAllowCompletion(e.target.checked)}
-          className="mt-0.5"
+          className="mt-0.5 accent-[#FFE600]"
         />
-        <span className="text-sm text-muted-foreground leading-snug">
+        <span className="text-sm text-[#6B6560] leading-snug">
           Autoriser l&apos;agent à compléter le texte si le contenu est insuffisant pour atteindre la durée sélectionnée
           <span className="block text-xs mt-0.5 opacity-70">
             Le contenu ajouté respecte le sujet et le style du texte original. Aucun fait inventé.
@@ -119,14 +119,14 @@ export function AdaptStream() {
 
       {/* Warnings */}
       {tooShort && (
-        <div className="text-sm bg-amber-50 border border-amber-200 rounded-lg p-3 text-amber-800">
-          ⚠️ Ton texte (~{originalMinutes} min) est plus court que la durée cible ({targetMinutes} min).
-          Le script sera plus court que prévu. Coche &quot;Autoriser à compléter&quot; pour que l&apos;agent ajoute du contenu cohérent.
+        <div className="text-sm border border-amber-400/20 rounded p-3 text-amber-400 bg-amber-400/5">
+          Ton texte (~{originalMinutes} min) est plus court que la durée cible ({targetMinutes} min).
+          Coche &ldquo;Autoriser à compléter&rdquo; pour que l&apos;agent ajoute du contenu cohérent.
         </div>
       )}
       {tooLong && (
-        <div className="text-sm bg-orange-50 border border-orange-200 rounded-lg p-3 text-orange-800">
-          ⚠️ Ton texte (~{originalMinutes} min) dépasse la durée cible ({targetMinutes} min).
+        <div className="text-sm border border-orange-400/20 rounded p-3 text-orange-400 bg-orange-400/5">
+          Ton texte (~{originalMinutes} min) dépasse la durée cible ({targetMinutes} min).
           L&apos;agent va condenser sans supprimer d&apos;idées importantes.
         </div>
       )}
@@ -137,7 +137,7 @@ export function AdaptStream() {
 
       {isLoading && (
         <div className="flex items-center justify-between">
-          <p className="text-sm text-muted-foreground animate-pulse">YUBOT adapte ton texte...</p>
+          <p className="text-sm text-[#6B6560] animate-pulse">YUBOT adapte ton texte...</p>
           <Button variant="outline" size="sm" onClick={stop}>Arrêter</Button>
         </div>
       )}
@@ -145,17 +145,17 @@ export function AdaptStream() {
       {completion && (
         <div className="space-y-4">
           {/* Legend */}
-          <div className="flex gap-4 text-xs flex-wrap">
+          <div className="flex gap-4 text-xs flex-wrap text-[#6B6560]">
             <span className="flex items-center gap-1.5">
-              <span className="w-3 h-3 rounded-sm bg-[#E8F4FD] border border-blue-200 inline-block" />
+              <span className="w-3 h-3 rounded-sm inline-block" style={{ backgroundColor: '#0D2235', border: '1px solid #1E4060' }} />
               Ajouté par l&apos;agent
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="w-3 h-3 rounded-sm bg-[#FFF3E0] border border-orange-200 inline-block" />
+              <span className="w-3 h-3 rounded-sm inline-block" style={{ backgroundColor: '#2A1500', border: '1px solid #4A2800' }} />
               Condensé
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="w-3 h-3 rounded-sm bg-white border border-gray-200 inline-block" />
+              <span className="w-3 h-3 rounded-sm inline-block bg-[#111111] border border-[#1E1E1E]" />
               Texte original
             </span>
           </div>

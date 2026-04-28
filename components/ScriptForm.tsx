@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
 import {
   Select,
   SelectContent,
@@ -31,23 +30,23 @@ export function ScriptForm({ onSubmit, isLoading }: Props) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="block text-sm font-medium mb-1">Thème de la vidéo</label>
-        <Textarea
+        <label className="block text-sm font-medium mb-1.5 text-[#F5F0E8]">Thème de la vidéo</label>
+        <textarea
           value={theme}
           onChange={e => setTheme(e.target.value)}
           placeholder="Ex : Comment devenir riche en 2025 avec l'IA"
           maxLength={500}
           rows={3}
-          className="resize-none"
+          className="w-full p-3 text-sm border border-[#1E1E1E] rounded resize-none bg-[#111111] text-[#F5F0E8] placeholder-[#3A3A3A] focus:outline-none focus:border-[#FFE600]/40 focus:ring-1 focus:ring-[#FFE600]/20 transition-colors"
         />
-        <p className="text-xs text-muted-foreground mt-1">{theme.length}/500</p>
+        <p className="text-xs text-[#3A3A3A] mt-1">{theme.length}/500</p>
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium mb-1">Durée</label>
+          <label className="block text-sm font-medium mb-1.5 text-[#F5F0E8]">Durée</label>
           <Select value={duration} onValueChange={v => { if (v !== null) setDuration(v); }}>
-            <SelectTrigger>
+            <SelectTrigger className="w-full">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -59,9 +58,9 @@ export function ScriptForm({ onSubmit, isLoading }: Props) {
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">Ton</label>
+          <label className="block text-sm font-medium mb-1.5 text-[#F5F0E8]">Ton</label>
           <Select value={tone} onValueChange={v => { if (v !== null) setTone(v); }}>
-            <SelectTrigger>
+            <SelectTrigger className="w-full">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

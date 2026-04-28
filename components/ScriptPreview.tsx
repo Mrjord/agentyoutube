@@ -5,35 +5,21 @@ interface Section {
   content: string;
 }
 
-const SECTION_COLORS: Record<string, string> = {
-  TITRE: 'border-gray-400 bg-gray-50',
-  MINIATURE: 'border-purple-400 bg-purple-50',
-  HOOK: 'border-red-500 bg-red-50',
-  INTRO: 'border-blue-500 bg-blue-50',
-  CORPS: 'border-green-500 bg-green-50',
-  'RE-HOOK': 'border-orange-500 bg-orange-50',
-  CONCLUSION: 'border-indigo-500 bg-indigo-50',
-  SCORE: 'border-amber-500 bg-amber-50',
-  NOTES: 'border-gray-300 bg-gray-50',
-};
-
-const LABEL_COLORS: Record<string, string> = {
-  TITRE: 'text-gray-700',
-  MINIATURE: 'text-purple-700',
-  HOOK: 'text-red-700',
-  INTRO: 'text-blue-700',
-  CORPS: 'text-green-700',
-  'RE-HOOK': 'text-orange-700',
-  CONCLUSION: 'text-indigo-700',
-  SCORE: 'text-amber-700',
-  NOTES: 'text-gray-500',
+const SECTION_HEX: Record<string, { border: string; bg: string; label: string }> = {
+  TITRE:      { border: '#4B5563', bg: '#111111', label: '#9CA3AF' },
+  MINIATURE:  { border: '#7C3AED', bg: '#1A0D2E', label: '#A78BFA' },
+  HOOK:       { border: '#DC2626', bg: '#1F0A0A', label: '#F87171' },
+  INTRO:      { border: '#2563EB', bg: '#0A0F1F', label: '#60A5FA' },
+  CORPS:      { border: '#16A34A', bg: '#0A1A0F', label: '#4ADE80' },
+  'RE-HOOK':  { border: '#EA580C', bg: '#1A0E05', label: '#FB923C' },
+  CONCLUSION: { border: '#4338CA', bg: '#0D0B1F', label: '#818CF8' },
+  NOTES:      { border: '#374151', bg: '#0F0F0F', label: '#6B7280' },
 };
 
 function getSectionKey(label: string): string {
   const upper = label.toUpperCase();
-  if (upper.startsWith('NOTES')) return 'NOTES';
-  if (upper.startsWith('SCORE')) return 'NOTES';
-  for (const key of Object.keys(SECTION_COLORS)) {
+  if (upper.startsWith('NOTES') || upper.startsWith('SCORE')) return 'NOTES';
+  for (const key of Object.keys(SECTION_HEX)) {
     if (upper.startsWith(key)) return key;
   }
   return 'TITRE';
@@ -63,50 +49,40 @@ interface Segment {
 }
 
 function parseSegments(content: string): Segment[] {
-  const segments: Segment[] = [];
   const pattern = /<(ajout|condensé)>([\s\S]*?)<\/\1>/gi;
   const matches = [...content.matchAll(pattern)];
 
-  if (matches.length === 0) {
-    return [{ type: 'text', value: content }];
-  }
+  if (matches.length === 0) return [{ type: 'text', value: content }];
 
+  const segments: Segment[] = [];
   let last = 0;
   for (const m of matches) {
-    if (m.index! > last) {
-      segments.push({ type: 'text', value: content.slice(last, m.index) });
-    }
-    const tag = m[1].toLowerCase();
-    segments.push({ type: tag === 'ajout' ? 'ajout' : 'condense', value: m[2] });
+    if (m.index! > last) segments.push({ type: 'text', value: content.slice(last, m.index) });
+    segments.push({ type: m[1].toLowerCase() === 'ajout' ? 'ajout' : 'condense', value: m[2] });
     last = m.index! + m[0].length;
   }
-  if (last < content.length) {
-    segments.push({ type: 'text', value: content.slice(last) });
-  }
-
+  if (last < content.length) segments.push({ type: 'text', value: content.slice(last) });
   return segments;
 }
 
 function renderSegments(content: string) {
-  const trimmed = content.trim();
-  const segments = parseSegments(trimmed);
-
+  const segments = parseSegments(content.trim());
   return (
     <>
       {segments.map((seg, i) => {
         if (seg.type === 'ajout') {
           return (
-            <span key={i} className="bg-[#E8F4FD] rounded px-0.5" title="Ajouté par l'agent">
+            <span key={i} className="rounded px-0.5" style={{ backgroundColor: '#0D2235', color: '#93C5FD' }} title="Ajouté par l'agent">
               {seg.value}
-              <span className="text-[10px] text-blue-500 ml-1 align-super">[+ajout]</span>
+              <span className="text-[10px] ml-1 align-super" style={{ color: '#60A5FA' }}>[+]</span>
             </span>
           );
         }
         if (seg.type === 'condense') {
           return (
-            <span key={i} className="bg-[#FFF3E0] rounded px-0.5" title="Condensé">
+            <span key={i} className="rounded px-0.5" style={{ backgroundColor: '#2A1500', color: '#FCD34D' }} title="Condensé">
               {seg.value}
-              <span className="text-[10px] text-orange-500 ml-1 align-super">[~condensé]</span>
+              <span className="text-[10px] ml-1 align-super" style={{ color: '#F97316' }}>[~]</span>
             </span>
           );
         }
@@ -125,33 +101,35 @@ export function ScriptPreview({ text }: Props) {
 
   if (sections.length === 0) {
     return (
-      <p className="text-sm text-muted-foreground bg-muted px-4 py-3 rounded-lg">
+      <p className="text-sm text-[#6B6560] bg-[#111111] px-4 py-3 rounded border border-[#1E1E1E]">
         {text.trim()}
       </p>
     );
   }
 
   return (
-    <div className="space-y-4 font-[Georgia,serif]">
+    <div className="space-y-3" style={{ fontFamily: 'Georgia, serif' }}>
       {sections.map((section, i) => {
         const key = getSectionKey(section.label);
-        const borderBg = SECTION_COLORS[key];
-        const labelColor = LABEL_COLORS[key];
+        const colors = SECTION_HEX[key];
         const isNotes = key === 'NOTES';
         return (
           <div key={i}>
             {isNotes && (
               <div className="flex items-center gap-3 my-6">
-                <div className="flex-1 border-t border-dashed border-gray-300" />
-                <span className="text-xs text-gray-400 uppercase tracking-widest">Notes créateur</span>
-                <div className="flex-1 border-t border-dashed border-gray-300" />
+                <div className="flex-1 border-t border-dashed border-[#2A2A2A]" />
+                <span className="text-xs text-[#3A3A3A] uppercase tracking-widest font-sans">Notes créateur</span>
+                <div className="flex-1 border-t border-dashed border-[#2A2A2A]" />
               </div>
             )}
-            <div className={`border-l-4 rounded-r-lg p-4 ${borderBg} ${isNotes ? 'opacity-75' : ''}`}>
-              <p className={`text-xs font-bold uppercase tracking-widest mb-2 ${labelColor}`}>
+            <div
+              className={`rounded-r border-l-[3px] p-4 ${isNotes ? 'opacity-70' : ''}`}
+              style={{ borderLeftColor: colors.border, backgroundColor: colors.bg }}
+            >
+              <p className="text-xs font-bold uppercase tracking-widest mb-2 font-sans" style={{ color: colors.label }}>
                 {section.label}
               </p>
-              <p className={`text-sm leading-relaxed ${isNotes ? 'text-gray-500' : 'text-gray-800'}`}>
+              <p className="text-sm leading-relaxed" style={{ color: isNotes ? '#6B7280' : '#C4BFB7' }}>
                 {renderSegments(section.content)}
               </p>
             </div>

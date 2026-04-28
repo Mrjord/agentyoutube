@@ -28,3 +28,4 @@ drizzle/
 *.tsbuildinfo
 next-env.d.ts
 coverage/
+.env*.local
