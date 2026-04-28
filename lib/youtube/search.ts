@@ -31,7 +31,7 @@ function parseDuration(iso8601: string): number {
 //   1. Duration 5-30 min (optimal watch-time window)
 //   2. Like rate ≥ 3%
 //   3. Comment rate ≥ 0.1% (indicates strong audience reaction)
-//   4. Views/subscribers ≥ 3× (reached 3× the subscriber base)
+//   4. Views/subscribers ≥ 1.5× (at minimum 1.5× the subscriber base)
 //   5. Minimum 10K views (noise floor)
 export function isViral(
   viewCount: number,
@@ -50,7 +50,7 @@ export function isViral(
   if (commentCount > 0 && commentCount / viewCount < 0.001) return false;
 
   if (subscriberCount > 0) {
-    if (viewCount / subscriberCount < 3) return false;
+    if (viewCount / subscriberCount < 1.5) return false;
   }
 
   return true;

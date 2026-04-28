@@ -7,7 +7,7 @@ describe('isViral', () => {
   });
 
   it('returns false for big channel underperforming: 500K views, 3% likes, 1M subs (0.5× ratio)', () => {
-    expect(isViral(500_000, 15_000, 1_000_000, 5_000, 600)).toBe(false);
+    expect(isViral(500_000, 25_000, 1_000_000, 5_000, 600)).toBe(false);
   });
 
   it('returns false below 3% like rate', () => {
