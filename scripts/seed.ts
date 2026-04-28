@@ -3,7 +3,9 @@ loadEnvConfig(process.cwd());
 
 import { db } from '../lib/db';
 import { users, searchKeywords } from '../lib/db/schema';
-import { V1_USER_ID, V1_USER_EMAIL, SEED_KEYWORDS } from '../lib/constants';
+import { V1_USER_ID, V1_USER_EMAIL, KEYWORDS_BY_DAY } from '../lib/constants';
+
+const SEED_KEYWORDS = KEYWORDS_BY_DAY.flat();
 
 async function seed() {
   console.log('Seeding database...');

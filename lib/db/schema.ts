@@ -29,6 +29,8 @@ export const videos = pgTable('videos', {
   url: text('url').notNull(),
   viewCount: bigint('view_count', { mode: 'number' }).notNull(),
   likeCount: bigint('like_count', { mode: 'number' }).notNull(),
+  subscriberCount: bigint('subscriber_count', { mode: 'number' }).default(0).notNull(),
+  commentCount: bigint('comment_count', { mode: 'number' }).default(0).notNull(),
   publishedAt: timestamp('published_at', { withTimezone: true }).notNull(),
   durationSeconds: integer('duration_seconds').notNull(),
   language: text('language').notNull(),

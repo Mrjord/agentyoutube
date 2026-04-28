@@ -10,6 +10,7 @@ export interface YouTubeVideoInfo {
   subscriberCount: number;
   viewCount: number;
   likeCount: number;
+  commentCount: number;
   publishedAt: Date;
   durationSeconds: number;
   language: string;
@@ -27,29 +28,37 @@ function parseDuration(iso8601: string): number {
 
 // A video is viral when it massively overperforms its channel's usual audience.
 // Criteria (all must pass):
-//   1. Like rate ≥ 3%  (5%+ = very strong signal)
-//   2. Views/subscribers ≥ 2  (reached at least 2× the subscriber base)
-//   3. Minimum 10K views (noise floor)
+//   1. Duration 5-30 min (optimal watch-time window)
+//   2. Like rate ≥ 3%
+//   3. Comment rate ≥ 0.1% (indicates strong audience reaction)
+//   4. Views/subscribers ≥ 3× (reached 3× the subscriber base)
+//   5. Minimum 10K views (noise floor)
 export function isViral(
   viewCount: number,
   likeCount: number,
   subscriberCount: number,
+  commentCount: number,
+  durationSeconds: number,
 ): boolean {
+  if (durationSeconds < 300 || durationSeconds > 1800) return false;
   if (viewCount < 10_000) return false;
 
   const likeRate = likeCount / viewCount;
   if (likeRate < 0.03) return false;
 
+  const commentRate = commentCount / viewCount;
+  if (commentRate < 0.001) return false;
+
   if (subscriberCount > 0) {
-    if (viewCount / subscriberCount < 2) return false;
+    if (viewCount / subscriberCount < 3) return false;
   }
 
   return true;
 }
 
 export async function searchViralVideos(keyword: string): Promise<YouTubeVideoInfo[]> {
-  // 30-day window — fresher signal than 90 days
-  const publishedAfter = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+  // 90-day window — stronger pattern signal than 30 days
+  const publishedAfter = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString();
 
   // 100 quota units — fetch max 50 results per keyword
   const searchRes = await youtube.search.list({
@@ -98,10 +107,12 @@ export async function searchViralVideos(keyword: string): Promise<YouTubeVideoIn
   for (const video of videos) {
     const viewCount = parseInt(video.statistics?.viewCount ?? '0');
     const likeCount = parseInt(video.statistics?.likeCount ?? '0');
+    const commentCount = parseInt(video.statistics?.commentCount ?? '0');
     const channelId = video.snippet?.channelId ?? '';
     const subscriberCount = subscriberMap.get(channelId) ?? 0;
+    const durationSeconds = parseDuration(video.contentDetails?.duration ?? '');
 
-    if (!isViral(viewCount, likeCount, subscriberCount)) continue;
+    if (!isViral(viewCount, likeCount, subscriberCount, commentCount, durationSeconds)) continue;
 
     results.push({
       videoId: video.id!,
@@ -111,8 +122,9 @@ export async function searchViralVideos(keyword: string): Promise<YouTubeVideoIn
       subscriberCount,
       viewCount,
       likeCount,
+      commentCount,
       publishedAt: new Date(video.snippet?.publishedAt ?? Date.now()),
-      durationSeconds: parseDuration(video.contentDetails?.duration ?? ''),
+      durationSeconds,
       language:
         video.snippet?.defaultLanguage ??
         video.snippet?.defaultAudioLanguage ??

@@ -1,15 +1,13 @@
 import {
-  getActiveKeywords,
   isVideoInDB,
   insertVideo,
   insertPattern,
   markVideoAnalyzed,
-  updateKeywordLastUsed,
 } from '@/lib/db/queries';
 import { searchViralVideos } from '@/lib/youtube/search';
 import { fetchTranscript, TranscriptUnavailableError } from '@/lib/youtube/transcript';
 import { analyzeVideo } from '@/lib/claude/analyze';
-import { MAX_VIDEOS_PER_RUN } from '@/lib/constants';
+import { getDailyKeywords, MAX_VIDEOS_PER_RUN } from '@/lib/constants';
 
 // Vercel Pro only — on Hobby set MAX_VIDEOS_PER_RUN=5 instead
 export const maxDuration = 300;
@@ -23,13 +21,12 @@ export async function GET(req: Request) {
     return Response.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const keywords = await getActiveKeywords();
+  const keywords = getDailyKeywords();
   let processed = 0;
 
   for (const kw of keywords) {
     if (processed >= MAX_VIDEOS_PER_RUN) break;
 
-    let newForKeyword = 0;
     try {
       const found = await searchViralVideos(kw.keyword);
 
@@ -47,6 +44,8 @@ export async function GET(req: Request) {
             url: `https://www.youtube.com/watch?v=${info.videoId}`,
             viewCount: info.viewCount,
             likeCount: info.likeCount,
+            subscriberCount: info.subscriberCount,
+            commentCount: info.commentCount,
             publishedAt: info.publishedAt,
             durationSeconds: info.durationSeconds,
             language: info.language,
@@ -68,7 +67,6 @@ export async function GET(req: Request) {
 
           await markVideoAnalyzed(videoDbId);
           processed++;
-          newForKeyword++;
           console.log(`[discover] ${info.videoId} — ${newPatterns.length} patterns`);
         } catch (err) {
           if (err instanceof TranscriptUnavailableError) {
@@ -81,9 +79,7 @@ export async function GET(req: Request) {
     } catch (err) {
       console.error(`[discover] search failed for "${kw.keyword}":`, err);
     }
-
-    await updateKeywordLastUsed(kw.id, newForKeyword);
   }
 
-  return Response.json({ processed, total: MAX_VIDEOS_PER_RUN });
+  return Response.json({ processed, keywords: keywords.map(k => k.keyword) });
 }

@@ -38,26 +38,70 @@ export function computeViralityScore(viewCount: number, likeCount: number): numb
   return Math.round(viewCount * likeRate * likeRate * 10_000);
 }
 
-// Max videos analyzed per cron run (Anthropic cost guard).
-// Each video ~$0.03 Sonnet 4.6. 50 videos ≈ $1.50/run, 6 runs/day ≈ $9/day.
-// YouTube free quota: 10,000 units/day. Each full run uses ~102 units × 15 keywords = 1,530.
-// 6 runs/day = 9,180 units — safely within the 10,000 free limit.
-export const MAX_VIDEOS_PER_RUN = 50;
+// YouTube free quota: 10,000 units/day. Each run uses ~102 units × 5 keywords/day = 510 units.
+// Can trigger ~19 times/day while staying within the free limit.
+export const MAX_VIDEOS_PER_RUN = 200;
 
-export const SEED_KEYWORDS: Array<{ keyword: string; language: string }> = [
-  { keyword: 'devenir riche 2025', language: 'fr' },
-  { keyword: 'mindset millionnaire', language: 'fr' },
-  { keyword: 'intelligence artificielle business', language: 'fr' },
-  { keyword: 'entrepreneuriat débutant', language: 'fr' },
-  { keyword: 'liberté financière', language: 'fr' },
-  { keyword: 'créer son entreprise', language: 'fr' },
-  { keyword: 'développement personnel', language: 'fr' },
-  { keyword: 'investir son argent', language: 'fr' },
-  { keyword: 'AI business ideas 2025', language: 'en' },
-  { keyword: 'mindset for success', language: 'en' },
-  { keyword: 'how to make money online', language: 'en' },
-  { keyword: 'entrepreneurship tips', language: 'en' },
-  { keyword: 'passive income streams', language: 'en' },
-  { keyword: 'build a business from scratch', language: 'en' },
-  { keyword: 'self improvement productivity', language: 'en' },
+// 7-day keyword rotation — 5 keywords per day, cycling by weekday
+export const KEYWORDS_BY_DAY: Array<Array<{ keyword: string; language: string }>> = [
+  // Day 0 — Sunday
+  [
+    { keyword: 'mindset millionnaire', language: 'fr' },
+    { keyword: 'liberté financière 2025', language: 'fr' },
+    { keyword: 'mindset for success', language: 'en' },
+    { keyword: 'how to think like a millionaire', language: 'en' },
+    { keyword: 'développement personnel 2025', language: 'fr' },
+  ],
+  // Day 1 — Monday
+  [
+    { keyword: 'intelligence artificielle business', language: 'fr' },
+    { keyword: 'AI business ideas 2025', language: 'en' },
+    { keyword: 'IA pour entrepreneurs', language: 'fr' },
+    { keyword: 'make money with AI 2025', language: 'en' },
+    { keyword: 'automatiser son business avec IA', language: 'fr' },
+  ],
+  // Day 2 — Tuesday
+  [
+    { keyword: 'entrepreneuriat débutant', language: 'fr' },
+    { keyword: 'entrepreneurship tips', language: 'en' },
+    { keyword: 'créer son entreprise', language: 'fr' },
+    { keyword: 'build a business from scratch', language: 'en' },
+    { keyword: 'comment lancer son business', language: 'fr' },
+  ],
+  // Day 3 — Wednesday
+  [
+    { keyword: 'devenir riche 2025', language: 'fr' },
+    { keyword: 'how to make money online', language: 'en' },
+    { keyword: 'revenus en ligne', language: 'fr' },
+    { keyword: 'online income streams 2025', language: 'en' },
+    { keyword: 'gagner de l argent sur internet', language: 'fr' },
+  ],
+  // Day 4 — Thursday
+  [
+    { keyword: 'investir son argent', language: 'fr' },
+    { keyword: 'passive income streams', language: 'en' },
+    { keyword: 'investissement débutant', language: 'fr' },
+    { keyword: 'passive income ideas 2025', language: 'en' },
+    { keyword: 'investir en bourse pour débutant', language: 'fr' },
+  ],
+  // Day 5 — Friday
+  [
+    { keyword: 'self improvement productivity', language: 'en' },
+    { keyword: 'productivité entrepreneur', language: 'fr' },
+    { keyword: 'discipline et succès', language: 'fr' },
+    { keyword: 'morning routine millionaire', language: 'en' },
+    { keyword: 'habitudes des entrepreneurs à succès', language: 'fr' },
+  ],
+  // Day 6 — Saturday
+  [
+    { keyword: 'personal branding 2025', language: 'en' },
+    { keyword: 'créer du contenu qui cartonne', language: 'fr' },
+    { keyword: 'YouTube growth strategy 2025', language: 'en' },
+    { keyword: 'personal branding réseaux sociaux', language: 'fr' },
+    { keyword: 'storytelling business', language: 'fr' },
+  ],
 ];
+
+export function getDailyKeywords(): Array<{ keyword: string; language: string }> {
+  return KEYWORDS_BY_DAY[new Date().getDay()];
+}
