@@ -5,7 +5,7 @@ import {
   markVideoAnalyzed,
 } from '@/lib/db/queries';
 import { searchViralVideos } from '@/lib/youtube/search';
-import { fetchTranscript, TranscriptUnavailableError } from '@/lib/youtube/transcript';
+import { fetchTranscript } from '@/lib/youtube/transcript';
 import { analyzeVideo } from '@/lib/claude/analyze';
 import { getDailyKeywords, MAX_VIDEOS_PER_RUN } from '@/lib/constants';
 
@@ -35,7 +35,14 @@ export async function GET(req: Request) {
         if (await isVideoInDB(info.videoId)) continue;
 
         try {
-          const transcript = await fetchTranscript(info.videoId);
+          // Try transcript first; fall back to video description if blocked (cloud IP)
+          let content: string;
+          try {
+            content = await fetchTranscript(info.videoId);
+          } catch {
+            if (!info.description) continue;
+            content = info.description;
+          }
 
           const videoDbId = await insertVideo({
             youtubeVideoId: info.videoId,
@@ -49,11 +56,11 @@ export async function GET(req: Request) {
             publishedAt: info.publishedAt,
             durationSeconds: info.durationSeconds,
             language: info.language,
-            transcript,
+            transcript: content,
           });
 
           const newPatterns = await analyzeVideo({
-            transcript,
+            transcript: content,
             title: info.title,
             viewCount: info.viewCount,
             likeCount: info.likeCount,
@@ -69,11 +76,7 @@ export async function GET(req: Request) {
           processed++;
           console.log(`[discover] ${info.videoId} — ${newPatterns.length} patterns`);
         } catch (err) {
-          if (err instanceof TranscriptUnavailableError) {
-            console.log(`[discover] skip ${info.videoId} — no transcript`);
-          } else {
-            console.error(`[discover] error ${info.videoId}:`, err);
-          }
+          console.error(`[discover] error ${info.videoId}:`, err);
         }
       }
     } catch (err) {

@@ -5,6 +5,7 @@ const youtube = google.youtube({ version: 'v3', auth: process.env.YOUTUBE_API_KE
 export interface YouTubeVideoInfo {
   videoId: string;
   title: string;
+  description: string;
   channel: string;
   channelId: string;
   subscriberCount: number;
@@ -108,6 +109,7 @@ export async function searchViralVideos(keyword: string, language = 'fr'): Promi
     results.push({
       videoId: video.id!,
       title: video.snippet?.title ?? '',
+      description: video.snippet?.description ?? '',
       channel: video.snippet?.channelTitle ?? '',
       channelId,
       subscriberCount,
