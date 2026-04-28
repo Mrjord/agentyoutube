@@ -39,8 +39,8 @@ export function computeViralityScore(viewCount: number, likeCount: number): numb
 }
 
 // YouTube free quota: 10,000 units/day. Each run uses ~102 units × 5 keywords/day = 510 units.
-// Can trigger ~19 times/day while staying within the free limit.
-export const MAX_VIDEOS_PER_RUN = 200;
+// Vercel Hobby: 60s function timeout, ~15-20s per video → max 3 per run.
+export const MAX_VIDEOS_PER_RUN = 3;
 
 // 7-day keyword rotation — 5 keywords per day, cycling by weekday
 export const KEYWORDS_BY_DAY: Array<Array<{ keyword: string; language: string }>> = [

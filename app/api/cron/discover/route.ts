@@ -9,8 +9,7 @@ import { fetchTranscript } from '@/lib/youtube/transcript';
 import { analyzeVideo } from '@/lib/claude/analyze';
 import { getDailyKeywords, MAX_VIDEOS_PER_RUN } from '@/lib/constants';
 
-// Vercel Pro only — on Hobby set MAX_VIDEOS_PER_RUN=5 instead
-export const maxDuration = 300;
+export const maxDuration = 60;
 
 export async function GET(req: Request) {
   if (!process.env.CRON_SECRET) {
