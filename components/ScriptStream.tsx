@@ -40,7 +40,7 @@ export function ScriptStream() {
       a.href = url;
       const date = new Date().toISOString().split('T')[0];
       const slug = (lastParams?.theme ?? 'script').toLowerCase().replace(/\s+/g, '-').slice(0, 40);
-      a.download = `script_${date}_${slug}.docx`;
+      a.download = `yubot_script_${date}_${slug}.docx`;
       a.click();
       URL.revokeObjectURL(url);
     } finally {
@@ -55,7 +55,7 @@ export function ScriptStream() {
       {isLoading && (
         <div className="flex items-center justify-between">
           <p className="text-sm text-muted-foreground animate-pulse">
-            Claude rédige votre script...
+            YUBOT rédige votre script...
           </p>
           <Button variant="outline" size="sm" onClick={stop}>
             Arrêter

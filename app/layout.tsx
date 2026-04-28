@@ -6,7 +6,7 @@ import Link from 'next/link';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'AgentYoutube — Viral Script Generator',
+  title: 'YUBOT — Agent YouTube IA',
   description: 'Génère des scripts YouTube viraux optimisés pour la rétention',
 };
 
@@ -15,7 +15,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="fr">
       <body className={inter.className}>
         <nav className="border-b px-6 py-3 flex items-center gap-6 bg-background">
-          <span className="font-bold text-lg">AgentYoutube</span>
+          <span className="font-bold text-lg tracking-tight">YUBOT <span className="text-muted-foreground font-normal text-sm">— Agent YouTube IA</span></span>
           <Link href="/" className="text-sm text-muted-foreground hover:text-foreground">
             Dashboard
           </Link>

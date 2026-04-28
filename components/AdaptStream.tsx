@@ -44,7 +44,7 @@ export function AdaptStream() {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `script_${new Date().toISOString().split('T')[0]}_adaptation.docx`;
+      a.download = `yubot_script_${new Date().toISOString().split('T')[0]}_adaptation.docx`;
       a.click();
       URL.revokeObjectURL(url);
     } finally {
@@ -137,7 +137,7 @@ export function AdaptStream() {
 
       {isLoading && (
         <div className="flex items-center justify-between">
-          <p className="text-sm text-muted-foreground animate-pulse">Claude adapte ton texte...</p>
+          <p className="text-sm text-muted-foreground animate-pulse">YUBOT adapte ton texte...</p>
           <Button variant="outline" size="sm" onClick={stop}>Arrêter</Button>
         </div>
       )}
