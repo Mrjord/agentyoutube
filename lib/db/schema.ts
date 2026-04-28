@@ -1,11 +1,11 @@
 import {
   pgTable, uuid, text, boolean, bigint, integer,
-  timestamp, jsonb, real, index,
+  timestamp, jsonb, real, index, uniqueIndex,
 } from 'drizzle-orm/pg-core';
 import type { AnyPgColumn } from 'drizzle-orm/pg-core';
 
 export const users = pgTable('users', {
-  id: uuid('id').primaryKey(),
+  id: uuid('id').primaryKey().defaultRandom(),
   email: text('email').notNull(),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
 });
@@ -17,7 +17,9 @@ export const searchKeywords = pgTable('search_keywords', {
   active: boolean('active').default(true),
   lastUsedAt: timestamp('last_used_at', { withTimezone: true }),
   resultsCount: integer('results_count').default(0),
-});
+}, (table) => [
+  uniqueIndex('search_keywords_keyword_language').on(table.keyword, table.language),
+]);
 
 export const videos = pgTable('videos', {
   id: uuid('id').primaryKey().defaultRandom(),
@@ -44,10 +46,10 @@ export const patterns = pgTable('patterns', {
   durationBucket: text('duration_bucket').notNull(),
   viralityScore: real('virality_score').notNull(),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
-}, (table) => ({
-  toneDurationIdx: index('patterns_tone_duration').on(table.tone, table.durationBucket),
-  viralityIdx: index('patterns_virality').on(table.viralityScore),
-}));
+}, (table) => [
+  index('patterns_tone_duration').on(table.tone, table.durationBucket),
+  index('patterns_virality').on(table.viralityScore),
+]);
 
 export const scripts = pgTable('scripts', {
   id: uuid('id').primaryKey().defaultRandom(),
