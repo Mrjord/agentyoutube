@@ -44,10 +44,11 @@ export async function GET(req: Request) {
   });
 
   const passing = rows.filter(r => r.viral);
-  let transcriptTest = null;
-  if (passing.length > 0) {
-    try { await fetchTranscript(passing[0].id!); transcriptTest = 'ok'; } catch (e) { transcriptTest = String(e); }
+  const transcriptTests = [];
+  for (const v of passing.slice(0, 5)) {
+    try { await fetchTranscript(v.id!); transcriptTests.push({ id: v.id, result: 'ok' }); }
+    catch (e) { transcriptTests.push({ id: v.id, result: String(e).slice(0, 80) }); }
   }
 
-  return Response.json({ keyword, totalFromSearch: videoIds.length, viralCount: passing.length, viral: passing, transcriptTest, allRows: rows.slice(0, 5) });
+  return Response.json({ keyword, totalFromSearch: videoIds.length, viralCount: passing.length, transcriptTests, allRows: rows.slice(0, 5) });
 }
