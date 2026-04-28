@@ -2,39 +2,27 @@ import { describe, it, expect } from 'vitest';
 import { isViral } from '@/lib/youtube/search';
 
 describe('isViral', () => {
-  it('returns true for viral small channel: 500K views, 5% likes, 1% comments, 10K subs (50× ratio), 10min', () => {
-    expect(isViral(500_000, 25_000, 10_000, 5_000, 600)).toBe(true);
+  it('returns true for high-reach video with strong like rate', () => {
+    expect(isViral(1_000_000, 40_000, 500_000, 5_000, 900)).toBe(true); // 4% lr, 15 min
   });
 
-  it('returns false for big channel underperforming: 500K views, 3% likes, 1M subs (0.5× ratio)', () => {
-    expect(isViral(500_000, 25_000, 1_000_000, 5_000, 600)).toBe(false);
+  it('returns false below 50K views floor', () => {
+    expect(isViral(40_000, 2_000, 5_000, 200, 600)).toBe(false);
   });
 
-  it('returns false below 3% like rate', () => {
-    expect(isViral(500_000, 10_000, 5_000, 5_000, 600)).toBe(false); // 2% like rate
+  it('returns false below 2% like rate', () => {
+    expect(isViral(500_000, 8_000, 10_000, 500, 600)).toBe(false); // 1.6% lr
   });
 
-  it('returns false below 10K views floor', () => {
-    expect(isViral(5_000, 500, 100, 50, 600)).toBe(false);
+  it('returns false below 5 minutes duration', () => {
+    expect(isViral(500_000, 25_000, 10_000, 5_000, 250)).toBe(false); // 4 min 10s
   });
 
-  it('returns true when no subscriber data and views ≥ 10K with 3%+ likes and 0.1%+ comments', () => {
-    expect(isViral(100_000, 5_000, 0, 200, 600)).toBe(true);
+  it('returns true regardless of subscriber count or comment count', () => {
+    expect(isViral(100_000, 3_000, 5_000_000, 0, 600)).toBe(true); // massive channel, no comments
   });
 
-  it('returns false when duration is under 5 minutes', () => {
-    expect(isViral(500_000, 25_000, 10_000, 5_000, 250)).toBe(false);
-  });
-
-  it('returns false when duration exceeds 30 minutes', () => {
-    expect(isViral(500_000, 25_000, 10_000, 5_000, 1900)).toBe(false);
-  });
-
-  it('returns false below 0.1% comment rate when comment data is available', () => {
-    expect(isViral(500_000, 25_000, 10_000, 400, 600)).toBe(false); // 0.08% comment rate
-  });
-
-  it('returns true when commentCount is 0 (comments disabled) if other criteria pass', () => {
-    expect(isViral(500_000, 25_000, 10_000, 0, 600)).toBe(true);
+  it('returns true for long-form content (> 30 min)', () => {
+    expect(isViral(1_500_000, 48_000, 400_000, 5_000, 15_000)).toBe(true); // 4-hour course
   });
 });

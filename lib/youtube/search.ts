@@ -26,13 +26,11 @@ function parseDuration(iso8601: string): number {
   );
 }
 
-// A video is viral when it massively overperforms its channel's usual audience.
+// A video has strong viral signals when it has high views + meaningful engagement.
 // Criteria (all must pass):
-//   1. Duration 5-30 min (optimal watch-time window)
-//   2. Like rate ≥ 3%
-//   3. Comment rate ≥ 0.1% (indicates strong audience reaction)
-//   4. Views/subscribers ≥ 1.5× (at minimum 1.5× the subscriber base)
-//   5. Minimum 10K views (noise floor)
+//   1. Minimum 50K views (meaningful reach)
+//   2. Like rate ≥ 2% (audience endorsement)
+//   3. Minimum 5 minutes duration (enough content to extract patterns from)
 export function isViral(
   viewCount: number,
   likeCount: number,
@@ -40,18 +38,11 @@ export function isViral(
   commentCount: number,
   durationSeconds: number,
 ): boolean {
-  if (durationSeconds < 300 || durationSeconds > 1800) return false;
-  if (viewCount < 10_000) return false;
+  if (viewCount < 50_000) return false;
+  if (durationSeconds < 300) return false;
 
   const likeRate = likeCount / viewCount;
-  if (likeRate < 0.03) return false;
-
-  // Only check comment rate when YouTube returns comment data (disabled = 0)
-  if (commentCount > 0 && commentCount / viewCount < 0.001) return false;
-
-  if (subscriberCount > 0) {
-    if (viewCount / subscriberCount < 1.5) return false;
-  }
+  if (likeRate < 0.02) return false;
 
   return true;
 }
