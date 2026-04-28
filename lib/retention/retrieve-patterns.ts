@@ -1,3 +1,4 @@
+import { getPatternsByToneAndDuration } from '../db/queries';
 import type { Pattern } from '../db/schema';
 
 interface RetrieveOptions {
@@ -8,7 +9,6 @@ interface RetrieveOptions {
 
 export async function retrievePatterns(options: RetrieveOptions): Promise<Pattern[]> {
   const { tone, durationBucket, limit = 50 } = options;
-  const { getPatternsByToneAndDuration } = await import('../db/queries');
   return getPatternsByToneAndDuration(tone, durationBucket, limit);
 }
 
