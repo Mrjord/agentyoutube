@@ -121,9 +121,9 @@ export function ScriptPreview({ text }: Props) {
 
   if (sections.length === 0) {
     return (
-      <pre className="whitespace-pre-wrap font-mono text-sm bg-muted p-4 rounded-lg">
-        {text}
-      </pre>
+      <p className="text-sm text-muted-foreground bg-muted px-4 py-3 rounded-lg">
+        {text.trim()}
+      </p>
     );
   }
 
