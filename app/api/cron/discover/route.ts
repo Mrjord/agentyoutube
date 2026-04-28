@@ -28,7 +28,7 @@ export async function GET(req: Request) {
     if (processed >= MAX_VIDEOS_PER_RUN) break;
 
     try {
-      const found = await searchViralVideos(kw.keyword);
+      const found = await searchViralVideos(kw.keyword, kw.language);
 
       for (const info of found) {
         if (processed >= MAX_VIDEOS_PER_RUN) break;

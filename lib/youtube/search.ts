@@ -56,7 +56,7 @@ export function isViral(
   return true;
 }
 
-export async function searchViralVideos(keyword: string): Promise<YouTubeVideoInfo[]> {
+export async function searchViralVideos(keyword: string, language = 'fr'): Promise<YouTubeVideoInfo[]> {
   // 90-day window — stronger pattern signal than 30 days
   const publishedAfter = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString();
 
@@ -67,6 +67,7 @@ export async function searchViralVideos(keyword: string): Promise<YouTubeVideoIn
     order: 'viewCount',
     publishedAfter,
     maxResults: 50,
+    relevanceLanguage: language,
     part: ['snippet', 'id'],
   });
 
