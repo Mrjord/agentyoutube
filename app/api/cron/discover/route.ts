@@ -23,6 +23,7 @@ export async function GET(req: Request) {
 
   const keywords = getDailyKeywords();
   let processed = 0;
+  const errors: string[] = [];
 
   for (const kw of keywords) {
     if (processed >= MAX_VIDEOS_PER_RUN) break;
@@ -76,13 +77,16 @@ export async function GET(req: Request) {
           processed++;
           console.log(`[discover] ${info.videoId} — ${newPatterns.length} patterns`);
         } catch (err) {
+          const msg = `${info.videoId}: ${String(err).slice(0, 120)}`;
+          errors.push(msg);
           console.error(`[discover] error ${info.videoId}:`, err);
         }
       }
     } catch (err) {
+      errors.push(`search "${kw.keyword}": ${String(err).slice(0, 120)}`);
       console.error(`[discover] search failed for "${kw.keyword}":`, err);
     }
   }
 
-  return Response.json({ processed, keywords: keywords.map(k => k.keyword) });
+  return Response.json({ processed, keywords: keywords.map(k => k.keyword), errors: errors.slice(0, 5) });
 }
