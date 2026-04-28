@@ -19,8 +19,19 @@ export async function isVideoInDB(youtubeVideoId: string): Promise<boolean> {
 }
 
 export async function insertVideo(data: NewVideo): Promise<string> {
-  const [row] = await db.insert(videos).values(data).returning({ id: videos.id });
-  return row.id;
+  const [row] = await db
+    .insert(videos)
+    .values(data)
+    .onConflictDoNothing()
+    .returning({ id: videos.id });
+  if (row) return row.id;
+  // Already exists (partial insert from a previous failed run) — get its ID
+  const [existing] = await db
+    .select({ id: videos.id })
+    .from(videos)
+    .where(eq(videos.youtubeVideoId, data.youtubeVideoId))
+    .limit(1);
+  return existing.id;
 }
 
 export async function insertPattern(data: NewPattern): Promise<void> {
