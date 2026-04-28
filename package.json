@@ -1,5 +1,5 @@
 {
-  "name": "build",
+  "name": "agentyoutube",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -8,6 +8,7 @@
     "start": "next start",
     "test": "vitest",
     "test:run": "vitest run",
+    "lint": "next lint",
     "db:push": "drizzle-kit push",
     "db:seed": "tsx scripts/seed.ts"
   },
