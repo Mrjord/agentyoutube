@@ -46,8 +46,8 @@ export function isViral(
   const likeRate = likeCount / viewCount;
   if (likeRate < 0.03) return false;
 
-  const commentRate = commentCount / viewCount;
-  if (commentRate < 0.001) return false;
+  // Only check comment rate when YouTube returns comment data (disabled = 0)
+  if (commentCount > 0 && commentCount / viewCount < 0.001) return false;
 
   if (subscriberCount > 0) {
     if (viewCount / subscriberCount < 3) return false;
@@ -67,7 +67,6 @@ export async function searchViralVideos(keyword: string): Promise<YouTubeVideoIn
     order: 'viewCount',
     publishedAfter,
     maxResults: 50,
-    videoDuration: 'medium',
     part: ['snippet', 'id'],
   });
 

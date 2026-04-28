@@ -30,7 +30,11 @@ describe('isViral', () => {
     expect(isViral(500_000, 25_000, 10_000, 5_000, 1900)).toBe(false);
   });
 
-  it('returns false below 0.1% comment rate', () => {
+  it('returns false below 0.1% comment rate when comment data is available', () => {
     expect(isViral(500_000, 25_000, 10_000, 400, 600)).toBe(false); // 0.08% comment rate
+  });
+
+  it('returns true when commentCount is 0 (comments disabled) if other criteria pass', () => {
+    expect(isViral(500_000, 25_000, 10_000, 0, 600)).toBe(true);
   });
 });
