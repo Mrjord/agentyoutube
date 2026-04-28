@@ -87,3 +87,20 @@ export async function getStats() {
 export async function getRecentVideos(limit = 10) {
   return db.select().from(videos).orderBy(desc(videos.discoveredAt)).limit(limit);
 }
+
+export async function getTopPatterns(limit = 20): Promise<Pattern[]> {
+  return db
+    .select()
+    .from(patterns)
+    .orderBy(desc(patterns.viralityScore))
+    .limit(limit);
+}
+
+export async function getRecentScripts(userId: string, limit = 5): Promise<Script[]> {
+  return db
+    .select()
+    .from(scripts)
+    .where(eq(scripts.userId, userId))
+    .orderBy(desc(scripts.createdAt))
+    .limit(limit);
+}

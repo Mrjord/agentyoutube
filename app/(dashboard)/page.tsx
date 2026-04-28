@@ -1,15 +1,14 @@
-import { getStats, getRecentVideos, getUserScripts } from '@/lib/db/queries';
+import { getStats, getRecentVideos, getRecentScripts } from '@/lib/db/queries';
 import { V1_USER_ID } from '@/lib/constants';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Link from 'next/link';
 
 export default async function DashboardPage() {
-  const [stats, recentVideos, allScripts] = await Promise.all([
+  const [stats, recentVideos, recentScripts] = await Promise.all([
     getStats(),
     getRecentVideos(5),
-    getUserScripts(V1_USER_ID),
+    getRecentScripts(V1_USER_ID, 5),
   ]);
-  const recentScripts = allScripts.slice(0, 5);
 
   return (
     <div className="space-y-8">

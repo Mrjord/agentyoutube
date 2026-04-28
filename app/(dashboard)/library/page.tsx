@@ -1,13 +1,10 @@
-import { getRecentVideos } from '@/lib/db/queries';
-import { db } from '@/lib/db';
-import { patterns } from '@/lib/db/schema';
-import { desc } from 'drizzle-orm';
+import { getRecentVideos, getTopPatterns } from '@/lib/db/queries';
 import { Badge } from '@/components/ui/badge';
 
 export default async function LibraryPage() {
   const [recentVideos, topPatterns] = await Promise.all([
     getRecentVideos(20),
-    db.select().from(patterns).orderBy(desc(patterns.viralityScore)).limit(20),
+    getTopPatterns(20),
   ]);
 
   return (
