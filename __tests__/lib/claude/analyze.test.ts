@@ -39,7 +39,11 @@ describe('parsePatterns', () => {
     expect(parsePatterns(wrapped, PARAMS)).toHaveLength(2);
   });
 
-  it('throws SyntaxError on invalid JSON', () => {
-    expect(() => parsePatterns('not json', PARAMS)).toThrow(SyntaxError);
+  it('returns empty array on invalid JSON', () => {
+    expect(parsePatterns('not json', PARAMS)).toEqual([]);
+  });
+
+  it('returns empty array when patterns key is missing', () => {
+    expect(parsePatterns(JSON.stringify({ hooks: [] }), PARAMS)).toEqual([]);
   });
 });

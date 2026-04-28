@@ -5,11 +5,20 @@ import { getDurationBucket, DURATION_TO_SECONDS, V1_USER_ID } from '@/lib/consta
 import type { DurationOption } from '@/lib/constants';
 
 export async function POST(req: Request) {
-  const { prompt: theme, duration, tone } = (await req.json()) as {
-    prompt: string;
-    duration: DurationOption;
-    tone: string;
-  };
+  let body: { prompt?: unknown; duration?: unknown; tone?: unknown };
+  try {
+    body = (await req.json()) as typeof body;
+  } catch {
+    return Response.json({ error: 'Bad request' }, { status: 400 });
+  }
+
+  const theme = typeof body.prompt === 'string' ? body.prompt.trim().slice(0, 500) : '';
+  if (!theme) {
+    return Response.json({ error: 'prompt required' }, { status: 400 });
+  }
+
+  const duration = (body.duration as DurationOption) ?? '10min';
+  const tone = typeof body.tone === 'string' ? body.tone : 'viral';
 
   const durationSeconds = DURATION_TO_SECONDS[duration] ?? 300;
   const durationBucket = getDurationBucket(durationSeconds);

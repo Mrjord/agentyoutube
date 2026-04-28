@@ -16,7 +16,13 @@ export function parsePatterns(
   params: { viewCount: number; likeCount: number; durationSeconds: number; videoDbId: string },
 ): NewPattern[] {
   const clean = rawJson.replace(/```(?:json)?\n?/g, '').trim();
-  const parsed = JSON.parse(clean) as { patterns: RawPattern[] };
+  let parsed: { patterns?: RawPattern[] };
+  try {
+    parsed = JSON.parse(clean) as { patterns?: RawPattern[] };
+  } catch {
+    return [];
+  }
+  if (!Array.isArray(parsed.patterns)) return [];
 
   const viralityScore = computeViralityScore(params.viewCount, params.likeCount);
   const durationBucket = getDurationBucket(params.durationSeconds);

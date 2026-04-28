@@ -1,4 +1,4 @@
-import { eq, and, desc, count } from 'drizzle-orm';
+import { eq, and, desc, count, isNotNull } from 'drizzle-orm';
 import { db } from './index';
 import { users, searchKeywords, videos, patterns, scripts } from './schema';
 import type { NewVideo, NewPattern, NewScript, Pattern, Script } from './schema';
@@ -13,7 +13,7 @@ export async function isVideoInDB(youtubeVideoId: string): Promise<boolean> {
   const rows = await db
     .select({ id: videos.id })
     .from(videos)
-    .where(eq(videos.youtubeVideoId, youtubeVideoId))
+    .where(and(eq(videos.youtubeVideoId, youtubeVideoId), isNotNull(videos.analyzedAt)))
     .limit(1);
   return rows.length > 0;
 }

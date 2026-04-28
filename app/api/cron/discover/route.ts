@@ -15,6 +15,9 @@ import { MAX_VIDEOS_PER_RUN } from '@/lib/constants';
 export const maxDuration = 300;
 
 export async function GET(req: Request) {
+  if (!process.env.CRON_SECRET) {
+    return Response.json({ error: 'Server misconfiguration' }, { status: 500 });
+  }
   const auth = req.headers.get('authorization');
   if (auth !== `Bearer ${process.env.CRON_SECRET}`) {
     return Response.json({ error: 'Unauthorized' }, { status: 401 });
