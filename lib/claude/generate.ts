@@ -17,7 +17,7 @@ export function createScriptStream(params: {
   const durationMin = Math.round(durationSeconds / 60);
 
   return streamText({
-    model: anthropic('claude-opus-4-7'),
+    model: anthropic('claude-sonnet-4-6'),
     system: GENERATE_SYSTEM_PROMPT,
     messages: [
       {
@@ -25,10 +25,5 @@ export function createScriptStream(params: {
         content: `## Patterns viraux de référence\n\n${patternsText}\n\n---\n\n## Demande\n\nThème : ${theme}\nDurée cible : ${durationMin} minutes (${durationSeconds}s)\nTon : ${tone}\n\nGénère le script complet.`,
       },
     ],
-    providerOptions: {
-      anthropic: {
-        thinking: { type: 'adaptive' },
-      },
-    },
   });
 }
