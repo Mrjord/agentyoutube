@@ -33,7 +33,8 @@ export function getDurationBucket(seconds: number): 'short' | 'medium' | 'long' 
 
 export function computeViralityScore(viewCount: number, likeCount: number): number {
   if (viewCount === 0) return 0;
-  return viewCount * (likeCount / viewCount);
+  // views × like_ratio simplifies to likeCount; kept as ranking proxy
+  return likeCount;
 }
 
 // Max videos per cron run. Vercel Hobby has 60s function timeout.
