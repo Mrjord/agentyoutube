@@ -14,6 +14,7 @@ import { PerspectiveMarquee } from '@/components/ui/perspective-marquee';
 import MagnifiedBento from '@/components/ui/magnified-bento';
 import PricingSection from '@/components/ui/pricing-section';
 import { RatingInteraction } from '@/components/ui/emoji-rating';
+import { TextScramble } from '@/components/ui/text-scramble';
 import { getAllArticles } from '@/lib/articles';
 
 const BLOG_ARTICLES = getAllArticles().slice(0, 3);
@@ -275,7 +276,14 @@ export default function LandingPage() {
           </div>
           <div className="hidden md:flex items-center gap-6">
             {[['#features', 'Fonctionnalités'], ['#pricing', 'Tarifs'], ['/blog', 'Blog'], ['#faq', 'FAQ']].map(([href, label]) => (
-              <a key={href} href={href} className="text-sm text-[#888] hover:text-[#F5F5F7] transition-colors duration-200">{label}</a>
+              <a key={href} href={href}>
+                <TextScramble
+                  text={label}
+                  textClassName="text-sm tracking-normal normal-case font-sans"
+                  restCharClassName="text-[#888]"
+                  scrambleCharClassName="text-[#c4302b] scale-110"
+                />
+              </a>
             ))}
           </div>
           <PulseButton>
@@ -311,14 +319,18 @@ export default function LandingPage() {
 
         <div className="relative grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-16 items-start">
           <div className="space-y-8">
-            <motion.p
-              className="text-xs font-mono text-[#c4302b] tracking-widest uppercase"
+            <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
             >
-              Agent YouTube IA
-            </motion.p>
+              <TextScramble
+                text="Agent YouTube IA"
+                textClassName="text-xs font-mono tracking-widest uppercase"
+                restCharClassName="text-[#c4302b]"
+                scrambleCharClassName="text-[#F5F0E8] scale-110"
+              />
+            </motion.div>
 
             <h1 className="font-heading text-5xl lg:text-6xl font-bold leading-[1.05] tracking-tight">
               <WordReveal text="Le script qui retient." delay={0.2} />
