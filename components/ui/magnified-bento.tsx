@@ -1,47 +1,46 @@
 "use client";
 import React from "react";
-import { HugeiconsIcon } from "@hugeicons/react";
 import {
-  Search01Icon,
-  FlashIcon,
-  RotateLeftIcon,
-  Chart01Icon,
-  CodeIcon,
-  Settings02Icon,
-  UserGroupIcon,
-  HierarchyIcon,
-  Link01Icon,
-  CpuIcon,
-  DatabaseIcon,
-  SmartPhone01Icon,
-  CloudIcon,
-  LockIcon,
-  UserIcon,
-} from "@hugeicons/core-free-icons";
+  Zap,
+  Search,
+  RotateCcw,
+  BarChart2,
+  Code2,
+  Settings,
+  Users,
+  Network,
+  Link,
+  Cpu,
+  Database,
+  Smartphone,
+  Cloud,
+  Lock,
+  User,
+} from "lucide-react";
 import { motion, useMotionValue, useMotionTemplate } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 const TAG_ROWS = [
   [
-    { id: "hook", icon: FlashIcon, label: "Hook viral" },
-    { id: "intro", icon: Search01Icon, label: "Intro narrative" },
-    { id: "rehook", icon: RotateLeftIcon, label: "Re-hook" },
-    { id: "structure", icon: HierarchyIcon, label: "Structure 3 actes" },
-    { id: "pattern", icon: Chart01Icon, label: "Pattern viral" },
+    { id: "hook", icon: Zap, label: "Hook viral" },
+    { id: "intro", icon: Search, label: "Intro narrative" },
+    { id: "rehook", icon: RotateCcw, label: "Re-hook" },
+    { id: "structure", icon: Network, label: "Structure 3 actes" },
+    { id: "pattern", icon: BarChart2, label: "Pattern viral" },
   ],
   [
-    { id: "tension", icon: Link01Icon, label: "Tension narrative" },
-    { id: "cta", icon: UserGroupIcon, label: "CTA organique" },
-    { id: "script", icon: CodeIcon, label: "Script complet" },
-    { id: "tone", icon: UserIcon, label: "Ton humain" },
-    { id: "viral", icon: CpuIcon, label: "Ratio viral" },
+    { id: "tension", icon: Link, label: "Tension narrative" },
+    { id: "cta", icon: Users, label: "CTA organique" },
+    { id: "script", icon: Code2, label: "Script complet" },
+    { id: "tone", icon: User, label: "Ton humain" },
+    { id: "viral", icon: Cpu, label: "Ratio viral" },
   ],
   [
-    { id: "analytics", icon: DatabaseIcon, label: "10 247 vidéos" },
-    { id: "trend", icon: SmartPhone01Icon, label: "Tendance hebdo" },
-    { id: "niche", icon: CloudIcon, label: "Niche optimisée" },
-    { id: "antiai", icon: LockIcon, label: "Anti-IA détecté" },
-    { id: "retention", icon: Settings02Icon, label: "Rétention 6s" },
+    { id: "analytics", icon: Database, label: "10 247 vidéos" },
+    { id: "trend", icon: Smartphone, label: "Tendance hebdo" },
+    { id: "niche", icon: Cloud, label: "Niche optimisée" },
+    { id: "antiai", icon: Lock, label: "Anti-IA détecté" },
+    { id: "retention", icon: Settings, label: "Rétention 6s" },
   ],
 ];
 
@@ -82,23 +81,16 @@ const MagnifiedBento = () => {
                   key={`row-${rowIndex}`}
                   className="flex gap-4 w-max"
                   animate={{
-                    x:
-                      rowIndex % 2 === 0
-                        ? ["0%", "-33.333%"]
-                        : ["-33.333%", "0%"],
+                    x: rowIndex % 2 === 0 ? ["0%", "-33.333%"] : ["-33.333%", "0%"],
                   }}
-                  transition={{
-                    duration: 25,
-                    ease: "linear",
-                    repeat: Infinity,
-                  }}
+                  transition={{ duration: 25, ease: "linear", repeat: Infinity }}
                 >
                   {[...row, ...row, ...row].map((item, idx) => (
                     <div
                       key={`${item.id}-${idx}`}
                       className="flex gap-2 bg-background/50 backdrop-blur-sm whitespace-nowrap w-fit text-muted-foreground p-2 px-3 items-center border border-border/50 rounded-full text-xs"
                     >
-                      <HugeiconsIcon icon={item.icon} size={14} />
+                      <item.icon size={14} />
                       <span>{item.label}</span>
                     </div>
                   ))}
@@ -116,30 +108,17 @@ const MagnifiedBento = () => {
                   key={`row-reveal-${rowIndex}`}
                   className="flex gap-4 w-max"
                   animate={{
-                    x:
-                      rowIndex % 2 === 0
-                        ? ["0%", "-33.333%"]
-                        : ["-33.333%", "0%"],
+                    x: rowIndex % 2 === 0 ? ["0%", "-33.333%"] : ["-33.333%", "0%"],
                   }}
-                  transition={{
-                    duration: 25,
-                    ease: "linear",
-                    repeat: Infinity,
-                  }}
+                  transition={{ duration: 25, ease: "linear", repeat: Infinity }}
                 >
                   {[...row, ...row, ...row].map((item, idx) => (
                     <div
                       key={`${item.id}-${idx}-reveal`}
                       className="flex gap-2 bg-background whitespace-nowrap w-fit text-foreground p-2 px-3 items-center border border-primary/20 shadow-sm rounded-full text-xs scale-125 ml-6"
                     >
-                      <HugeiconsIcon
-                        icon={item.icon}
-                        size={14}
-                        className="text-primary"
-                      />
-                      <span className="font-medium text-primary">
-                        {item.label}
-                      </span>
+                      <item.icon size={14} className="text-primary" />
+                      <span className="font-medium text-primary">{item.label}</span>
                     </div>
                   ))}
                 </motion.div>
@@ -180,51 +159,16 @@ const MagnifiedBento = () => {
 
 export default MagnifiedBento;
 
-const MagnifyingLens = ({ size = 92 }: { size?: number }) => {
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 512 512"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M365.424 335.392L342.24 312.192L311.68 342.736L334.88 365.936L365.424 335.392Z"
-        fill="#B0BDC6"
-      />
-      <path
-        d="M358.08 342.736L334.88 319.552L319.04 335.392L342.24 358.584L358.08 342.736Z"
-        fill="#DFE9EF"
-      />
-      <path
-        d="M352.368 321.808L342.752 312.192L312.208 342.752L321.824 352.36L352.368 321.808Z"
-        fill="#B0BDC6"
-      />
-      <path
-        d="M332 332C260 404 142.4 404 69.6001 332C-2.3999 260 -2.3999 142.4 69.6001 69.6C141.6 -3.20003 259.2 -2.40002 332 69.6C404.8 142.4 404.8 260 332 332ZM315.2 87.2C252 24 150.4 24 88.0001 87.2C24.8001 150.4 24.8001 252 88.0001 314.4C151.2 377.6 252.8 377.6 315.2 314.4C377.6 252 377.6 150.4 315.2 87.2Z"
-        fill="#DFE9EF"
-      />
-      <path
-        d="M319.2 319.2C254.4 384 148.8 384 83.2001 319.2C18.4001 254.4 18.4001 148.8 83.2001 83.2C148 18.4 253.6 18.4 319.2 83.2C384 148.8 384 254.4 319.2 319.2ZM310.4 92C250.4 32 152 32 92.0001 92C32.0001 152 32.0001 250.4 92.0001 310.4C152 370.4 250.4 370.4 310.4 310.4C370.4 250.4 370.4 152 310.4 92Z"
-        fill="#7A858C"
-      />
-      <path
-        d="M484.104 428.784L373.8 318.472L318.36 373.912L428.672 484.216L484.104 428.784Z"
-        fill="#333333"
-      />
-      <path
-        d="M471.664 441.224L361.344 330.928L330.8 361.48L441.12 471.76L471.664 441.224Z"
-        fill="#575B5E"
-      />
-      <path
-        d="M495.2 423.2C504 432 432.8 504 423.2 495.2L417.6 489.6C408.8 480.8 480 408.8 489.6 417.6L495.2 423.2Z"
-        fill="#B0BDC6"
-      />
-      <path
-        d="M483.2 435.2C492 444 444.8 492 435.2 483.2L429.6 477.6C420.8 468.8 468 420.8 477.6 429.6L483.2 435.2Z"
-        fill="#DFE9EF"
-      />
-    </svg>
-  );
-};
+const MagnifyingLens = ({ size = 92 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M365.424 335.392L342.24 312.192L311.68 342.736L334.88 365.936L365.424 335.392Z" fill="#B0BDC6" />
+    <path d="M358.08 342.736L334.88 319.552L319.04 335.392L342.24 358.584L358.08 342.736Z" fill="#DFE9EF" />
+    <path d="M352.368 321.808L342.752 312.192L312.208 342.752L321.824 352.36L352.368 321.808Z" fill="#B0BDC6" />
+    <path d="M332 332C260 404 142.4 404 69.6001 332C-2.3999 260 -2.3999 142.4 69.6001 69.6C141.6 -3.20003 259.2 -2.40002 332 69.6C404.8 142.4 404.8 260 332 332ZM315.2 87.2C252 24 150.4 24 88.0001 87.2C24.8001 150.4 24.8001 252 88.0001 314.4C151.2 377.6 252.8 377.6 315.2 314.4C377.6 252 377.6 150.4 315.2 87.2Z" fill="#DFE9EF" />
+    <path d="M319.2 319.2C254.4 384 148.8 384 83.2001 319.2C18.4001 254.4 18.4001 148.8 83.2001 83.2C148 18.4 253.6 18.4 319.2 83.2C384 148.8 384 254.4 319.2 319.2ZM310.4 92C250.4 32 152 32 92.0001 92C32.0001 152 32.0001 250.4 92.0001 310.4C152 370.4 250.4 370.4 310.4 310.4C370.4 250.4 370.4 152 310.4 92Z" fill="#7A858C" />
+    <path d="M484.104 428.784L373.8 318.472L318.36 373.912L428.672 484.216L484.104 428.784Z" fill="#333333" />
+    <path d="M471.664 441.224L361.344 330.928L330.8 361.48L441.12 471.76L471.664 441.224Z" fill="#575B5E" />
+    <path d="M495.2 423.2C504 432 432.8 504 423.2 495.2L417.6 489.6C408.8 480.8 480 408.8 489.6 417.6L495.2 423.2Z" fill="#B0BDC6" />
+    <path d="M483.2 435.2C492 444 444.8 492 435.2 483.2L429.6 477.6C420.8 468.8 468 420.8 477.6 429.6L483.2 435.2Z" fill="#DFE9EF" />
+  </svg>
+);
