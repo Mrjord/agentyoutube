@@ -16,6 +16,7 @@ import PricingSection from '@/components/ui/pricing-section';
 import { RatingInteraction } from '@/components/ui/emoji-rating';
 import { TextScramble } from '@/components/ui/text-scramble';
 import { getAllArticles } from '@/lib/articles';
+import { FloatingHeader } from '@/components/landing/FloatingHeader';
 
 const BLOG_ARTICLES = getAllArticles().slice(0, 3);
 
@@ -267,43 +268,7 @@ export default function LandingPage() {
       <Cursor />
 
       {/* ── NAV ─────────────────────────────────────────────────────── */}
-      <motion.nav
-        initial={{ y: -20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.6, ease: EASE }}
-        className="sticky top-0 z-50 border-b border-[#1F1F25]/80 bg-[#050507]/85 backdrop-blur-md"
-      >
-        <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <motion.span
-              className="w-7 h-7 rounded bg-[#c4302b] flex items-center justify-center text-[#050507] font-heading font-bold text-sm"
-              whileHover={{ scale: 1.12, rotate: 5 }}
-              transition={{ type: 'spring', stiffness: 400 }}
-            >Y</motion.span>
-            <span className="font-heading font-semibold tracking-tight">YUBOT</span>
-          </div>
-          <div className="hidden md:flex items-center gap-6">
-            {[['#features', 'Fonctionnalités'], ['#pricing', 'Tarifs'], ['/blog', 'Blog'], ['#faq', 'FAQ']].map(([href, label]) => (
-              <a key={href} href={href}>
-                <TextScramble
-                  text={label}
-                  textClassName="text-sm tracking-normal normal-case font-sans"
-                  restCharClassName="text-[#888]"
-                  scrambleCharClassName="text-[#c4302b] scale-110"
-                />
-              </a>
-            ))}
-          </div>
-          <PulseButton>
-            <Link
-              href="/generate"
-              className="px-4 py-1.5 bg-[#c4302b] text-[#050507] text-sm font-semibold rounded hover:bg-[#c4302b]/90 transition-colors"
-            >
-              Essayer gratuitement
-            </Link>
-          </PulseButton>
-        </div>
-      </motion.nav>
+      <FloatingHeader />
 
       {/* ── HERO ─────────────────────────────────────────────────────── */}
       <section className="relative w-full px-6 pt-24 pb-28 overflow-hidden flex flex-col items-center">
