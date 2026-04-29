@@ -29,7 +29,7 @@ function BentoGrid({ items }: BentoGridProps) {
             "border border-[#1F1F25] bg-[#050507]/60",
             "hover:-translate-y-0.5 will-change-transform",
             "hover:border-[#c4302b]/30 hover:shadow-[0_4px_24px_rgba(196,48,43,0.08)]",
-            item.colSpan === 2 ? "md:col-span-2" : "col-span-1",
+            item.colSpan === 3 ? "md:col-span-3" : item.colSpan === 2 ? "md:col-span-2" : "col-span-1",
             item.hasPersistentHover && "-translate-y-0.5 border-[#c4302b]/20 shadow-[0_4px_24px_rgba(196,48,43,0.06)]"
           )}
         >

@@ -297,10 +297,11 @@ const FEATURES_BENTO: BentoItem[] = [
   },
   {
     title: 'Export Word pro',
-    description: 'Document .docx avec code couleur par section et notes créateur intégrées. Prêt pour le prompteur.',
+    description: 'Document .docx avec code couleur par section et notes créateur intégrées. Prêt pour le prompteur ou le partage avec ton équipe.',
     icon: <Download size={14} className="text-[#c4302b]" />,
     tags: ['export', 'word', 'prompteur'],
     cta: 'Voir un exemple →',
+    colSpan: 3,
   },
 ];
 
