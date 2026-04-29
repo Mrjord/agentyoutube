@@ -936,7 +936,7 @@ export default function LandingPage() {
               ))}
             </Marquee>
 
-            <Marquee pauseOnHover reverse repeat={3} className="[--duration:45s] [--gap:1rem]">
+            <Marquee pauseOnHover repeat={3} className="[--duration:45s] [--gap:1rem]">
               {TESTIMONIALS.slice(4).map(({ quote, author, role, initials, stars }) => (
                 <div
                   key={author}
