@@ -17,6 +17,8 @@ import { RatingInteraction } from '@/components/ui/emoji-rating';
 import { TextScramble } from '@/components/ui/text-scramble';
 import { getAllArticles } from '@/lib/articles';
 import { FloatingHeader } from '@/components/landing/FloatingHeader';
+import RadialOrbitalTimeline from '@/components/ui/radial-orbital-timeline';
+import { Search, Filter, BarChart2, Cpu, Shield, FileText } from 'lucide-react';
 
 const BLOG_ARTICLES = getAllArticles().slice(0, 3);
 
@@ -567,29 +569,19 @@ export default function LandingPage() {
 
       {/* ── COMMENT ÇA MARCHE ────────────────────────────────────────── */}
       <section id="how" className="border-b border-[#1F1F25]">
-        <div className="max-w-6xl mx-auto px-6 py-20">
+        <div className="max-w-6xl mx-auto px-6 pt-20 pb-4">
           <SectionLabel>Le processus</SectionLabel>
-          <FadeUp><h2 className="font-heading text-3xl font-bold mb-14">Comment ça marche</h2></FadeUp>
-          <Stagger className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-[#1F1F25]" delay={0.1}>
-            {[
-              { n: '01', title: 'On scanne YouTube en permanence.', desc: 'Notre système analyse des dizaines de milliers de vidéos chaque semaine. On mesure le ratio viral — vues obtenues versus abonnés — pas les vues brutes.', stat: '10 247 vidéos analysées' },
-              { n: '02', title: 'On filtre les vraies pépites.', desc: "Seulement 3% des vidéos passent nos filtres. Critères : ratio viral minimum, engagement réel, fraîcheur du contenu. Ce qui reste, c'est l'élite.", stat: '3% passent nos filtres' },
-              { n: '03', title: 'On extrait les patterns gagnants.', desc: "Chaque vidéo retenue est analysée : hook, promesse, re-hooks, conclusion. On mesure les taux de succès et classe par efficacité.", stat: '47 patterns actifs' },
-              { n: '04', title: 'Tu génères ton script en 90s.', desc: 'Tu donnes un thème. YUBOT sélectionne les patterns adaptés, construit la structure, rédige le texte à dire mot pour mot.', stat: 'Génération moyenne : 87s' },
-            ].map(({ n, title, desc, stat }) => (
-              <motion.div
-                key={n}
-                variants={fadeUpChild}
-                className="bg-[#050507] p-8 space-y-4 group hover:bg-[#0D0D10] transition-colors duration-300"
-              >
-                <span className="font-heading text-5xl font-bold text-[#1F1F25] group-hover:text-[#2A2A30] transition-colors">{n}</span>
-                <h3 className="font-heading text-base font-semibold leading-snug">{title}</h3>
-                <p className="text-sm text-[#888] leading-relaxed">{desc}</p>
-                <p className="text-xs font-mono text-[#c4302b] pt-2">{stat}</p>
-              </motion.div>
-            ))}
-          </Stagger>
+          <FadeUp><h2 className="font-heading text-3xl font-bold mb-2">Comment ça marche</h2></FadeUp>
+          <FadeUp delay={0.1}><p className="text-[#888] text-sm mb-0">Clique sur un nœud pour explorer chaque étape.</p></FadeUp>
         </div>
+        <RadialOrbitalTimeline timelineData={[
+          { id: 1, title: "Veille YouTube", date: "Quotidien", content: "YUBOT scanne des dizaines de milliers de vidéos chaque semaine et mesure le ratio viral — vues / abonnés — pour détecter les performances anormales.", category: "analyse", icon: Search, relatedIds: [2, 3], status: "completed", energy: 92 },
+          { id: 2, title: "Filtrage viral", date: "3% retenus", content: "Seulement les vidéos avec un ratio viral minimum passent nos filtres stricts. Résultat : une base de patterns issus de l'élite YouTube, pas du contenu moyen.", category: "filtrage", icon: Filter, relatedIds: [1, 3], status: "completed", energy: 78 },
+          { id: 3, title: "47 patterns", date: "Actifs", content: "Chaque vidéo retenue est décortiquée : hook, promesse, re-hooks, rythme, conclusion. Les patterns sont classés par taux de succès et mis à jour chaque jour.", category: "patterns", icon: BarChart2, relatedIds: [1, 4], status: "completed", energy: 85 },
+          { id: 4, title: "Génération", date: "87 secondes", content: "Tu donnes un thème. YUBOT sélectionne les patterns adaptés à ta niche, construit la structure et rédige le texte à dire mot pour mot.", category: "génération", icon: Cpu, relatedIds: [3, 5], status: "completed", energy: 95 },
+          { id: 5, title: "Anti-IA filter", date: "100% humain", content: "Chaque script passe un test anti-IA strict : pas de mots interdits, rythme irrégulier, fragments assumés. Le résultat sonne humain parce qu'il est conçu pour l'être.", category: "filtre", icon: Shield, relatedIds: [4, 6], status: "in-progress", energy: 88 },
+          { id: 6, title: "Export Word", date: "1 clic", content: "Ton script est exporté en document Word professionnel avec code couleur par section, prêt à coller dans ton prompteur ou partager avec ton équipe.", category: "export", icon: FileText, relatedIds: [5], status: "completed", energy: 70 },
+        ]} />
       </section>
 
       {/* ── FEATURES ─────────────────────────────────────────────────── */}
