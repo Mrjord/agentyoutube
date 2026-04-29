@@ -4,6 +4,7 @@ import { ScriptStream } from '@/components/ScriptStream';
 import { AdaptStream } from '@/components/AdaptStream';
 import { AnalyzeScriptStream } from '@/components/AnalyzeScriptStream';
 import { useLocalStorage } from '@/lib/hooks/useLocalStorage';
+import { useSaveGuard } from '@/components/SaveGuardProvider';
 
 type Tab = 'generate' | 'adapt' | 'analyze';
 
@@ -15,6 +16,7 @@ const TABS: { id: Tab; label: string }[] = [
 
 export default function GeneratePage() {
   const { value: tab, set: setTab } = useLocalStorage<Tab>('yubot_active_tab', 'generate');
+  const { navigate } = useSaveGuard();
 
   return (
     <div className="max-w-3xl space-y-6">
@@ -30,7 +32,7 @@ export default function GeneratePage() {
         {TABS.map(({ id, label }) => (
           <button
             key={id}
-            onClick={() => setTab(id)}
+            onClick={() => navigate(() => setTab(id))}
             className={`px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px whitespace-nowrap ${
               tab === id
                 ? 'border-[#FFE600] text-[#FFE600]'

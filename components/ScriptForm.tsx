@@ -14,9 +14,10 @@ import { useLocalStorage } from '@/lib/hooks/useLocalStorage';
 interface Props {
   onSubmit: (theme: string, duration: string, tone: string) => void;
   isLoading: boolean;
+  onReset?: () => void;
 }
 
-export function ScriptForm({ onSubmit, isLoading }: Props) {
+export function ScriptForm({ onSubmit, isLoading, onReset }: Props) {
   const { value: theme, set: setTheme, saved: themeSaved } = useLocalStorage('yubot_generate_theme', '');
   const { value: duration, set: setDuration } = useLocalStorage('yubot_generate_duration', '10min');
   const { value: tone, set: setTone } = useLocalStorage('yubot_generate_tone', 'viral');
@@ -32,6 +33,7 @@ export function ScriptForm({ onSubmit, isLoading }: Props) {
     setTheme('');
     setDuration('10min');
     setTone('viral');
+    onReset?.();
   };
 
   return (

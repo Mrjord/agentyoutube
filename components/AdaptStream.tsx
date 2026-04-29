@@ -1,13 +1,14 @@
 'use client';
 
 import { useCompletion } from '@ai-sdk/react';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { ScriptPreview } from './ScriptPreview';
 import { Button } from '@/components/ui/button';
 import { generateDocxBlob } from '@/lib/export/generateDocx';
 import { DURATION_OPTIONS, DURATION_TO_SECONDS, WORDS_PER_MINUTE } from '@/lib/constants';
 import type { DurationOption } from '@/lib/constants';
 import { useLocalStorage } from '@/lib/hooks/useLocalStorage';
+import { useSaveGuard } from '@/components/SaveGuardProvider';
 
 function countWords(text: string): number {
   return text.trim().split(/\s+/).filter(Boolean).length;
@@ -17,12 +18,83 @@ export function AdaptStream() {
   const { value: text, set: setText, saved: textSaved } = useLocalStorage('yubot_adapt_text', '');
   const { value: duration, set: setDuration } = useLocalStorage<DurationOption>('yubot_adapt_duration', '10min');
   const { value: allowCompletion, set: setAllowCompletion } = useLocalStorage('yubot_adapt_complete', false);
+  const { value: savedCompletion, set: setSavedCompletion, clear: clearSavedCompletion } = useLocalStorage('yubot_adapt_result', '');
   const [isExporting, setIsExporting] = useState(false);
+  const [isGeneratedThisSession, setIsGeneratedThisSession] = useState(false);
+  const [hasBeenCopied, setHasBeenCopied] = useState(false);
+  const [hasBeenDownloaded, setHasBeenDownloaded] = useState(false);
+  const [savedBannerVisible, setSavedBannerVisible] = useState(false);
+  const savedBannerTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const wasLoadingRef = useRef(false);
+
+  const { register, clear } = useSaveGuard();
 
   const { complete, completion, isLoading, stop } = useCompletion({
     api: '/api/adapt',
     streamProtocol: 'text',
   });
+
+  // Save result when streaming finishes
+  useEffect(() => {
+    if (wasLoadingRef.current && !isLoading && completion) {
+      setSavedCompletion(completion);
+    }
+    wasLoadingRef.current = isLoading;
+  }, [isLoading, completion, setSavedCompletion]);
+
+  const shownCompletion = completion || savedCompletion;
+  const hasBeenSaved = hasBeenCopied || hasBeenDownloaded;
+
+  // Ref for guard callbacks
+  const completionRef = useRef('');
+  completionRef.current = shownCompletion;
+
+  // Green saved banner auto-dismisses after 3s
+  useEffect(() => {
+    if (!hasBeenSaved) return;
+    setSavedBannerVisible(true);
+    if (savedBannerTimerRef.current) clearTimeout(savedBannerTimerRef.current);
+    savedBannerTimerRef.current = setTimeout(() => setSavedBannerVisible(false), 3000);
+    return () => { if (savedBannerTimerRef.current) clearTimeout(savedBannerTimerRef.current); };
+  }, [hasBeenSaved]);
+
+  // Block browser navigation
+  useEffect(() => {
+    if (!isGeneratedThisSession || hasBeenSaved) return;
+    const handler = (e: BeforeUnloadEvent) => { e.preventDefault(); e.returnValue = ''; };
+    window.addEventListener('beforeunload', handler);
+    return () => window.removeEventListener('beforeunload', handler);
+  }, [isGeneratedThisSession, hasBeenSaved]);
+
+  // Register/clear internal navigation guard
+  useEffect(() => {
+    if (!isGeneratedThisSession || hasBeenSaved || isLoading) {
+      if (!isLoading) clear();
+      return;
+    }
+    register({
+      copy: () => {
+        navigator.clipboard.writeText(completionRef.current);
+        setHasBeenCopied(true);
+      },
+      download: async () => {
+        setIsExporting(true);
+        try {
+          const blob = await generateDocxBlob(completionRef.current, 'adaptation');
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `yubot_script_${new Date().toISOString().split('T')[0]}_adaptation.docx`;
+          a.click();
+          URL.revokeObjectURL(url);
+        } finally {
+          setIsExporting(false);
+        }
+        setHasBeenDownloaded(true);
+      },
+    });
+    return () => clear();
+  }, [isGeneratedThisSession, hasBeenSaved, isLoading, register, clear]);
 
   const wordCount = useMemo(() => countWords(text), [text]);
   const originalMinutes = +(wordCount / WORDS_PER_MINUTE).toFixed(1);
@@ -33,13 +105,17 @@ export function AdaptStream() {
 
   const handleSubmit = () => {
     if (!text.trim()) return;
+    clearSavedCompletion();
+    setIsGeneratedThisSession(true);
+    setHasBeenCopied(false);
+    setHasBeenDownloaded(false);
     complete('', { body: { text, duration, allowCompletion } });
   };
 
   const handleExportWord = async () => {
     setIsExporting(true);
     try {
-      const blob = await generateDocxBlob(completion, 'adaptation');
+      const blob = await generateDocxBlob(shownCompletion, 'adaptation');
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -49,6 +125,7 @@ export function AdaptStream() {
     } finally {
       setIsExporting(false);
     }
+    setHasBeenDownloaded(true);
   };
 
   const handleReset = () => {
@@ -56,6 +133,11 @@ export function AdaptStream() {
     setText('');
     setDuration('10min');
     setAllowCompletion(false);
+    clearSavedCompletion();
+    setIsGeneratedThisSession(false);
+    setHasBeenCopied(false);
+    setHasBeenDownloaded(false);
+    clear();
   };
 
   const tooShort = wordCount > 0 && gap > 50 && !allowCompletion;
@@ -156,8 +238,34 @@ export function AdaptStream() {
         </div>
       )}
 
-      {completion && (
+      {shownCompletion && (
         <div className="space-y-4">
+          {isGeneratedThisSession && (
+            !hasBeenSaved ? (
+              <div className="sticky top-0 z-10 flex items-center gap-3 px-4 py-2.5 rounded-lg bg-[#FFE600] text-[#0A0A0A] text-sm shadow-md">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+                  <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+                  <line x1="12" y1="9" x2="12" y2="13"/>
+                  <line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+                <span className="flex-1 text-xs font-medium">Pense à copier ou télécharger ton script avant de quitter cette page.</span>
+                <button
+                  onClick={() => { navigator.clipboard.writeText(shownCompletion); setHasBeenCopied(true); }}
+                  className="text-xs font-bold underline underline-offset-2 shrink-0 hover:opacity-70"
+                >
+                  Copier
+                </button>
+              </div>
+            ) : savedBannerVisible ? (
+              <div className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#00C853] text-white text-xs font-medium shadow-md">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                Script sauvegardé. Tu peux quitter sans risque.
+              </div>
+            ) : null
+          )}
+
           {/* Legend */}
           <div className="flex gap-4 text-xs flex-wrap text-[#6B6560]">
             <span className="flex items-center gap-1.5">
@@ -175,7 +283,7 @@ export function AdaptStream() {
           </div>
 
           <div className="flex gap-2 justify-end flex-wrap">
-            <Button variant="outline" size="sm" onClick={() => navigator.clipboard.writeText(completion)}>
+            <Button variant="outline" size="sm" onClick={() => { navigator.clipboard.writeText(shownCompletion); setHasBeenCopied(true); }}>
               Copier le texte
             </Button>
             <Button variant="outline" size="sm" onClick={handleSubmit} disabled={isLoading}>
@@ -186,7 +294,7 @@ export function AdaptStream() {
             </Button>
           </div>
 
-          <ScriptPreview text={completion} />
+          <ScriptPreview text={shownCompletion} />
         </div>
       )}
     </div>
