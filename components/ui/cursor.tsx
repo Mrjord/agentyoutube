@@ -236,7 +236,6 @@ export {
   MouseTrackerProvider,
   Pointer,
   PointerFollower,
-  useMouseTracker,
   type MouseTrackerContextType as CursorContextType,
   type MouseTrackerProviderProps as CursorProviderProps,
   type PointerProps as CursorProps,
