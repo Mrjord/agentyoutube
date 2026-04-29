@@ -1,52 +1,119 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import Link from 'next/link';
+import { motion, useInView, AnimatePresence } from 'framer-motion';
+import { FadeUp, Stagger, fadeUpChild } from '@/components/landing/AnimIn';
+import { CountUp } from '@/components/landing/CountUp';
+import { Cursor } from '@/components/landing/Cursor';
+import { HeroParticles } from '@/components/landing/HeroParticles';
+import { TiltCard } from '@/components/landing/TiltCard';
+import { SmoothScroll } from '@/components/landing/SmoothScroll';
 
-/* ── FAQ accordion ───────────────────────────────────────────── */
+/* ── helpers ─────────────────────────────────────────────────────── */
+const EASE = [0.65, 0, 0.35, 1] as const;
+
+function WordReveal({ text, className, delay = 0 }: { text: string; className?: string; delay?: number }) {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true });
+  const words = text.split(' ');
+  return (
+    <span ref={ref} className={className} aria-label={text}>
+      {words.map((w, i) => (
+        <motion.span
+          key={i}
+          className="inline-block"
+          initial={{ opacity: 0, y: 22 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.45, delay: delay + i * 0.055, ease: EASE }}
+        >
+          {w}{i < words.length - 1 ? ' ' : ''}
+        </motion.span>
+      ))}
+    </span>
+  );
+}
+
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <motion.p
+      className="text-xs font-mono text-[#FFE600] tracking-widest uppercase mb-4"
+      initial={{ opacity: 0, x: -12 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.5, ease: EASE }}
+    >
+      {children}
+    </motion.p>
+  );
+}
+
+/* ── Progress bar ────────────────────────────────────────────────── */
+function ProgressBar({ year, pct, s, i }: { year: string; pct: string; s: string; i: number }) {
+  const barRef = useRef(null);
+  const inView = useInView(barRef, { once: true });
+  return (
+    <div className="flex items-center gap-3">
+      <span className="text-xs font-mono text-[#3A3A44] w-8">{year}</span>
+      <div className="flex-1 h-1 bg-[#1F1F25] rounded-full overflow-hidden" ref={barRef}>
+        <motion.div
+          className="h-full rounded-full"
+          style={{ background: 'rgba(255,230,0,0.6)' }}
+          initial={{ width: 0 }}
+          animate={inView ? { width: pct } : {}}
+          transition={{ duration: 1, delay: 0.2 + i * 0.1, ease: EASE }}
+        />
+      </div>
+      <span className="text-xs font-mono text-[#888] w-10 text-right">{s}</span>
+    </div>
+  );
+}
+
+/* ── FAQ ──────────────────────────────────────────────────────────── */
 function FAQ({ q, a }: { q: string; a: string | string[] }) {
   const [open, setOpen] = useState(false);
   const paragraphs = Array.isArray(a) ? a : [a];
   return (
-    <div className="border-b border-[#1E1E1E]">
+    <motion.div className="border-b border-[#1E1E1E]" layout>
       <button
         onClick={() => setOpen(v => !v)}
         className="w-full flex items-center justify-between py-5 text-left text-[#F5F0E8] hover:text-[#FFE600] transition-colors"
       >
         <span className="font-medium">{q}</span>
-        <span className="text-[#6B6560] ml-4 shrink-0 text-lg leading-none">{open ? '−' : '+'}</span>
+        <motion.span
+          className="text-[#6B6560] ml-4 shrink-0 text-lg leading-none"
+          animate={{ rotate: open ? 45 : 0 }}
+          transition={{ duration: 0.25 }}
+        >
+          +
+        </motion.span>
       </button>
-      {open && (
-        <div className="pb-5 space-y-3">
-          {paragraphs.map((p, i) => (
-            <p key={i} className="text-[#6B6560] text-sm leading-relaxed">{p}</p>
-          ))}
-        </div>
-      )}
-    </div>
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: EASE }}
+            style={{ overflow: 'hidden' }}
+          >
+            <div className="pb-5 space-y-3">
+              {paragraphs.map((p, i) => (
+                <p key={i} className="text-[#6B6560] text-sm leading-relaxed">{p}</p>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
   );
 }
 
-/* ── mock script sections ────────────────────────────────────── */
+/* ── data ─────────────────────────────────────────────────────────── */
 const MOCK_SCRIPT = [
-  {
-    label: 'HOOK — 0 à 30s',
-    color: '#DC2626',
-    bg: '#1F0A0A',
-    text: "T'as passé 3 heures sur cette tâche hier. Un outil que t'as peut-être jamais entendu l'aurait faite en 4 minutes. Ce n'est pas de la science-fiction. C'est ce qu'on va décortiquer aujourd'hui.",
-  },
-  {
-    label: 'INTRO — 30s à 2 min',
-    color: '#2563EB',
-    bg: '#0A0F1F',
-    text: "Je m'appelle pas Thomas Edison. Je suis pas un génie de la tech. Mais depuis que j'ai changé une habitude dans mon workflow, j'ai récupéré 12 heures par semaine. Douze heures.",
-  },
-  {
-    label: 'CORPS — Acte 1',
-    color: '#16A34A',
-    bg: '#0A1A0F',
-    text: "La plupart des gens qui \"veulent utiliser l'IA\" ouvrent ChatGPT, tapent quelque chose au hasard, obtiennent une réponse médiocre, et concluent que \"l'IA c'est pas pour eux\". C'est pas l'outil le problème.",
-  },
+  { label: 'HOOK — 0 à 30s', color: '#DC2626', bg: '#1F0A0A', text: "T'as passé 3 heures sur cette tâche hier. Un outil que t'as peut-être jamais entendu l'aurait faite en 4 minutes. Ce n'est pas de la science-fiction. C'est ce qu'on va décortiquer aujourd'hui." },
+  { label: 'INTRO — 30s à 2 min', color: '#2563EB', bg: '#0A0F1F', text: "Je m'appelle pas Thomas Edison. Je suis pas un génie de la tech. Mais depuis que j'ai changé une habitude dans mon workflow, j'ai récupéré 12 heures par semaine. Douze heures." },
+  { label: 'CORPS — Acte 1', color: '#16A34A', bg: '#0A1A0F', text: "La plupart des gens qui \"veulent utiliser l'IA\" ouvrent ChatGPT, tapent quelque chose au hasard, obtiennent une réponse médiocre, et concluent que \"l'IA c'est pas pour eux\". C'est pas l'outil le problème." },
 ];
 
 const DEMO_THEMES = [
@@ -85,21 +152,9 @@ const COMPARATIF = [
 ];
 
 const TESTIMONIALS = [
-  {
-    quote: "YUBOT a changé ma façon de créer. Je ne passe plus mes week-ends à réécrire le même hook 15 fois. J'ai un script propre en moins de 2 heures du thème à la caméra. Et mes vidéos durent plus longtemps dans les recommandations.",
-    author: 'Thomas L.',
-    role: 'Chaîne finance personnelle, 91K abonnés',
-  },
-  {
-    quote: "En 2 mois, mes vues moyennes ont doublé. Mais ce qui m'a vraiment surprise, c'est que les commentaires ont changé. Les gens disent que mes vidéos sont plus fluides, plus naturelles. YUBOT sort des scripts qui ne sonnent pas comme une IA.",
-    author: 'Léa M.',
-    role: 'Créatrice mindset & business',
-  },
-  {
-    quote: "J'ai testé tous les générateurs de scripts du marché. Tous donnent quelque chose d'utilisable mais générique. YUBOT est le seul qui comprend que le problème n'est pas d'écrire du texte — c'est de construire une structure qui retient les gens.",
-    author: 'Pierre D.',
-    role: 'Directeur créatif, agence vidéo',
-  },
+  { quote: "YUBOT a changé ma façon de créer. Je ne passe plus mes week-ends à réécrire le même hook 15 fois. J'ai un script propre en moins de 2 heures du thème à la caméra. Et mes vidéos durent plus longtemps dans les recommandations.", author: 'Thomas L.', role: 'Chaîne finance personnelle, 91K abonnés' },
+  { quote: "En 2 mois, mes vues moyennes ont doublé. Mais ce qui m'a vraiment surprise, c'est que les commentaires ont changé. Les gens disent que mes vidéos sont plus fluides, plus naturelles. YUBOT sort des scripts qui ne sonnent pas comme une IA.", author: 'Léa M.', role: 'Créatrice mindset & business' },
+  { quote: "J'ai testé tous les générateurs de scripts du marché. Tous donnent quelque chose d'utilisable mais générique. YUBOT est le seul qui comprend que le problème n'est pas d'écrire du texte — c'est de construire une structure qui retient les gens.", author: 'Pierre D.', role: 'Directeur créatif, agence vidéo' },
 ];
 
 const BLOG_ARTICLES = [
@@ -109,50 +164,14 @@ const BLOG_ARTICLES = [
 ];
 
 const FAQS = [
-  {
-    q: 'Comment YUBOT analyse-t-il les vidéos virales ?',
-    a: [
-      "YUBOT utilise un système d'analyse automatisé qui scanne des milliers de vidéos YouTube chaque semaine dans les niches business, entrepreneuriat, mindset et IA. L'analyse porte sur le ratio viral — vues divisées par le nombre d'abonnés — pour identifier les vidéos qui ont surperformé leur base normale.",
-      "Chaque vidéo retenue est analysée en profondeur : structure du hook, type de promesse dans l'intro, techniques de re-hook, style de conclusion, rythme narratif. Ces éléments sont classifiés en patterns stockés avec leur score de performance. La base est mise à jour quotidiennement.",
-    ],
-  },
-  {
-    q: 'Quelle est la différence entre YUBOT et ChatGPT ?',
-    a: [
-      "La différence est fondamentale. ChatGPT est un modèle de langage généraliste — il génère du texte cohérent mais n'a jamais regardé YouTube. Il ne sait pas ce qui retient l'attention sur une vidéo.",
-      "YUBOT est entraîné sur des données de performance YouTube réelles. Chaque structure utilisée vient d'une vidéo qui a sur-performé. Il applique aussi des règles anti-IA strictes : pas de formulations miroir, pas d'exemples inventés, pas de ton coaching. Le résultat sonne humain parce qu'il est conçu pour l'être.",
-    ],
-  },
-  {
-    q: 'Combien de scripts puis-je générer par mois ?',
-    a: "Starter : 10 scripts/mois. Pro : 50 scripts/mois. Studio : illimité. Les scripts non utilisés sont reportés sur le mois suivant, une fois. Si tu dépasses ton quota, tu peux passer au plan supérieur à tout moment — le changement est immédiat et calculé au prorata.",
-  },
-  {
-    q: 'Les scripts sonnent vraiment humains ?',
-    a: [
-      "C'est la priorité numéro un. Chaque script passe un test anti-IA : pas de mots interdits (\"fondamental\", \"indéniablement\", \"en conclusion\"...), rythme irrégulier, fragments assumés, pas d'exemples inventés avec des prénoms génériques.",
-      "Le rythme oral est calibré pour sonner comme un vrai créateur parle — pas comme un texte rédigé. Si ça sonne IA, ça ne part pas.",
-    ],
-  },
-  {
-    q: 'Y a-t-il un essai gratuit ?',
-    a: "7 jours d'essai complet sur le plan de ton choix, sans carte bancaire requise. Tu accèdes à toutes les fonctionnalités dès le premier jour. À la fin, si tu décides de continuer, tu renseignes ton moyen de paiement. Sinon, le compte passe en mode lecture seule — tes scripts restent accessibles.",
-  },
-  {
-    q: 'Puis-je adapter mon propre texte ?',
-    a: "Oui. L'onglet \"Adapter mon texte\" prend ton contenu brut (article, newsletter, notes, ancien script) et le restructure en format viral sans changer une seule idée. Les mots ajoutés sont signalés en bleu, les passages condensés en orange. Tu vois exactement ce qui a changé.",
-  },
-  {
-    q: 'YUBOT fonctionne-t-il pour toutes les niches ?',
-    a: [
-      "YUBOT est optimisé pour les niches business, entrepreneuriat, mindset, IA, argent et carrière. C'est là que notre base de patterns est la plus dense.",
-      "Pour les sujets très éloignés — recettes, sport, jeux vidéo, fiction — YUBOT signalera que le sujet sort de son domaine plutôt que de générer quelque chose d'approximatif. Cette limitation est intentionnelle.",
-    ],
-  },
-  {
-    q: 'Comment annuler mon abonnement ?',
-    a: "En 1 clic depuis ton tableau de bord — Paramètres → Abonnement → Annuler. Aucun formulaire, aucun email, aucun appel. L'annulation prend effet à la fin de la période en cours. Tes scripts sont conservés 90 jours après l'annulation.",
-  },
+  { q: 'Comment YUBOT analyse-t-il les vidéos virales ?', a: ["YUBOT utilise un système d'analyse automatisé qui scanne des milliers de vidéos YouTube chaque semaine dans les niches business, entrepreneuriat, mindset et IA. L'analyse porte sur le ratio viral — vues divisées par le nombre d'abonnés — pour identifier les vidéos qui ont surperformé leur base normale.", "Chaque vidéo retenue est analysée en profondeur : structure du hook, type de promesse dans l'intro, techniques de re-hook, style de conclusion, rythme narratif. Ces éléments sont classifiés en patterns stockés avec leur score de performance. La base est mise à jour quotidiennement."] },
+  { q: 'Quelle est la différence entre YUBOT et ChatGPT ?', a: ["La différence est fondamentale. ChatGPT est un modèle de langage généraliste — il génère du texte cohérent mais n'a jamais regardé YouTube. Il ne sait pas ce qui retient l'attention sur une vidéo.", "YUBOT est entraîné sur des données de performance YouTube réelles. Chaque structure utilisée vient d'une vidéo qui a sur-performé. Il applique aussi des règles anti-IA strictes : pas de formulations miroir, pas d'exemples inventés, pas de ton coaching. Le résultat sonne humain parce qu'il est conçu pour l'être."] },
+  { q: 'Combien de scripts puis-je générer par mois ?', a: "Starter : 10 scripts/mois. Pro : 50 scripts/mois. Studio : illimité. Les scripts non utilisés sont reportés sur le mois suivant, une fois. Si tu dépasses ton quota, tu peux passer au plan supérieur à tout moment — le changement est immédiat et calculé au prorata." },
+  { q: 'Les scripts sonnent vraiment humains ?', a: ["C'est la priorité numéro un. Chaque script passe un test anti-IA : pas de mots interdits (\"fondamental\", \"indéniablement\", \"en conclusion\"...), rythme irrégulier, fragments assumés, pas d'exemples inventés avec des prénoms génériques.", "Le rythme oral est calibré pour sonner comme un vrai créateur parle — pas comme un texte rédigé. Si ça sonne IA, ça ne part pas."] },
+  { q: "Y a-t-il un essai gratuit ?", a: "7 jours d'essai complet sur le plan de ton choix, sans carte bancaire requise. Tu accèdes à toutes les fonctionnalités dès le premier jour. À la fin, si tu décides de continuer, tu renseignes ton moyen de paiement. Sinon, le compte passe en mode lecture seule — tes scripts restent accessibles." },
+  { q: "Puis-je adapter mon propre texte ?", a: "Oui. L'onglet \"Adapter mon texte\" prend ton contenu brut (article, newsletter, notes, ancien script) et le restructure en format viral sans changer une seule idée. Les mots ajoutés sont signalés en bleu, les passages condensés en orange. Tu vois exactement ce qui a changé." },
+  { q: 'YUBOT fonctionne-t-il pour toutes les niches ?', a: ["YUBOT est optimisé pour les niches business, entrepreneuriat, mindset, IA, argent et carrière. C'est là que notre base de patterns est la plus dense.", "Pour les sujets très éloignés — recettes, sport, jeux vidéo, fiction — YUBOT signalera que le sujet sort de son domaine plutôt que de générer quelque chose d'approximatif. Cette limitation est intentionnelle."] },
+  { q: "Comment annuler mon abonnement ?", a: "En 1 clic depuis ton tableau de bord — Paramètres → Abonnement → Annuler. Aucun formulaire, aucun email, aucun appel. L'annulation prend effet à la fin de la période en cours. Tes scripts sont conservés 90 jours après l'annulation." },
 ];
 
 const INTEGRATIONS = [
@@ -164,742 +183,843 @@ const INTEGRATIONS = [
   { name: 'App native', desc: 'Mac & Windows — applications natives (Q3 2026)', available: false },
 ];
 
-/* ── page ─────────────────────────────────────────────────────── */
+/* ── page ─────────────────────────────────────────────────────────── */
 export default function LandingPage() {
   const [demoTheme, setDemoTheme] = useState('');
   const [demoResult, setDemoResult] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[#0A0A0A] text-[#F5F0E8]">
+    <div className="landing min-h-screen bg-[#050507] text-[#F5F0E8]">
+      <SmoothScroll />
+      <Cursor />
 
-      {/* ── 1. NAV ─────────────────────────────────────────────── */}
-      <nav className="sticky top-0 z-50 border-b border-[#1E1E1E] bg-[#0A0A0A]/90 backdrop-blur-sm">
+      {/* ── NAV ─────────────────────────────────────────────────────── */}
+      <motion.nav
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.6, ease: EASE }}
+        className="sticky top-0 z-50 border-b border-[#1F1F25]/80 bg-[#050507]/85 backdrop-blur-md"
+      >
         <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <span className="w-7 h-7 rounded bg-[#FFE600] flex items-center justify-center text-[#0A0A0A] font-heading font-bold text-sm">Y</span>
+            <motion.span
+              className="w-7 h-7 rounded bg-[#FFE600] flex items-center justify-center text-[#050507] font-heading font-bold text-sm"
+              whileHover={{ scale: 1.12, rotate: 5 }}
+              transition={{ type: 'spring', stiffness: 400 }}
+            >Y</motion.span>
             <span className="font-heading font-semibold tracking-tight">YUBOT</span>
           </div>
           <div className="hidden md:flex items-center gap-6">
-            <a href="#features" className="text-sm text-[#6B6560] hover:text-[#F5F0E8] transition-colors">Fonctionnalités</a>
-            <a href="#pricing" className="text-sm text-[#6B6560] hover:text-[#F5F0E8] transition-colors">Tarifs</a>
-            <Link href="/blog" className="text-sm text-[#6B6560] hover:text-[#F5F0E8] transition-colors">Blog</Link>
-            <a href="#faq" className="text-sm text-[#6B6560] hover:text-[#F5F0E8] transition-colors">FAQ</a>
+            {[['#features', 'Fonctionnalités'], ['#pricing', 'Tarifs'], ['/blog', 'Blog'], ['#faq', 'FAQ']].map(([href, label]) => (
+              <a key={href} href={href} className="text-sm text-[#888] hover:text-[#F5F5F7] transition-colors duration-200">{label}</a>
+            ))}
           </div>
-          <Link
-            href="/generate"
-            className="px-4 py-1.5 bg-[#FFE600] text-[#0A0A0A] text-sm font-semibold rounded hover:bg-[#FFE600]/90 transition-colors"
-          >
-            Essayer gratuitement
-          </Link>
+          <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
+            <Link
+              href="/generate"
+              className="px-4 py-1.5 bg-[#FFE600] text-[#050507] text-sm font-semibold rounded hover:bg-[#FFE600]/90 transition-colors"
+            >
+              Essayer gratuitement
+            </Link>
+          </motion.div>
         </div>
-      </nav>
+      </motion.nav>
 
-      {/* ── 2. HERO ────────────────────────────────────────────── */}
-      <section className="max-w-6xl mx-auto px-6 pt-20 pb-24">
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-16 items-start">
+      {/* ── HERO ─────────────────────────────────────────────────────── */}
+      <section className="relative max-w-6xl mx-auto px-6 pt-20 pb-28 overflow-hidden">
+        {/* ambient glow */}
+        <div className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 w-[700px] h-[400px] rounded-full opacity-[0.07]"
+          style={{ background: 'radial-gradient(ellipse, #FFE600 0%, transparent 70%)' }} />
+        <HeroParticles />
+
+        <div className="relative grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-16 items-start">
           <div className="space-y-8">
-            <div className="space-y-5">
-              <p className="text-xs font-mono text-[#FFE600] tracking-widest uppercase">Agent YouTube IA</p>
-              <h1 className="font-heading text-5xl lg:text-6xl font-bold leading-[1.05] tracking-tight">
-                Le script qui retient.<br />
-                La structure qui <span className="text-[#FFE600]">convertit.</span>
-              </h1>
-              <p className="text-[#6B6560] text-lg leading-relaxed max-w-lg">
-                YUBOT scanne YouTube en permanence, extrait les patterns des vidéos qui explosent, et génère des scripts qui répliquent exactement ce qui fonctionne — dans ta niche, pour ton audience.
-              </p>
-            </div>
-            <div className="flex flex-wrap items-center gap-4">
-              <Link
-                href="/generate"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-[#FFE600] text-[#0A0A0A] font-semibold rounded hover:bg-[#FFE600]/90 transition-colors"
+            <motion.p
+              className="text-xs font-mono text-[#FFE600] tracking-widest uppercase"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+            >
+              Agent YouTube IA
+            </motion.p>
+
+            <h1 className="font-heading text-5xl lg:text-6xl font-bold leading-[1.05] tracking-tight">
+              <WordReveal text="Le script qui retient." delay={0.2} />
+              <br />
+              <WordReveal text="La structure qui" delay={0.35} />{' '}
+              <motion.span
+                className="text-[#FFE600]"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5, delay: 0.7 }}
               >
-                Essayer gratuitement
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </Link>
-              <a href="#how" className="text-sm text-[#6B6560] hover:text-[#F5F0E8] transition-colors">
+                convertit.
+              </motion.span>
+            </h1>
+
+            <motion.p
+              className="text-[#888] text-lg leading-relaxed max-w-lg"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.55 }}
+            >
+              YUBOT scanne YouTube en permanence, extrait les patterns des vidéos qui explosent, et génère des scripts qui répliquent exactement ce qui fonctionne — dans ta niche, pour ton audience.
+            </motion.p>
+
+            <motion.div
+              className="flex flex-wrap items-center gap-4"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.7 }}
+            >
+              <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
+                <Link
+                  href="/generate"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-[#FFE600] text-[#050507] font-semibold rounded hover:bg-[#FFE600]/90 transition-colors"
+                >
+                  Essayer gratuitement
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </Link>
+              </motion.div>
+              <a href="#how" className="text-sm text-[#888] hover:text-[#F5F5F7] transition-colors">
                 Voir comment ça marche →
               </a>
-            </div>
-            <div className="flex items-center gap-8 pt-2">
+            </motion.div>
+
+            <motion.div
+              className="flex items-center gap-10 pt-2"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.9 }}
+            >
               {[
                 { n: '10 247', label: 'vidéos analysées' },
                 { n: '47', label: 'patterns actifs' },
                 { n: '2 540', label: 'créateurs actifs' },
               ].map(({ n, label }) => (
                 <div key={label}>
-                  <p className="font-heading text-2xl font-bold">{n}</p>
-                  <p className="text-xs text-[#6B6560]">{label}</p>
+                  <p className="font-heading text-2xl font-bold"><CountUp value={n} /></p>
+                  <p className="text-xs text-[#888]">{label}</p>
                 </div>
               ))}
-            </div>
+            </motion.div>
           </div>
 
-          {/* mock script */}
-          <div className="border border-[#1E1E1E] rounded-lg bg-[#0F0F0F] overflow-hidden shadow-2xl">
-            <div className="border-b border-[#1E1E1E] px-4 py-3 flex items-center gap-2">
-              <div className="w-2.5 h-2.5 rounded-full bg-[#2A2A2A]" />
-              <div className="w-2.5 h-2.5 rounded-full bg-[#2A2A2A]" />
-              <div className="w-2.5 h-2.5 rounded-full bg-[#2A2A2A]" />
-              <span className="ml-2 text-xs text-[#3A3A3A] font-mono">script_viral.docx</span>
-              <span className="ml-auto text-xs text-[#3A3A3A] font-mono">Généré il y a 4s</span>
-            </div>
-            <div className="px-4 py-2 bg-[#0D0D0D] border-b border-[#1E1E1E]">
-              <p className="text-xs text-[#6B6560] font-mono">Thème : Comment gagner du temps avec l&apos;IA en 2026</p>
-            </div>
-            <div className="p-5 space-y-4">
-              {MOCK_SCRIPT.map(({ label, color, bg, text }) => (
-                <div key={label} className="rounded border-l-2 p-3" style={{ borderLeftColor: color, backgroundColor: bg }}>
-                  <p className="text-xs font-mono font-bold mb-2 tracking-widest" style={{ color }}>{label}</p>
-                  <p className="text-sm text-[#C4BFB7] leading-relaxed">{text}</p>
-                </div>
-              ))}
-              <div className="flex items-center gap-1.5 pt-1">
-                <div className="h-px flex-1 bg-[#1E1E1E]" />
-                <span className="text-xs text-[#3A3A3A] font-mono">+ 5 sections</span>
-                <div className="h-px flex-1 bg-[#1E1E1E]" />
+          {/* mock script card */}
+          <motion.div
+            initial={{ opacity: 0, x: 30, rotateY: -8 }}
+            animate={{ opacity: 1, x: 0, rotateY: 0 }}
+            transition={{ duration: 0.9, delay: 0.4, ease: EASE }}
+            style={{ perspective: 1200 }}
+          >
+            <div className="border border-[#1F1F25] rounded-xl bg-[#0F0F12] overflow-hidden shadow-2xl shadow-black/50">
+              <div className="border-b border-[#1F1F25] px-4 py-3 flex items-center gap-2">
+                <div className="w-2.5 h-2.5 rounded-full bg-[#2A2A30]" />
+                <div className="w-2.5 h-2.5 rounded-full bg-[#2A2A30]" />
+                <div className="w-2.5 h-2.5 rounded-full bg-[#2A2A30]" />
+                <span className="ml-2 text-xs text-[#3A3A44] font-mono">script_viral.docx</span>
+                <span className="ml-auto text-xs font-mono" style={{ color: '#FFE60060' }}>Généré il y a 4s</span>
+              </div>
+              <div className="px-4 py-2 bg-[#0D0D10] border-b border-[#1F1F25]">
+                <p className="text-xs text-[#888] font-mono">Thème : Comment gagner du temps avec l&apos;IA en 2026</p>
+              </div>
+              <div className="p-5 space-y-3">
+                {MOCK_SCRIPT.map(({ label, color, bg, text }, i) => (
+                  <motion.div
+                    key={label}
+                    initial={{ opacity: 0, x: -12 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.5, delay: 0.6 + i * 0.15 }}
+                    className="rounded border-l-2 p-3"
+                    style={{ borderLeftColor: color, backgroundColor: bg }}
+                  >
+                    <p className="text-xs font-mono font-bold mb-2 tracking-widest" style={{ color }}>{label}</p>
+                    <p className="text-sm text-[#C4BFB7] leading-relaxed">{text}</p>
+                  </motion.div>
+                ))}
+                <motion.div
+                  className="flex items-center gap-1.5 pt-1"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 1.1 }}
+                >
+                  <div className="h-px flex-1 bg-[#1F1F25]" />
+                  <span className="text-xs text-[#3A3A44] font-mono">+ 5 sections</span>
+                  <div className="h-px flex-1 bg-[#1F1F25]" />
+                </motion.div>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </section>
 
-      {/* ── 3. SOCIAL PROOF ────────────────────────────────────── */}
-      <section className="border-t border-b border-[#1E1E1E] bg-[#0D0D0D]">
+      {/* ── SOCIAL PROOF ─────────────────────────────────────────────── */}
+      <section className="border-t border-b border-[#1F1F25] bg-[#0D0D10]">
         <div className="max-w-6xl mx-auto px-6 py-8">
-          <p className="text-xs text-[#3A3A3A] text-center mb-6 uppercase tracking-widest font-mono">Utilisé par des créateurs qui prennent leurs résultats au sérieux</p>
-          <div className="flex flex-wrap justify-center gap-x-10 gap-y-3">
+          <FadeUp>
+            <p className="text-xs text-[#3A3A44] text-center mb-6 uppercase tracking-widest font-mono">
+              Utilisé par des créateurs qui prennent leurs résultats au sérieux
+            </p>
+          </FadeUp>
+          <Stagger className="flex flex-wrap justify-center gap-x-10 gap-y-3">
             {['La Clé des Marchés', 'Marketing Flow', 'Mindset Business', 'Code & Café', 'Léa Creates', 'Finance Réelle', "L'Atelier Vidéo", 'Startup Stories'].map(name => (
-              <span key={name} className="text-sm text-[#3A3A3A] font-heading font-semibold">{name}</span>
+              <motion.span key={name} variants={fadeUpChild} className="text-sm text-[#3A3A44] font-heading font-semibold hover:text-[#888] transition-colors duration-200">
+                {name}
+              </motion.span>
             ))}
-          </div>
-          <p className="text-center text-xs text-[#6B6560] mt-6">+ 2 500 créateurs font confiance à YUBOT</p>
+          </Stagger>
+          <FadeUp delay={0.2}>
+            <p className="text-center text-xs text-[#888] mt-6">+ 2 500 créateurs font confiance à YUBOT</p>
+          </FadeUp>
         </div>
       </section>
 
-      {/* ── 4. LE PROBLÈME ─────────────────────────────────────── */}
-      <section className="border-b border-[#1E1E1E]">
+      {/* ── LE PROBLÈME ──────────────────────────────────────────────── */}
+      <section className="border-b border-[#1F1F25]">
         <div className="max-w-6xl mx-auto px-6 py-20">
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_420px] gap-16 items-start">
             <div className="space-y-6">
-              <div>
-                <p className="text-xs font-mono text-[#FFE600] tracking-widest uppercase mb-4">Le problème</p>
+              <SectionLabel>Le problème</SectionLabel>
+              <FadeUp>
                 <h2 className="font-heading text-3xl lg:text-4xl font-bold leading-tight">
                   Tu sais ce qui tue 99% des vidéos YouTube ?
                 </h2>
-              </div>
-              <div className="space-y-4 text-[#6B6560] leading-relaxed">
-                <p>C&apos;est pas la qualité de l&apos;image. Pas le montage. Pas même le sujet. Des dizaines de milliers de vidéos en 4K sur des sujets brillants moisissent à 200 vues. La différence ne se voit pas à l&apos;écran. Elle se lit dans le script.</p>
-                <p>YouTube a changé. L&apos;attention des spectateurs aussi. En 2020, une intro de 90 secondes passait encore. Aujourd&apos;hui, t&apos;as 6 secondes. Six secondes pour que l&apos;algorithme décide si ta vidéo mérite d&apos;être montrée. La plupart des créateurs le savent — mais personne ne leur a jamais montré comment construire ces 6 secondes.</p>
-                <p>Les patterns viraux changent tous les 45 jours environ. Ce qui marchait en mars ne marche plus en juin. Analyser 10 vidéos virales en profondeur, ça prend une journée. Et pendant ce temps, t&apos;es pas en train de créer.</p>
-              </div>
+              </FadeUp>
+              <Stagger className="space-y-4 text-[#888] leading-relaxed" delay={0.1}>
+                {[
+                  "C'est pas la qualité de l'image. Pas le montage. Pas même le sujet. Des dizaines de milliers de vidéos en 4K sur des sujets brillants moisissent à 200 vues. La différence ne se voit pas à l'écran. Elle se lit dans le script.",
+                  "YouTube a changé. L'attention des spectateurs aussi. En 2020, une intro de 90 secondes passait encore. Aujourd'hui, t'as 6 secondes. Six secondes pour que l'algorithme décide si ta vidéo mérite d'être montrée. La plupart des créateurs le savent — mais personne ne leur a jamais montré comment construire ces 6 secondes.",
+                  "Les patterns viraux changent tous les 45 jours environ. Ce qui marchait en mars ne marche plus en juin. Analyser 10 vidéos virales en profondeur, ça prend une journée. Et pendant ce temps, t'es pas en train de créer.",
+                ].map((p, i) => (
+                  <motion.p key={i} variants={fadeUpChild}>{p}</motion.p>
+                ))}
+              </Stagger>
             </div>
             <div className="space-y-4">
-              <div className="border border-[#1E1E1E] rounded-lg p-6 bg-[#0D0D0D]">
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="w-1.5 h-1.5 rounded-full bg-[#FFE600]" />
-                  <span className="text-xs font-mono text-[#6B6560] uppercase tracking-widest">Temps d&apos;accroche critique</span>
+              <FadeUp delay={0.2}>
+                <div className="border border-[#1F1F25] rounded-xl p-6 bg-[#0D0D10]">
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="w-1.5 h-1.5 rounded-full bg-[#FFE600]" />
+                    <span className="text-xs font-mono text-[#888] uppercase tracking-widest">Temps d&apos;accroche critique</span>
+                  </div>
+                  <div className="space-y-2">
+                    {[
+                      { year: '2020', pct: '100%', s: '15s' },
+                      { year: '2022', pct: '67%', s: '10s' },
+                      { year: '2024', pct: '53%', s: '8s' },
+                      { year: '2026', pct: '40%', s: '6s' },
+                    ].map(({ year, pct, s }, i) => (
+                      <ProgressBar key={year} year={year} pct={pct} s={s} i={i} />
+                    ))}
+                  </div>
+                  <p className="text-xs text-[#3A3A44] mt-4 font-mono">Le temps d&apos;accroche est passé de 15s à 6s.</p>
                 </div>
-                <div className="space-y-2">
-                  {[
-                    { year: '2020', seconds: 15, pct: '100%' },
-                    { year: '2022', seconds: 10, pct: '67%' },
-                    { year: '2024', seconds: 8, pct: '53%' },
-                    { year: '2026', seconds: 6, pct: '40%' },
-                  ].map(({ year, seconds, pct }) => (
-                    <div key={year} className="flex items-center gap-3">
-                      <span className="text-xs font-mono text-[#3A3A3A] w-8">{year}</span>
-                      <div className="flex-1 h-1 bg-[#1E1E1E] rounded-full overflow-hidden">
-                        <div className="h-full bg-[#FFE600]/60 rounded-full" style={{ width: pct }} />
-                      </div>
-                      <span className="text-xs font-mono text-[#6B6560] w-12 text-right">{seconds}s</span>
-                    </div>
-                  ))}
-                </div>
-                <p className="text-xs text-[#3A3A3A] mt-4 font-mono">Le temps d&apos;accroche est passé de 15s à 6s.</p>
-              </div>
-              <blockquote className="border border-[#1E1E1E] rounded-lg p-6 bg-[#0D0D0D] space-y-3">
-                <div className="w-6 h-0.5 bg-[#FFE600]" />
-                <p className="text-sm text-[#C4BFB7] leading-relaxed italic">
-                  &ldquo;J&apos;ai passé 6 mois à créer du contenu régulièrement. Des vidéos soignées. Des sujets pertinents. Aucune ne dépassait 400 vues. C&apos;est le genre de truc qui te fait remettre en question tout ce que tu fais.&rdquo;
-                </p>
-                <p className="text-xs text-[#6B6560]">— Thomas L., créateur business, 250K abonnés aujourd&apos;hui</p>
-              </blockquote>
+              </FadeUp>
+              <FadeUp delay={0.35}>
+                <blockquote className="border border-[#1F1F25] rounded-xl p-6 bg-[#0D0D10] space-y-3">
+                  <div className="w-6 h-0.5 bg-[#FFE600]" />
+                  <p className="text-sm text-[#C4BFB7] leading-relaxed italic">
+                    &ldquo;J&apos;ai passé 6 mois à créer du contenu régulièrement. Des vidéos soignées. Des sujets pertinents. Aucune ne dépassait 400 vues. C&apos;est le genre de truc qui te fait remettre en question tout ce que tu fais.&rdquo;
+                  </p>
+                  <p className="text-xs text-[#888]">— Thomas L., créateur business, 250K abonnés aujourd&apos;hui</p>
+                </blockquote>
+              </FadeUp>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── 5. LA SOLUTION ─────────────────────────────────────── */}
-      <section className="border-b border-[#1E1E1E] bg-[#0D0D0D]">
+      {/* ── LA SOLUTION ──────────────────────────────────────────────── */}
+      <section className="border-b border-[#1F1F25] bg-[#0D0D10]">
         <div className="max-w-6xl mx-auto px-6 py-20">
           <div className="max-w-2xl">
-            <p className="text-xs font-mono text-[#FFE600] tracking-widest uppercase mb-4">La solution</p>
-            <h2 className="font-heading text-3xl lg:text-4xl font-bold leading-tight mb-8">
-              On a lu YouTube à ta place.
-            </h2>
-            <div className="space-y-5 text-[#6B6560] leading-relaxed">
-              <p>YUBOT ne génère pas des scripts à partir de rien. Il commence par analyser. Chaque jour, notre système scanne des milliers de vidéos dans les niches business, entrepreneuriat, mindset, IA et argent. Il mesure le ratio viral — vues vs abonnés — pour ne retenir que les vidéos qui ont surperformé leur base d&apos;audience.</p>
-              <p>Ensuite, il décortique. Structure du hook. Longueur de l&apos;intro. Nombre de re-hooks dans le corps. Technique de conclusion. Rythme des phrases. On identifie les patterns qui se répètent dans les vidéos qui fonctionnent — et seulement celles-là.</p>
-              <p>Enfin, il génère. Tu donnes un thème. YUBOT sélectionne les patterns les plus adaptés à ton sujet, à ta durée cible, à ton ton. Et il produit un script complet — hook, intro, 3 actes, re-hook, conclusion — avec le rythme oral qui correspond à ce que les spectateurs restent à regarder.</p>
-            </div>
+            <SectionLabel>La solution</SectionLabel>
+            <FadeUp>
+              <h2 className="font-heading text-3xl lg:text-4xl font-bold leading-tight mb-8">
+                On a lu YouTube à ta place.
+              </h2>
+            </FadeUp>
+            <Stagger className="space-y-5 text-[#888] leading-relaxed" delay={0.1}>
+              {[
+                "YUBOT ne génère pas des scripts à partir de rien. Il commence par analyser. Chaque jour, notre système scanne des milliers de vidéos dans les niches business, entrepreneuriat, mindset, IA et argent. Il mesure le ratio viral — vues vs abonnés — pour ne retenir que les vidéos qui ont surperformé leur base d'audience.",
+                "Ensuite, il décortique. Structure du hook. Longueur de l'intro. Nombre de re-hooks dans le corps. Technique de conclusion. Rythme des phrases. On identifie les patterns qui se répètent dans les vidéos qui fonctionnent — et seulement celles-là.",
+                "Enfin, il génère. Tu donnes un thème. YUBOT sélectionne les patterns les plus adaptés à ton sujet, à ta durée cible, à ton ton. Et il produit un script complet — hook, intro, 3 actes, re-hook, conclusion — avec le rythme oral qui correspond à ce que les spectateurs restent à regarder.",
+              ].map((p, i) => (
+                <motion.p key={i} variants={fadeUpChild}>{p}</motion.p>
+              ))}
+            </Stagger>
           </div>
         </div>
       </section>
 
-      {/* ── 6. COMMENT ÇA MARCHE ───────────────────────────────── */}
-      <section id="how" className="border-b border-[#1E1E1E]">
+      {/* ── COMMENT ÇA MARCHE ────────────────────────────────────────── */}
+      <section id="how" className="border-b border-[#1F1F25]">
         <div className="max-w-6xl mx-auto px-6 py-20">
-          <p className="text-xs font-mono text-[#FFE600] tracking-widest uppercase mb-4">Le processus</p>
-          <h2 className="font-heading text-3xl font-bold mb-14">Comment ça marche</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-[#1E1E1E]">
+          <SectionLabel>Le processus</SectionLabel>
+          <FadeUp><h2 className="font-heading text-3xl font-bold mb-14">Comment ça marche</h2></FadeUp>
+          <Stagger className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-[#1F1F25]" delay={0.1}>
             {[
-              {
-                n: '01',
-                title: 'On scanne YouTube en permanence.',
-                desc: 'Notre système analyse des dizaines de milliers de vidéos chaque semaine. On mesure le ratio viral — vues obtenues versus abonnés — pas les vues brutes.',
-                stat: '10 247 vidéos analysées',
-              },
-              {
-                n: '02',
-                title: 'On filtre les vraies pépites.',
-                desc: "Seulement 3% des vidéos passent nos filtres. Critères : ratio viral minimum, engagement réel, fraîcheur du contenu. Ce qui reste, c'est l'élite.",
-                stat: '3% passent nos filtres',
-              },
-              {
-                n: '03',
-                title: 'On extrait les patterns gagnants.',
-                desc: "Chaque vidéo retenue est analysée : hook, promesse, re-hooks, conclusion. On mesure les taux de succès et classe par efficacité.",
-                stat: '47 patterns actifs',
-              },
-              {
-                n: '04',
-                title: 'Tu génères ton script en 90s.',
-                desc: 'Tu donnes un thème. YUBOT sélectionne les patterns adaptés, construit la structure, rédige le texte à dire mot pour mot.',
-                stat: 'Génération moyenne : 87s',
-              },
+              { n: '01', title: 'On scanne YouTube en permanence.', desc: 'Notre système analyse des dizaines de milliers de vidéos chaque semaine. On mesure le ratio viral — vues obtenues versus abonnés — pas les vues brutes.', stat: '10 247 vidéos analysées' },
+              { n: '02', title: 'On filtre les vraies pépites.', desc: "Seulement 3% des vidéos passent nos filtres. Critères : ratio viral minimum, engagement réel, fraîcheur du contenu. Ce qui reste, c'est l'élite.", stat: '3% passent nos filtres' },
+              { n: '03', title: 'On extrait les patterns gagnants.', desc: "Chaque vidéo retenue est analysée : hook, promesse, re-hooks, conclusion. On mesure les taux de succès et classe par efficacité.", stat: '47 patterns actifs' },
+              { n: '04', title: 'Tu génères ton script en 90s.', desc: 'Tu donnes un thème. YUBOT sélectionne les patterns adaptés, construit la structure, rédige le texte à dire mot pour mot.', stat: 'Génération moyenne : 87s' },
             ].map(({ n, title, desc, stat }) => (
-              <div key={n} className="bg-[#0A0A0A] p-8 space-y-4">
-                <span className="font-heading text-5xl font-bold text-[#1E1E1E]">{n}</span>
+              <motion.div
+                key={n}
+                variants={fadeUpChild}
+                className="bg-[#050507] p-8 space-y-4 group hover:bg-[#0D0D10] transition-colors duration-300"
+              >
+                <span className="font-heading text-5xl font-bold text-[#1F1F25] group-hover:text-[#2A2A30] transition-colors">{n}</span>
                 <h3 className="font-heading text-base font-semibold leading-snug">{title}</h3>
-                <p className="text-sm text-[#6B6560] leading-relaxed">{desc}</p>
+                <p className="text-sm text-[#888] leading-relaxed">{desc}</p>
                 <p className="text-xs font-mono text-[#FFE600] pt-2">{stat}</p>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </Stagger>
         </div>
       </section>
 
-      {/* ── 7. FEATURES PRINCIPALES ────────────────────────────── */}
-      <section id="features" className="border-b border-[#1E1E1E] bg-[#0D0D0D]">
+      {/* ── FEATURES ─────────────────────────────────────────────────── */}
+      <section id="features" className="border-b border-[#1F1F25] bg-[#0D0D10]">
         <div className="max-w-6xl mx-auto px-6 py-20">
-          <p className="text-xs font-mono text-[#FFE600] tracking-widest uppercase mb-4">Ce que YUBOT fait concrètement</p>
-          <h2 className="font-heading text-3xl font-bold mb-16">5 outils. Un workflow complet.</h2>
+          <SectionLabel>Ce que YUBOT fait concrètement</SectionLabel>
+          <FadeUp><h2 className="font-heading text-3xl font-bold mb-16">5 outils. Un workflow complet.</h2></FadeUp>
 
           <div className="space-y-20">
-
             {/* Feature 1 */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              <div className="space-y-5">
+              <FadeUp className="space-y-5">
                 <div className="w-6 h-0.5 bg-[#FFE600]" />
                 <h3 className="font-heading text-2xl font-bold">Un script complet. Basé sur ce qui marche vraiment.</h3>
-                <div className="space-y-3 text-[#6B6560] text-sm leading-relaxed">
+                <div className="space-y-3 text-[#888] text-sm leading-relaxed">
                   <p>Tu donnes un thème. YUBOT génère un script entier — pas une ébauche, pas un plan, un texte à dire mot pour mot. Hook calibré pour les 6 premières secondes critiques. Intro qui pose une promesse claire. Corps structuré en 3 actes avec re-hooks intégrés. Conclusion qui ferme le loop sans tomber dans le CTA commercial.</p>
                   <p>Chaque section est accompagnée de notes créateur : pourquoi ce hook, quel pattern est utilisé, quel type de vidéo a inspiré la structure. Tu comprends ce que tu lis.</p>
                   <p>7 tons disponibles : viral, éducatif, storytelling, tutoriel, provocateur, inspirant, analytique.</p>
                 </div>
-                <p className="text-sm text-[#F5F0E8] font-medium">Plus besoin de passer 3 heures sur un script. Tu n&apos;as plus qu&apos;à filmer.</p>
-              </div>
-              <div className="border border-[#1E1E1E] rounded-lg overflow-hidden">
-                <div className="border-b border-[#1E1E1E] px-4 py-2 bg-[#111111] flex items-center gap-2">
-                  <span className="text-xs font-mono text-[#6B6560]">Onglet : Générer un script</span>
-                </div>
-                <div className="p-5 space-y-3 bg-[#0F0F0F]">
-                  {[
-                    { label: '[HOOK]', color: '#DC2626', bg: '#1F0A0A', text: "T'es en train de perdre 80% de tes spectateurs dans les 30 premières secondes. Voilà pourquoi — et comment l'arrêter." },
-                    { label: '[INTRO]', color: '#2563EB', bg: '#0A0F1F', text: "Cette vidéo est basée sur 3 ans d'analyse de 10 000 vidéos YouTube. Ce que tu vas apprendre, ça prend normalement des mois à comprendre seul." },
-                    { label: '[NOTES CRÉATEUR]', color: '#6B7280', bg: '#0F0F0F', text: 'Hook utilisé : Chiffre choc + promesse de solution. Score viral moyen de ce pattern : 14x.' },
-                  ].map(({ label, color, bg, text }) => (
-                    <div key={label} className="rounded border-l-2 p-3" style={{ borderLeftColor: color, backgroundColor: bg }}>
-                      <p className="text-xs font-mono font-bold mb-1.5" style={{ color }}>{label}</p>
-                      <p className="text-xs text-[#C4BFB7] leading-relaxed">{text}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
+                <p className="text-sm text-[#F5F5F7] font-medium">Plus besoin de passer 3 heures sur un script. Tu n&apos;as plus qu&apos;à filmer.</p>
+              </FadeUp>
+              <FadeUp delay={0.15}>
+                <TiltCard className="border border-[#1F1F25] rounded-xl overflow-hidden group relative">
+                  <div className="border-b border-[#1F1F25] px-4 py-2 bg-[#111114] flex items-center gap-2">
+                    <span className="text-xs font-mono text-[#888]">Onglet : Générer un script</span>
+                  </div>
+                  <div className="p-5 space-y-3 bg-[#0F0F12]">
+                    {[
+                      { label: '[HOOK]', color: '#DC2626', bg: '#1F0A0A', text: "T'es en train de perdre 80% de tes spectateurs dans les 30 premières secondes. Voilà pourquoi — et comment l'arrêter." },
+                      { label: '[INTRO]', color: '#2563EB', bg: '#0A0F1F', text: "Cette vidéo est basée sur 3 ans d'analyse de 10 000 vidéos YouTube. Ce que tu vas apprendre, ça prend normalement des mois à comprendre seul." },
+                      { label: '[NOTES CRÉATEUR]', color: '#6B7280', bg: '#0F0F12', text: 'Hook utilisé : Chiffre choc + promesse de solution. Score viral moyen de ce pattern : 14x.' },
+                    ].map(({ label, color, bg, text }) => (
+                      <div key={label} className="rounded border-l-2 p-3" style={{ borderLeftColor: color, backgroundColor: bg }}>
+                        <p className="text-xs font-mono font-bold mb-1.5" style={{ color }}>{label}</p>
+                        <p className="text-xs text-[#C4BFB7] leading-relaxed">{text}</p>
+                      </div>
+                    ))}
+                  </div>
+                </TiltCard>
+              </FadeUp>
             </div>
 
-            <div className="border-t border-[#1E1E1E]" />
+            <div className="border-t border-[#1F1F25]" />
 
             {/* Feature 2 */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              <div className="order-2 lg:order-1 border border-[#1E1E1E] rounded-lg overflow-hidden">
-                <div className="border-b border-[#1E1E1E] px-4 py-2 bg-[#111111]">
-                  <span className="text-xs font-mono text-[#6B6560]">Onglet : Adapter mon texte</span>
-                </div>
-                <div className="p-5 bg-[#0F0F0F] space-y-3">
-                  <div className="p-3 rounded border border-[#1E1E1E] bg-[#111111]">
-                    <p className="text-xs font-mono text-[#3A3A3A] mb-1">Texte original</p>
-                    <p className="text-xs text-[#6B6560] leading-relaxed">L&apos;intelligence artificielle transforme le marché du travail. Selon une étude récente, 40% des tâches actuelles pourront être automatisées d&apos;ici 2030...</p>
+              <FadeUp delay={0.15} className="order-2 lg:order-1">
+                <TiltCard className="border border-[#1F1F25] rounded-xl overflow-hidden group relative">
+                  <div className="border-b border-[#1F1F25] px-4 py-2 bg-[#111114]">
+                    <span className="text-xs font-mono text-[#888]">Onglet : Adapter mon texte</span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <div className="flex-1 h-px bg-[#FFE600]/30" />
-                    <span className="text-xs font-mono text-[#FFE600]">→ adapté</span>
-                    <div className="flex-1 h-px bg-[#FFE600]/30" />
+                  <div className="p-5 bg-[#0F0F12] space-y-3">
+                    <div className="p-3 rounded border border-[#1F1F25] bg-[#111114]">
+                      <p className="text-xs font-mono text-[#3A3A44] mb-1">Texte original</p>
+                      <p className="text-xs text-[#888] leading-relaxed">L&apos;intelligence artificielle transforme le marché du travail. Selon une étude récente, 40% des tâches actuelles pourront être automatisées d&apos;ici 2030...</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="flex-1 h-px bg-[#FFE600]/30" />
+                      <span className="text-xs font-mono text-[#FFE600]">→ adapté</span>
+                      <div className="flex-1 h-px bg-[#FFE600]/30" />
+                    </div>
+                    <div className="p-3 rounded border-l-2 border-[#DC2626] bg-[#1F0A0A]">
+                      <p className="text-xs font-mono text-[#DC2626] font-bold mb-1.5">[HOOK]</p>
+                      <p className="text-xs text-[#C4BFB7] leading-relaxed">
+                        40% de ton boulot disparaît d&apos;ici 2030. Pas dans 50 ans. Dans 5 ans.{' '}
+                        <span className="px-0.5 rounded" style={{ backgroundColor: '#0D2235', color: '#93C5FD' }}>La question n&apos;est pas si ça va arriver. La question, c&apos;est ce que tu vas faire avant. [+]</span>
+                      </p>
+                    </div>
                   </div>
-                  <div className="p-3 rounded border-l-2 border-[#DC2626] bg-[#1F0A0A]">
-                    <p className="text-xs font-mono text-[#DC2626] font-bold mb-1.5">[HOOK]</p>
-                    <p className="text-xs text-[#C4BFB7] leading-relaxed">
-                      40% de ton boulot disparaît d&apos;ici 2030. Pas dans 50 ans. Dans 5 ans.{' '}
-                      <span className="px-0.5 rounded" style={{ backgroundColor: '#0D2235', color: '#93C5FD' }}>La question n&apos;est pas si ça va arriver. La question, c&apos;est ce que tu vas faire avant. [+]</span>
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className="order-1 lg:order-2 space-y-5">
+                </TiltCard>
+              </FadeUp>
+              <FadeUp className="order-1 lg:order-2 space-y-5">
                 <div className="w-6 h-0.5 bg-[#FFE600]" />
                 <h3 className="font-heading text-2xl font-bold">T&apos;as déjà un texte. On lui donne une forme qui retient.</h3>
-                <div className="space-y-3 text-[#6B6560] text-sm leading-relaxed">
+                <div className="space-y-3 text-[#888] text-sm leading-relaxed">
                   <p>Tu as un article de blog, une newsletter, des notes de cours, un script existant qui n&apos;a pas fonctionné. Tu colles le texte. YUBOT restructure sans toucher au fond.</p>
                   <p>Les faits restent les faits. Tes opinions restent tes opinions. Ce que YUBOT change : l&apos;ordre des informations, la formulation pour un rythme oral, la structure pour hook → intro → corps → conclusion. Ce qui a été ajouté est signalé en bleu. Ce qui a été condensé en orange.</p>
                   <p>L&apos;outil calcule aussi l&apos;écart entre la longueur de ton texte et la durée cible. Tu peux autoriser YUBOT à compléter — sans inventer de faits.</p>
                 </div>
-                <p className="text-sm text-[#F5F0E8] font-medium">Ton contenu existant peut performer 3x mieux. Le fond ne change pas. La forme fait tout.</p>
-              </div>
+                <p className="text-sm text-[#F5F5F7] font-medium">Ton contenu existant peut performer 3x mieux. Le fond ne change pas. La forme fait tout.</p>
+              </FadeUp>
             </div>
 
-            <div className="border-t border-[#1E1E1E]" />
+            <div className="border-t border-[#1F1F25]" />
 
-            {/* Feature 3, 4, 5 — cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {/* Feature cards */}
+            <Stagger className="grid grid-cols-1 md:grid-cols-3 gap-5" delay={0.1}>
               {[
-                {
-                  title: '47 patterns viraux. Transparents, explorables.',
-                  desc: "YUBOT n'est pas une boîte noire. Tu peux explorer la bibliothèque de patterns — pour chaque pattern : type, ton associé, durée optimale, score viral moyen, exemples sources. Mise à jour quotidiennement.",
-                },
-                {
-                  title: 'Ce qui marche dans ta niche. Cette semaine.',
-                  desc: "Les patterns viraux ont une durée de vie. YUBOT suit leur évolution en temps réel et signale les patterns émergents. Dashboard tendances : quels hooks gagnent des parts d'attention ce mois-ci.",
-                },
-                {
-                  title: 'Prêt à imprimer. Prêt à partager. Prêt à tourner.',
-                  desc: 'Export .docx avec mise en forme professionnelle. Les sections sont colorées par type. Les notes créateur sont séparées visuellement. Quelqu\'un qui n\'a jamais utilisé YUBOT peut prendre ce document et filmer.',
-                },
+                { title: '47 patterns viraux. Transparents, explorables.', desc: "YUBOT n'est pas une boîte noire. Tu peux explorer la bibliothèque de patterns — pour chaque pattern : type, ton associé, durée optimale, score viral moyen, exemples sources. Mise à jour quotidiennement." },
+                { title: 'Ce qui marche dans ta niche. Cette semaine.', desc: "Les patterns viraux ont une durée de vie. YUBOT suit leur évolution en temps réel et signale les patterns émergents. Dashboard tendances : quels hooks gagnent des parts d'attention ce mois-ci." },
+                { title: 'Prêt à imprimer. Prêt à partager. Prêt à tourner.', desc: "Export .docx avec mise en forme professionnelle. Les sections sont colorées par type. Les notes créateur sont séparées visuellement. Quelqu'un qui n'a jamais utilisé YUBOT peut prendre ce document et filmer." },
               ].map(({ title, desc }) => (
-                <div key={title} className="border border-[#1E1E1E] rounded-lg p-6 space-y-3 bg-[#0A0A0A]">
-                  <div className="w-6 h-0.5 bg-[#FFE600]" />
-                  <h3 className="font-heading text-base font-semibold leading-snug">{title}</h3>
-                  <p className="text-sm text-[#6B6560] leading-relaxed">{desc}</p>
-                </div>
+                <motion.div key={title} variants={fadeUpChild}>
+                  <TiltCard className="border border-[#1F1F25] rounded-xl p-6 space-y-3 bg-[#050507] group relative h-full">
+                    <div className="w-6 h-0.5 bg-[#FFE600]" />
+                    <h3 className="font-heading text-base font-semibold leading-snug">{title}</h3>
+                    <p className="text-sm text-[#888] leading-relaxed">{desc}</p>
+                  </TiltCard>
+                </motion.div>
               ))}
-            </div>
-
+            </Stagger>
           </div>
         </div>
       </section>
 
-      {/* ── 8. DÉMO INTERACTIVE ────────────────────────────────── */}
-      <section className="border-b border-[#1E1E1E]">
+      {/* ── DÉMO INTERACTIVE ─────────────────────────────────────────── */}
+      <section className="border-b border-[#1F1F25]">
         <div className="max-w-3xl mx-auto px-6 py-20">
-          <p className="text-xs font-mono text-[#FFE600] tracking-widest uppercase mb-4">Démo interactive</p>
-          <h2 className="font-heading text-3xl font-bold mb-2">Essaye YUBOT maintenant. Sans inscription.</h2>
-          <p className="text-[#6B6560] mb-8">Donne un thème. Vois un extrait de script généré. Tu décides ensuite si tu veux le script complet.</p>
+          <SectionLabel>Démo interactive</SectionLabel>
+          <FadeUp>
+            <h2 className="font-heading text-3xl font-bold mb-2">Essaye YUBOT maintenant. Sans inscription.</h2>
+            <p className="text-[#888] mb-8">Donne un thème. Vois un extrait de script généré. Tu décides ensuite si tu veux le script complet.</p>
+          </FadeUp>
 
-          <div className="border border-[#1E1E1E] rounded-lg bg-[#0D0D0D] p-6 space-y-5">
-            <div className="flex flex-wrap gap-2">
-              {DEMO_THEMES.map(t => (
-                <button
-                  key={t}
-                  onClick={() => setDemoTheme(t)}
-                  className={`px-3 py-1.5 text-xs rounded border transition-colors ${demoTheme === t ? 'bg-[#FFE600]/10 text-[#FFE600] border-[#FFE600]/30' : 'border-[#1E1E1E] text-[#6B6560] hover:border-[#2E2E2E] hover:text-[#F5F0E8]'}`}
+          <FadeUp delay={0.15}>
+            <div className="border border-[#1F1F25] rounded-xl bg-[#0D0D10] p-6 space-y-5">
+              <div className="flex flex-wrap gap-2">
+                {DEMO_THEMES.map(t => (
+                  <motion.button
+                    key={t}
+                    onClick={() => setDemoTheme(t)}
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
+                    className={`px-3 py-1.5 text-xs rounded border transition-colors ${demoTheme === t ? 'bg-[#FFE600]/10 text-[#FFE600] border-[#FFE600]/30' : 'border-[#1F1F25] text-[#888] hover:border-[#2E2E38] hover:text-[#F5F5F7]'}`}
+                  >
+                    {t}
+                  </motion.button>
+                ))}
+              </div>
+
+              <div>
+                <label className="block text-xs font-mono text-[#888] mb-2">Ou saisis un thème personnalisé</label>
+                <input
+                  value={demoTheme}
+                  onChange={e => { setDemoTheme(e.target.value); setDemoResult(false); }}
+                  placeholder="Ex : Pourquoi les riches ne travaillent pas plus dur"
+                  className="w-full px-3 py-2.5 text-sm border border-[#1F1F25] rounded-lg bg-[#111114] text-[#F5F5F7] placeholder-[#3A3A44] focus:outline-none focus:border-[#FFE600]/40 focus:ring-1 focus:ring-[#FFE600]/10 transition-colors"
+                />
+              </div>
+
+              <motion.button
+                onClick={() => demoTheme.trim() && setDemoResult(true)}
+                disabled={!demoTheme.trim()}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="w-full py-2.5 bg-[#FFE600] text-[#050507] font-semibold text-sm rounded-lg hover:bg-[#FFE600]/90 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+              >
+                Générer l&apos;aperçu
+              </motion.button>
+
+              <AnimatePresence>
+                {demoResult && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 8 }}
+                    transition={{ duration: 0.4, ease: EASE }}
+                    className="space-y-4 pt-2"
+                  >
+                    <div className="flex items-center gap-2">
+                      <div className="h-px flex-1 bg-[#1F1F25]" />
+                      <span className="text-xs font-mono text-[#FFE600]">Aperçu généré</span>
+                      <div className="h-px flex-1 bg-[#1F1F25]" />
+                    </div>
+                    {DEMO_RESULT.map(({ label, color, bg, text }) => (
+                      <div key={label} className="rounded border-l-2 p-3" style={{ borderLeftColor: color, backgroundColor: bg }}>
+                        <p className="text-xs font-mono font-bold mb-1.5" style={{ color }}>[{label}]</p>
+                        <p className="text-sm text-[#C4BFB7] leading-relaxed">{text}</p>
+                      </div>
+                    ))}
+                    <div className="border border-[#1F1F25] rounded-lg p-3 bg-[#111114] flex items-center justify-between">
+                      <p className="text-xs text-[#888]">Script complet : 8 sections • notes créateur • export Word</p>
+                      <Link href="/generate" className="text-xs font-semibold text-[#FFE600] hover:text-[#FFE600]/80 transition-colors">
+                        Obtenir le script complet →
+                      </Link>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </FadeUp>
+        </div>
+      </section>
+
+      {/* ── STATS ────────────────────────────────────────────────────── */}
+      <section className="border-b border-[#1F1F25] bg-[#0D0D10]">
+        <div className="max-w-6xl mx-auto px-6 py-20">
+          <FadeUp><p className="text-xs font-mono text-[#FFE600] tracking-widest uppercase mb-12 text-center">YUBOT en chiffres</p></FadeUp>
+          <Stagger className="grid grid-cols-2 md:grid-cols-3 gap-px bg-[#1F1F25]" delay={0.05}>
+            {STATS.map(({ n, label }) => (
+              <motion.div
+                key={label}
+                variants={fadeUpChild}
+                className="bg-[#0D0D10] p-8 text-center group hover:bg-[#111114] transition-colors duration-300"
+              >
+                <p className="font-heading text-4xl font-bold mb-2 tabular-nums">
+                  <CountUp value={n} />
+                </p>
+                <p className="text-sm text-[#888]">{label}</p>
+              </motion.div>
+            ))}
+          </Stagger>
+        </div>
+      </section>
+
+      {/* ── COMPARATIF ───────────────────────────────────────────────── */}
+      <section className="border-b border-[#1F1F25]">
+        <div className="max-w-6xl mx-auto px-6 py-20">
+          <SectionLabel>Comparatif</SectionLabel>
+          <FadeUp>
+            <h2 className="font-heading text-3xl font-bold mb-3">YUBOT n&apos;est pas ChatGPT avec un prompt YouTube.</h2>
+            <p className="text-[#888] mb-10 max-w-xl">La différence est structurelle. Voilà pourquoi.</p>
+          </FadeUp>
+          <FadeUp delay={0.15}>
+            <div className="border border-[#1F1F25] rounded-xl overflow-hidden">
+              <div className="grid grid-cols-4 border-b border-[#1F1F25] bg-[#111114]">
+                <div className="p-4 text-xs font-mono text-[#888] uppercase tracking-widest">Fonctionnalité</div>
+                <div className="p-4 text-xs font-mono text-[#FFE600] uppercase tracking-widest border-l border-[#1F1F25]">YUBOT</div>
+                <div className="p-4 text-xs font-mono text-[#888] uppercase tracking-widest border-l border-[#1F1F25]">ChatGPT</div>
+                <div className="p-4 text-xs font-mono text-[#888] uppercase tracking-widest border-l border-[#1F1F25]">Autres outils</div>
+              </div>
+              {COMPARATIF.map(([feat, yubot, gpt, others], i) => (
+                <motion.div
+                  key={i}
+                  className={`grid grid-cols-4 border-b border-[#1F1F25] last:border-b-0 ${i % 2 === 0 ? 'bg-[#050507]' : 'bg-[#0D0D10]'}`}
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.3, delay: i * 0.04 }}
                 >
-                  {t}
-                </button>
+                  <div className="p-4 text-sm text-[#C4BFB7]">{feat}</div>
+                  {[yubot, gpt, others].map((val, j) => (
+                    <div key={j} className="p-4 border-l border-[#1F1F25]">
+                      {val === true ? (
+                        <span className="text-green-400 text-sm">✓ Oui</span>
+                      ) : val === false ? (
+                        <span className="text-[#3A3A44] text-sm">—</span>
+                      ) : (
+                        <span className={`text-sm ${j === 0 ? 'text-[#FFE600]' : 'text-[#888]'}`}>{val as string}</span>
+                      )}
+                    </div>
+                  ))}
+                </motion.div>
               ))}
             </div>
-
-            <div>
-              <label className="block text-xs font-mono text-[#6B6560] mb-2">Ou saisis un thème personnalisé</label>
-              <input
-                value={demoTheme}
-                onChange={e => setDemoTheme(e.target.value)}
-                placeholder="Ex : Pourquoi les riches ne travaillent pas plus dur"
-                className="w-full px-3 py-2.5 text-sm border border-[#1E1E1E] rounded bg-[#111111] text-[#F5F0E8] placeholder-[#3A3A3A] focus:outline-none focus:border-[#FFE600]/40"
-              />
-            </div>
-
-            <button
-              onClick={() => demoTheme.trim() && setDemoResult(true)}
-              disabled={!demoTheme.trim()}
-              className="w-full py-2.5 bg-[#FFE600] text-[#0A0A0A] font-semibold text-sm rounded hover:bg-[#FFE600]/90 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-            >
-              Générer l&apos;aperçu
-            </button>
-
-            {demoResult && (
-              <div className="space-y-4 pt-2">
-                <div className="flex items-center gap-2">
-                  <div className="h-px flex-1 bg-[#1E1E1E]" />
-                  <span className="text-xs font-mono text-[#FFE600]">Aperçu généré</span>
-                  <div className="h-px flex-1 bg-[#1E1E1E]" />
-                </div>
-                {DEMO_RESULT.map(({ label, color, bg, text }) => (
-                  <div key={label} className="rounded border-l-2 p-3" style={{ borderLeftColor: color, backgroundColor: bg }}>
-                    <p className="text-xs font-mono font-bold mb-1.5" style={{ color }}>[{label}]</p>
-                    <p className="text-sm text-[#C4BFB7] leading-relaxed">{text}</p>
-                  </div>
-                ))}
-                <div className="border border-[#1E1E1E] rounded p-3 bg-[#111111] flex items-center justify-between">
-                  <p className="text-xs text-[#6B6560]">Script complet : 8 sections • notes créateur • export Word</p>
-                  <Link href="/generate" className="text-xs font-semibold text-[#FFE600] hover:text-[#FFE600]/80 transition-colors">
-                    Obtenir le script complet →
-                  </Link>
-                </div>
-              </div>
-            )}
-          </div>
+          </FadeUp>
         </div>
       </section>
 
-      {/* ── 9. CHIFFRES ────────────────────────────────────────── */}
-      <section className="border-b border-[#1E1E1E] bg-[#0D0D0D]">
+      {/* ── CAS CLIENTS ──────────────────────────────────────────────── */}
+      <section className="border-b border-[#1F1F25] bg-[#0D0D10]">
         <div className="max-w-6xl mx-auto px-6 py-20">
-          <p className="text-xs font-mono text-[#FFE600] tracking-widest uppercase mb-12 text-center">YUBOT en chiffres</p>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-px bg-[#1E1E1E]">
-            {STATS.map(({ n, label }) => (
-              <div key={label} className="bg-[#0D0D0D] p-8 text-center">
-                <p className="font-heading text-4xl font-bold mb-2">{n}</p>
-                <p className="text-sm text-[#6B6560]">{label}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── 10. COMPARATIF ─────────────────────────────────────── */}
-      <section className="border-b border-[#1E1E1E]">
-        <div className="max-w-6xl mx-auto px-6 py-20">
-          <p className="text-xs font-mono text-[#FFE600] tracking-widest uppercase mb-4">Comparatif</p>
-          <h2 className="font-heading text-3xl font-bold mb-3">YUBOT n&apos;est pas ChatGPT avec un prompt YouTube.</h2>
-          <p className="text-[#6B6560] mb-10 max-w-xl">La différence est structurelle. Voilà pourquoi.</p>
-
-          <div className="border border-[#1E1E1E] rounded-lg overflow-hidden">
-            <div className="grid grid-cols-4 border-b border-[#1E1E1E] bg-[#111111]">
-              <div className="p-4 text-xs font-mono text-[#6B6560] uppercase tracking-widest">Fonctionnalité</div>
-              <div className="p-4 text-xs font-mono text-[#FFE600] uppercase tracking-widest border-l border-[#1E1E1E]">YUBOT</div>
-              <div className="p-4 text-xs font-mono text-[#6B6560] uppercase tracking-widest border-l border-[#1E1E1E]">ChatGPT</div>
-              <div className="p-4 text-xs font-mono text-[#6B6560] uppercase tracking-widest border-l border-[#1E1E1E]">Autres outils</div>
-            </div>
-            {COMPARATIF.map(([feat, yubot, gpt, others], i) => (
-              <div key={i} className={`grid grid-cols-4 border-b border-[#1E1E1E] last:border-b-0 ${i % 2 === 0 ? 'bg-[#0A0A0A]' : 'bg-[#0D0D0D]'}`}>
-                <div className="p-4 text-sm text-[#C4BFB7]">{feat}</div>
-                {[yubot, gpt, others].map((val, j) => (
-                  <div key={j} className="p-4 border-l border-[#1E1E1E]">
-                    {val === true ? (
-                      <span className="text-green-400 text-sm">✓ Oui</span>
-                    ) : val === false ? (
-                      <span className="text-[#3A3A3A] text-sm">—</span>
-                    ) : (
-                      <span className={`text-sm ${j === 0 ? 'text-[#FFE600]' : 'text-[#6B6560]'}`}>{val as string}</span>
-                    )}
-                  </div>
-                ))}
-              </div>
-            ))}
-          </div>
-
-          <p className="text-sm text-[#6B6560] mt-6 max-w-2xl leading-relaxed">
-            ChatGPT génère du texte correct. YUBOT génère des scripts viraux. Ce n&apos;est pas le même métier. Un script viral n&apos;est pas du texte bien écrit — c&apos;est une architecture de l&apos;attention construite sur des données réelles.
-          </p>
-        </div>
-      </section>
-
-      {/* ── 11. CAS CLIENTS ────────────────────────────────────── */}
-      <section className="border-b border-[#1E1E1E] bg-[#0D0D0D]">
-        <div className="max-w-6xl mx-auto px-6 py-20">
-          <p className="text-xs font-mono text-[#FFE600] tracking-widest uppercase mb-4">Résultats réels</p>
-          <h2 className="font-heading text-3xl font-bold mb-12">Ce que des créateurs ont accompli avec YUBOT</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <SectionLabel>Résultats réels</SectionLabel>
+          <FadeUp><h2 className="font-heading text-3xl font-bold mb-12">Ce que des créateurs ont accompli avec YUBOT</h2></FadeUp>
+          <Stagger className="grid grid-cols-1 md:grid-cols-3 gap-5" delay={0.1}>
             {[
-              {
-                title: 'De 200 à 50 000 vues par vidéo en 4 mois.',
-                before: '180 vues moyennes · 3 400 abonnés',
-                after: '48 000 vues · 91 000 abonnés',
-                quote: '"Je pensais que le problème venait de mon montage. En vrai le problème était dans les 15 premières secondes."',
-                author: 'Thomas L. — Finance personnelle',
-                slug: 'thomas-finance',
-              },
-              {
-                title: "L'agence MPW génère 3× plus de scripts.",
-                before: '5h/script · 8 clients',
-                after: '45min/script · volume ×3',
-                quote: '"YUBOT ne remplace pas notre expertise. Il remplace le temps de production."',
-                author: 'Équipe MPW — Agence vidéo',
-                slug: 'agence-mpw',
-              },
-              {
-                title: 'Sophie a récupéré 18 heures par semaine.',
-                before: '22h/semaine sur scripts',
-                after: '4h/semaine · engagement +140%',
-                quote: '"Je savais quoi dire dans mes vidéos. Ce que je ne savais pas, c\'est dans quel ordre."',
-                author: 'Sophie — Lifestyle minimaliste',
-                slug: 'sophie-lifestyle',
-              },
+              { title: 'De 200 à 50 000 vues par vidéo en 4 mois.', before: '180 vues moyennes · 3 400 abonnés', after: '48 000 vues · 91 000 abonnés', quote: '"Je pensais que le problème venait de mon montage. En vrai le problème était dans les 15 premières secondes."', author: 'Thomas L. — Finance personnelle' },
+              { title: "L'agence MPW génère 3× plus de scripts.", before: '5h/script · 8 clients', after: '45min/script · volume ×3', quote: '"YUBOT ne remplace pas notre expertise. Il remplace le temps de production."', author: 'Équipe MPW — Agence vidéo' },
+              { title: 'Sophie a récupéré 18 heures par semaine.', before: '22h/semaine sur scripts', after: '4h/semaine · engagement +140%', quote: '"Je savais quoi dire dans mes vidéos. Ce que je ne savais pas, c\'est dans quel ordre."', author: 'Sophie — Lifestyle minimaliste' },
             ].map(({ title, before, after, quote, author }) => (
-              <div key={title} className="border border-[#1E1E1E] rounded-lg overflow-hidden bg-[#0A0A0A]">
-                <div className="p-6 space-y-4">
-                  <h3 className="font-heading text-base font-semibold leading-snug">{title}</h3>
-                  <div className="space-y-1.5">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs font-mono text-[#3A3A3A] w-14">Avant</span>
-                      <span className="text-xs text-[#6B6560]">{before}</span>
+              <motion.div key={title} variants={fadeUpChild}>
+                <TiltCard className="border border-[#1F1F25] rounded-xl overflow-hidden bg-[#050507] group relative h-full flex flex-col">
+                  <div className="p-6 space-y-4 flex-1">
+                    <h3 className="font-heading text-base font-semibold leading-snug">{title}</h3>
+                    <div className="space-y-1.5">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-mono text-[#3A3A44] w-14">Avant</span>
+                        <span className="text-xs text-[#888]">{before}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-mono text-[#FFE600] w-14">Après</span>
+                        <span className="text-xs text-[#F5F5F7] font-medium">{after}</span>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs font-mono text-[#FFE600] w-14">Après</span>
-                      <span className="text-xs text-[#F5F0E8] font-medium">{after}</span>
-                    </div>
+                    <blockquote className="border-l-2 border-[#FFE600]/40 pl-3">
+                      <p className="text-xs text-[#888] italic leading-relaxed">{quote}</p>
+                      <p className="text-xs text-[#3A3A44] mt-1">— {author}</p>
+                    </blockquote>
                   </div>
-                  <blockquote className="border-l-2 border-[#FFE600]/40 pl-3">
-                    <p className="text-xs text-[#6B6560] italic leading-relaxed">{quote}</p>
-                    <p className="text-xs text-[#3A3A3A] mt-1">— {author}</p>
-                  </blockquote>
-                </div>
-                <div className="border-t border-[#1E1E1E] px-6 py-3">
-                  <Link href="/case-studies" className="text-xs text-[#6B6560] hover:text-[#FFE600] transition-colors">
-                    Lire l&apos;étude de cas →
-                  </Link>
-                </div>
-              </div>
+                  <div className="border-t border-[#1F1F25] px-6 py-3">
+                    <Link href="/case-studies" className="text-xs text-[#888] hover:text-[#FFE600] transition-colors">
+                      Lire l&apos;étude de cas →
+                    </Link>
+                  </div>
+                </TiltCard>
+              </motion.div>
             ))}
-          </div>
+          </Stagger>
         </div>
       </section>
 
-      {/* ── 12. TÉMOIGNAGES ────────────────────────────────────── */}
-      <section className="border-b border-[#1E1E1E]">
+      {/* ── TÉMOIGNAGES ──────────────────────────────────────────────── */}
+      <section className="border-b border-[#1F1F25]">
         <div className="max-w-6xl mx-auto px-6 py-20">
-          <p className="text-xs font-mono text-[#FFE600] tracking-widest uppercase mb-12 text-center">Ce qu&apos;ils disent</p>
-
-          {/* big quote */}
-          <blockquote className="border border-[#1E1E1E] rounded-lg p-8 bg-[#0D0D0D] mb-8 max-w-3xl mx-auto text-center">
-            <p className="font-heading text-xl font-semibold leading-relaxed mb-4 text-[#F5F0E8]">
-              &ldquo;{TESTIMONIALS[0].quote}&rdquo;
-            </p>
-            <p className="text-sm text-[#6B6560]">{TESTIMONIALS[0].author} — {TESTIMONIALS[0].role}</p>
-          </blockquote>
-
-          {/* smaller quotes */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <FadeUp><p className="text-xs font-mono text-[#FFE600] tracking-widest uppercase mb-12 text-center">Ce qu&apos;ils disent</p></FadeUp>
+          <FadeUp delay={0.1}>
+            <motion.blockquote
+              className="border border-[#1F1F25] rounded-xl p-8 bg-[#0D0D10] mb-8 max-w-3xl mx-auto text-center"
+              whileHover={{ borderColor: 'rgba(255,230,0,0.2)' }}
+              transition={{ duration: 0.3 }}
+            >
+              <p className="font-heading text-xl font-semibold leading-relaxed mb-4 text-[#F5F5F7]">
+                &ldquo;{TESTIMONIALS[0].quote}&rdquo;
+              </p>
+              <p className="text-sm text-[#888]">{TESTIMONIALS[0].author} — {TESTIMONIALS[0].role}</p>
+            </motion.blockquote>
+          </FadeUp>
+          <Stagger className="grid grid-cols-1 md:grid-cols-2 gap-5" delay={0.15}>
             {TESTIMONIALS.slice(1).map(({ quote, author, role }) => (
-              <blockquote key={author} className="border border-[#1E1E1E] rounded-lg p-6 bg-[#0D0D0D] space-y-3">
+              <motion.blockquote
+                key={author}
+                variants={fadeUpChild}
+                className="border border-[#1F1F25] rounded-xl p-6 bg-[#0D0D10] space-y-3"
+                whileHover={{ borderColor: 'rgba(255,230,0,0.15)' }}
+                transition={{ duration: 0.3 }}
+              >
                 <div className="w-5 h-0.5 bg-[#FFE600]" />
                 <p className="text-sm text-[#C4BFB7] leading-relaxed italic">&ldquo;{quote}&rdquo;</p>
-                <p className="text-xs text-[#6B6560]">{author} — {role}</p>
-              </blockquote>
+                <p className="text-xs text-[#888]">{author} — {role}</p>
+              </motion.blockquote>
             ))}
-          </div>
+          </Stagger>
         </div>
       </section>
 
-      {/* ── 13. BLOG ───────────────────────────────────────────── */}
-      <section className="border-b border-[#1E1E1E] bg-[#0D0D0D]">
+      {/* ── BLOG ─────────────────────────────────────────────────────── */}
+      <section className="border-b border-[#1F1F25] bg-[#0D0D10]">
         <div className="max-w-6xl mx-auto px-6 py-20">
           <div className="flex items-end justify-between mb-12">
-            <div>
-              <p className="text-xs font-mono text-[#FFE600] tracking-widest uppercase mb-4">Blog</p>
+            <FadeUp>
+              <SectionLabel>Blog</SectionLabel>
               <h2 className="font-heading text-3xl font-bold">Apprends ce que YUBOT sait.</h2>
-              <p className="text-[#6B6560] mt-2 max-w-xl">Les créateurs qui dominent leur niche ne font pas de la chance. Ils maîtrisent des principes précis. On les documente.</p>
-            </div>
-            <Link href="/blog" className="text-sm text-[#6B6560] hover:text-[#F5F0E8] transition-colors hidden md:block">
+              <p className="text-[#888] mt-2 max-w-xl">Les créateurs qui dominent leur niche ne font pas de la chance. Ils maîtrisent des principes précis. On les documente.</p>
+            </FadeUp>
+            <Link href="/blog" className="text-sm text-[#888] hover:text-[#F5F5F7] transition-colors hidden md:block shrink-0">
               Voir tous les articles →
             </Link>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <Stagger className="grid grid-cols-1 md:grid-cols-3 gap-5" delay={0.1}>
             {BLOG_ARTICLES.map(({ title, date, read, excerpt, slug }) => (
-              <Link key={slug} href={`/blog/${slug}`} className="border border-[#1E1E1E] rounded-lg p-6 bg-[#0A0A0A] hover:border-[#2E2E2E] transition-colors group space-y-3">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-[#3A3A3A]">{date}</span>
-                  <span className="text-xs text-[#3A3A3A]">·</span>
-                  <span className="text-xs text-[#3A3A3A]">{read} de lecture</span>
-                </div>
-                <h3 className="font-heading text-base font-semibold leading-snug group-hover:text-[#FFE600] transition-colors">{title}</h3>
-                <p className="text-sm text-[#6B6560] leading-relaxed">{excerpt}</p>
-                <p className="text-xs text-[#FFE600] opacity-0 group-hover:opacity-100 transition-opacity">Lire l&apos;article →</p>
-              </Link>
+              <motion.div key={slug} variants={fadeUpChild}>
+                <Link
+                  href={`/blog/${slug}`}
+                  className="border border-[#1F1F25] rounded-xl p-6 bg-[#050507] hover:border-[#2E2E38] transition-colors group space-y-3 flex flex-col h-full block"
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-[#3A3A44]">{date}</span>
+                    <span className="text-xs text-[#3A3A44]">·</span>
+                    <span className="text-xs text-[#3A3A44]">{read} de lecture</span>
+                  </div>
+                  <h3 className="font-heading text-base font-semibold leading-snug group-hover:text-[#FFE600] transition-colors">{title}</h3>
+                  <p className="text-sm text-[#888] leading-relaxed flex-1">{excerpt}</p>
+                  <p className="text-xs text-[#FFE600] opacity-0 group-hover:opacity-100 transition-opacity">Lire l&apos;article →</p>
+                </Link>
+              </motion.div>
             ))}
-          </div>
-          <div className="mt-6 md:hidden text-center">
-            <Link href="/blog" className="text-sm text-[#6B6560] hover:text-[#F5F0E8] transition-colors">
-              Voir tous les articles →
-            </Link>
-          </div>
+          </Stagger>
         </div>
       </section>
 
-      {/* ── 14. FAQ ────────────────────────────────────────────── */}
-      <section id="faq" className="border-b border-[#1E1E1E]">
+      {/* ── FAQ ──────────────────────────────────────────────────────── */}
+      <section id="faq" className="border-b border-[#1F1F25]">
         <div className="max-w-2xl mx-auto px-6 py-20">
-          <p className="text-xs font-mono text-[#FFE600] tracking-widest uppercase mb-4">Questions fréquentes</p>
-          <h2 className="font-heading text-3xl font-bold mb-10">FAQ</h2>
+          <SectionLabel>Questions fréquentes</SectionLabel>
+          <FadeUp><h2 className="font-heading text-3xl font-bold mb-10">FAQ</h2></FadeUp>
           <div>
             {FAQS.map(faq => <FAQ key={faq.q} q={faq.q} a={faq.a} />)}
           </div>
         </div>
       </section>
 
-      {/* ── 15. TARIFICATION ───────────────────────────────────── */}
-      <section id="pricing" className="border-b border-[#1E1E1E] bg-[#0D0D0D]">
+      {/* ── PRICING ──────────────────────────────────────────────────── */}
+      <section id="pricing" className="border-b border-[#1F1F25] bg-[#0D0D10]">
         <div className="max-w-6xl mx-auto px-6 py-20">
-          <p className="text-xs font-mono text-[#FFE600] tracking-widest uppercase mb-4 text-center">Tarifs</p>
-          <h2 className="font-heading text-3xl font-bold mb-3 text-center">Simple. Transparent. Sans piège.</h2>
-          <p className="text-[#6B6560] text-center mb-14">7 jours d&apos;essai gratuit sur tous les plans. Sans carte bancaire.</p>
+          <SectionLabel>Tarifs</SectionLabel>
+          <FadeUp>
+            <h2 className="font-heading text-3xl font-bold mb-3 text-center">Simple. Transparent. Sans piège.</h2>
+            <p className="text-[#888] text-center mb-14">7 jours d&apos;essai gratuit sur tous les plans. Sans carte bancaire.</p>
+          </FadeUp>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-
+          <Stagger className="grid grid-cols-1 md:grid-cols-3 gap-5" delay={0.1}>
             {/* Starter */}
-            <div className="border border-[#1E1E1E] rounded-lg p-7 bg-[#0A0A0A] space-y-6">
-              <div>
-                <p className="text-xs font-mono text-[#6B6560] uppercase tracking-widest mb-2">Starter</p>
-                <div className="flex items-end gap-1">
-                  <span className="font-heading text-4xl font-bold">19€</span>
-                  <span className="text-sm text-[#6B6560] mb-1">/mois</span>
+            <motion.div variants={fadeUpChild}>
+              <TiltCard className="border border-[#1F1F25] rounded-xl p-7 bg-[#050507] space-y-6 relative group h-full">
+                <div>
+                  <p className="text-xs font-mono text-[#888] uppercase tracking-widest mb-2">Starter</p>
+                  <div className="flex items-end gap-1">
+                    <span className="font-heading text-4xl font-bold">19€</span>
+                    <span className="text-sm text-[#888] mb-1">/mois</span>
+                  </div>
+                  <p className="text-xs text-[#888] mt-2">Idéal pour démarrer et tester les patterns viraux.</p>
                 </div>
-                <p className="text-xs text-[#6B6560] mt-2">Idéal pour démarrer et tester les patterns viraux.</p>
-              </div>
-              <ul className="space-y-2.5">
-                {['10 scripts générés par mois', 'Accès à tous les patterns viraux actifs', 'Adaptation de texte (5 par mois)', 'Export Word sur tous les scripts', 'Support email sous 48h'].map(f => (
-                  <li key={f} className="flex items-start gap-2.5 text-sm text-[#C4BFB7]">
-                    <span className="text-[#FFE600] mt-0.5 shrink-0">✓</span>
-                    {f}
-                  </li>
-                ))}
-              </ul>
-              <Link href="/generate" className="block w-full py-2.5 border border-[#1E1E1E] text-center text-sm font-semibold text-[#F5F0E8] rounded hover:border-[#FFE600]/40 hover:text-[#FFE600] transition-colors">
-                Commencer gratuitement
-              </Link>
-            </div>
+                <ul className="space-y-2.5">
+                  {['10 scripts générés par mois', 'Accès à tous les patterns viraux actifs', 'Adaptation de texte (5 par mois)', 'Export Word sur tous les scripts', 'Support email sous 48h'].map(f => (
+                    <li key={f} className="flex items-start gap-2.5 text-sm text-[#C4BFB7]">
+                      <span className="text-[#FFE600] mt-0.5 shrink-0">✓</span>{f}
+                    </li>
+                  ))}
+                </ul>
+                <Link href="/generate" className="block w-full py-2.5 border border-[#1F1F25] text-center text-sm font-semibold text-[#F5F5F7] rounded-lg hover:border-[#FFE600]/40 hover:text-[#FFE600] transition-colors">
+                  Commencer gratuitement
+                </Link>
+              </TiltCard>
+            </motion.div>
 
-            {/* Pro - highlighted */}
-            <div className="border border-[#FFE600]/30 rounded-lg p-7 bg-[#0A0A0A] space-y-6 relative">
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                <span className="px-3 py-1 bg-[#FFE600] text-[#0A0A0A] text-xs font-semibold rounded-full">Le plus populaire</span>
+            {/* Pro */}
+            <motion.div variants={fadeUpChild} className="relative">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
+                <span className="px-3 py-1 bg-[#FFE600] text-[#050507] text-xs font-semibold rounded-full">Le plus populaire</span>
               </div>
-              <div>
-                <p className="text-xs font-mono text-[#FFE600] uppercase tracking-widest mb-2">Pro</p>
-                <div className="flex items-end gap-1">
-                  <span className="font-heading text-4xl font-bold">49€</span>
-                  <span className="text-sm text-[#6B6560] mb-1">/mois</span>
+              <TiltCard className="border border-[#FFE600]/30 rounded-xl p-7 bg-[#050507] space-y-6 relative group h-full" intensity={6}>
+                <div>
+                  <p className="text-xs font-mono text-[#FFE600] uppercase tracking-widest mb-2">Pro</p>
+                  <div className="flex items-end gap-1">
+                    <span className="font-heading text-4xl font-bold">49€</span>
+                    <span className="text-sm text-[#888] mb-1">/mois</span>
+                  </div>
+                  <p className="text-xs text-[#888] mt-2">Pour les créateurs qui publient régulièrement.</p>
                 </div>
-                <p className="text-xs text-[#6B6560] mt-2">Pour les créateurs qui publient régulièrement.</p>
-              </div>
-              <ul className="space-y-2.5">
-                {['50 scripts générés par mois', 'Patterns viraux + analyses avancées', 'Adaptation de texte illimitée', 'Bibliothèque de patterns personnelle', 'Accès aux tendances hebdomadaires', 'Support prioritaire sous 12h'].map(f => (
-                  <li key={f} className="flex items-start gap-2.5 text-sm text-[#C4BFB7]">
-                    <span className="text-[#FFE600] mt-0.5 shrink-0">✓</span>
-                    {f}
-                  </li>
-                ))}
-              </ul>
-              <Link href="/generate" className="block w-full py-2.5 bg-[#FFE600] text-center text-sm font-semibold text-[#0A0A0A] rounded hover:bg-[#FFE600]/90 transition-colors">
-                Commencer gratuitement
-              </Link>
-            </div>
+                <ul className="space-y-2.5">
+                  {['50 scripts générés par mois', 'Patterns viraux + analyses avancées', 'Adaptation de texte illimitée', 'Bibliothèque de patterns personnelle', 'Accès aux tendances hebdomadaires', 'Support prioritaire sous 12h'].map(f => (
+                    <li key={f} className="flex items-start gap-2.5 text-sm text-[#C4BFB7]">
+                      <span className="text-[#FFE600] mt-0.5 shrink-0">✓</span>{f}
+                    </li>
+                  ))}
+                </ul>
+                <Link href="/generate" className="block w-full py-2.5 bg-[#FFE600] text-center text-sm font-semibold text-[#050507] rounded-lg hover:bg-[#FFE600]/90 transition-colors">
+                  Commencer gratuitement
+                </Link>
+              </TiltCard>
+            </motion.div>
 
             {/* Studio */}
-            <div className="border border-[#1E1E1E] rounded-lg p-7 bg-[#0A0A0A] space-y-6">
-              <div>
-                <p className="text-xs font-mono text-[#6B6560] uppercase tracking-widest mb-2">Studio</p>
-                <div className="flex items-end gap-1">
-                  <span className="font-heading text-4xl font-bold">149€</span>
-                  <span className="text-sm text-[#6B6560] mb-1">/mois</span>
+            <motion.div variants={fadeUpChild}>
+              <TiltCard className="border border-[#1F1F25] rounded-xl p-7 bg-[#050507] space-y-6 relative group h-full">
+                <div>
+                  <p className="text-xs font-mono text-[#888] uppercase tracking-widest mb-2">Studio</p>
+                  <div className="flex items-end gap-1">
+                    <span className="font-heading text-4xl font-bold">149€</span>
+                    <span className="text-sm text-[#888] mb-1">/mois</span>
+                  </div>
+                  <p className="text-xs text-[#888] mt-2">Pour les agences et équipes créatives.</p>
                 </div>
-                <p className="text-xs text-[#6B6560] mt-2">Pour les agences et équipes créatives.</p>
-              </div>
-              <ul className="space-y-2.5">
-                {['Scripts illimités', 'Analyses personnalisées par niche', 'Accès API', 'Multi-utilisateurs — 5 sièges inclus', 'Support dédié + gestionnaire de compte', 'Onboarding personnalisé (60 min)'].map(f => (
-                  <li key={f} className="flex items-start gap-2.5 text-sm text-[#C4BFB7]">
-                    <span className="text-[#FFE600] mt-0.5 shrink-0">✓</span>
-                    {f}
-                  </li>
-                ))}
-              </ul>
-              <Link href="/contact" className="block w-full py-2.5 border border-[#1E1E1E] text-center text-sm font-semibold text-[#F5F0E8] rounded hover:border-[#FFE600]/40 hover:text-[#FFE600] transition-colors">
-                Contacter l&apos;équipe
-              </Link>
-            </div>
+                <ul className="space-y-2.5">
+                  {['Scripts illimités', 'Analyses personnalisées par niche', 'Accès API', 'Multi-utilisateurs — 5 sièges inclus', 'Support dédié + gestionnaire de compte', 'Onboarding personnalisé (60 min)'].map(f => (
+                    <li key={f} className="flex items-start gap-2.5 text-sm text-[#C4BFB7]">
+                      <span className="text-[#FFE600] mt-0.5 shrink-0">✓</span>{f}
+                    </li>
+                  ))}
+                </ul>
+                <Link href="/contact" className="block w-full py-2.5 border border-[#1F1F25] text-center text-sm font-semibold text-[#F5F5F7] rounded-lg hover:border-[#FFE600]/40 hover:text-[#FFE600] transition-colors">
+                  Contacter l&apos;équipe
+                </Link>
+              </TiltCard>
+            </motion.div>
+          </Stagger>
 
-          </div>
-
-          <p className="text-center text-xs text-[#3A3A3A] mt-8">
-            Toutes les offres incluent 7 jours d&apos;essai gratuit · Aucune carte bancaire requise · Résiliation en 1 clic
-          </p>
+          <FadeUp delay={0.3}>
+            <p className="text-center text-xs text-[#3A3A44] mt-8">
+              Toutes les offres incluent 7 jours d&apos;essai gratuit · Aucune carte bancaire requise · Résiliation en 1 clic
+            </p>
+          </FadeUp>
         </div>
       </section>
 
-      {/* ── 16. INTÉGRATIONS ───────────────────────────────────── */}
-      <section className="border-b border-[#1E1E1E]">
+      {/* ── INTÉGRATIONS ─────────────────────────────────────────────── */}
+      <section className="border-b border-[#1F1F25]">
         <div className="max-w-6xl mx-auto px-6 py-20">
-          <p className="text-xs font-mono text-[#FFE600] tracking-widest uppercase mb-4">Intégrations</p>
-          <h2 className="font-heading text-3xl font-bold mb-3">YUBOT s&apos;intègre à ton workflow.</h2>
-          <p className="text-[#6B6560] mb-12 max-w-xl">T&apos;as déjà tes outils. YUBOT se connecte à eux plutôt que de les remplacer.</p>
-
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <SectionLabel>Intégrations</SectionLabel>
+          <FadeUp>
+            <h2 className="font-heading text-3xl font-bold mb-3">YUBOT s&apos;intègre à ton workflow.</h2>
+            <p className="text-[#888] mb-12 max-w-xl">T&apos;as déjà tes outils. YUBOT se connecte à eux plutôt que de les remplacer.</p>
+          </FadeUp>
+          <Stagger className="grid grid-cols-2 md:grid-cols-3 gap-4" delay={0.05}>
             {INTEGRATIONS.map(({ name, desc, available }) => (
-              <div key={name} className={`border rounded-lg p-5 space-y-2 ${available ? 'border-[#1E1E1E] bg-[#0D0D0D]' : 'border-[#1E1E1E] bg-[#0A0A0A] opacity-50'}`}>
+              <motion.div
+                key={name}
+                variants={fadeUpChild}
+                className={`border rounded-xl p-5 space-y-2 transition-colors duration-300 ${available ? 'border-[#1F1F25] bg-[#0D0D10] hover:border-[#2E2E38]' : 'border-[#1F1F25] bg-[#050507] opacity-50'}`}
+              >
                 <div className="flex items-center justify-between">
                   <p className="font-heading font-semibold text-sm">{name}</p>
-                  {!available && <span className="text-xs text-[#3A3A3A] font-mono">Bientôt</span>}
+                  {!available && <span className="text-xs text-[#3A3A44] font-mono">Bientôt</span>}
                 </div>
-                <p className="text-xs text-[#6B6560] leading-relaxed">{desc}</p>
-              </div>
+                <p className="text-xs text-[#888] leading-relaxed">{desc}</p>
+              </motion.div>
             ))}
-          </div>
-          <p className="text-xs text-[#3A3A3A] mt-5">Les intégrations Google Docs, Notion et Zapier sont disponibles sur les plans Pro et Studio.</p>
+          </Stagger>
         </div>
       </section>
 
-      {/* ── 17. FINAL CTA ──────────────────────────────────────── */}
-      <section className="border-b border-[#1E1E1E] bg-[#0D0D0D]">
-        <div className="max-w-3xl mx-auto px-6 py-28 text-center">
-          <p className="text-xs font-mono text-[#FFE600] tracking-widest uppercase mb-6">Commence maintenant</p>
-          <h2 className="font-heading text-4xl lg:text-5xl font-bold leading-tight mb-6">
-            Tes prochaines vidéos peuvent changer ta trajectoire. Reste à ce qu&apos;elles soient construites comme il faut.
-          </h2>
-          <p className="text-[#6B6560] mb-10 text-lg">
-            Rejoins les 2 500 créateurs qui ont arrêté de deviner ce qui marche.
-          </p>
-          <Link
-            href="/generate"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-[#FFE600] text-[#0A0A0A] font-semibold rounded hover:bg-[#FFE600]/90 transition-colors"
-          >
-            Essayer YUBOT gratuitement
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </Link>
-          <p className="text-xs text-[#3A3A3A] mt-4">Sans carte bancaire · 7 jours d&apos;essai · Annulable en 1 clic</p>
+      {/* ── FINAL CTA ────────────────────────────────────────────────── */}
+      <section className="border-b border-[#1F1F25] bg-[#0D0D10] relative overflow-hidden">
+        {/* ambient */}
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+          <div className="w-[600px] h-[300px] rounded-full opacity-[0.05]"
+            style={{ background: 'radial-gradient(ellipse, #FFE600 0%, transparent 70%)' }} />
+        </div>
+        <div className="relative max-w-3xl mx-auto px-6 py-28 text-center">
+          <SectionLabel>Commence maintenant</SectionLabel>
+          <FadeUp>
+            <h2 className="font-heading text-4xl lg:text-5xl font-bold leading-tight mb-6">
+              Tes prochaines vidéos peuvent changer ta trajectoire. Reste à ce qu&apos;elles soient construites comme il faut.
+            </h2>
+          </FadeUp>
+          <FadeUp delay={0.15}>
+            <p className="text-[#888] mb-10 text-lg">Rejoins les 2 500 créateurs qui ont arrêté de deviner ce qui marche.</p>
+          </FadeUp>
+          <FadeUp delay={0.25}>
+            <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }} className="inline-block">
+              <Link
+                href="/generate"
+                className="inline-flex items-center gap-2 px-8 py-4 bg-[#FFE600] text-[#050507] font-semibold rounded-lg hover:bg-[#FFE600]/90 transition-colors"
+              >
+                Essayer YUBOT gratuitement
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </Link>
+            </motion.div>
+            <p className="text-xs text-[#3A3A44] mt-4">Sans carte bancaire · 7 jours d&apos;essai · Annulable en 1 clic</p>
+          </FadeUp>
         </div>
       </section>
 
-      {/* ── 18. FOOTER ─────────────────────────────────────────── */}
-      <footer className="border-t border-[#1E1E1E] bg-[#0A0A0A]">
+      {/* ── FOOTER ───────────────────────────────────────────────────── */}
+      <footer className="border-t border-[#1F1F25] bg-[#050507]">
         <div className="max-w-6xl mx-auto px-6 py-16">
           <div className="grid grid-cols-2 md:grid-cols-5 gap-10 mb-12">
-            {/* brand */}
             <div className="col-span-2 md:col-span-1 space-y-4">
               <div className="flex items-center gap-2.5">
-                <span className="w-7 h-7 rounded bg-[#FFE600] flex items-center justify-center text-[#0A0A0A] font-heading font-bold text-sm">Y</span>
+                <span className="w-7 h-7 rounded bg-[#FFE600] flex items-center justify-center text-[#050507] font-heading font-bold text-sm">Y</span>
                 <span className="font-heading font-semibold tracking-tight">YUBOT</span>
               </div>
-              <p className="text-xs text-[#3A3A3A] leading-relaxed">Agent YouTube IA pour les créateurs qui veulent des résultats.</p>
+              <p className="text-xs text-[#3A3A44] leading-relaxed">Agent YouTube IA pour les créateurs qui veulent des résultats.</p>
               <div className="flex items-center gap-3">
                 {['Twitter', 'LinkedIn', 'YouTube'].map(s => (
-                  <a key={s} href="#" className="text-xs text-[#3A3A3A] hover:text-[#6B6560] transition-colors">{s}</a>
+                  <a key={s} href="#" className="text-xs text-[#3A3A44] hover:text-[#888] transition-colors">{s}</a>
                 ))}
               </div>
             </div>
-
             {[
               { title: 'Produit', links: ['Fonctionnalités', 'Tarifs', 'Démo interactive', 'Roadmap', 'Changelog'] },
               { title: 'Ressources', links: ['Blog', 'Guide YouTube 2026', 'Bibliothèque patterns', 'Glossaire', 'Newsletter'] },
@@ -907,29 +1027,27 @@ export default function LandingPage() {
               { title: 'Support', links: ["Centre d'aide", 'Contact', 'Status', 'Documentation API', 'Changelog'] },
             ].map(({ title, links }) => (
               <div key={title}>
-                <p className="text-xs font-semibold text-[#F5F0E8] uppercase tracking-widest mb-4">{title}</p>
+                <p className="text-xs font-semibold text-[#F5F5F7] uppercase tracking-widest mb-4">{title}</p>
                 <ul className="space-y-2.5">
                   {links.map(link => (
                     <li key={link}>
-                      <a href="#" className="text-xs text-[#3A3A3A] hover:text-[#6B6560] transition-colors">{link}</a>
+                      <a href="#" className="text-xs text-[#3A3A44] hover:text-[#888] transition-colors">{link}</a>
                     </li>
                   ))}
                 </ul>
               </div>
             ))}
           </div>
-
-          <div className="border-t border-[#1E1E1E] pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-xs text-[#3A3A3A]">© 2026 YUBOT. Pensé pour les créateurs.</p>
+          <div className="border-t border-[#1F1F25] pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+            <p className="text-xs text-[#3A3A44]">© 2026 YUBOT. Pensé pour les créateurs.</p>
             <div className="flex items-center gap-6">
-              <a href="#" className="text-xs text-[#3A3A3A] hover:text-[#6B6560] transition-colors">Mentions légales</a>
-              <a href="#" className="text-xs text-[#3A3A3A] hover:text-[#6B6560] transition-colors">CGU</a>
-              <a href="#" className="text-xs text-[#3A3A3A] hover:text-[#6B6560] transition-colors">Politique de confidentialité</a>
+              {['Mentions légales', 'CGU', 'Politique de confidentialité'].map(l => (
+                <a key={l} href="#" className="text-xs text-[#3A3A44] hover:text-[#888] transition-colors">{l}</a>
+              ))}
             </div>
           </div>
         </div>
       </footer>
-
     </div>
   );
 }

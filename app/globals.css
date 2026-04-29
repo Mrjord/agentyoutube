@@ -99,3 +99,26 @@
     letter-spacing: -0.02em;
   }
 }
+
+/* ── Custom cursor ─────────────────────────────────────────────── */
+@media (pointer: fine) {
+  .cur-ring {
+    transition: scale 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.2s, opacity 0.2s;
+  }
+  .cur-ring.cur-hover {
+    scale: 1.7;
+    border-color: rgba(255, 230, 0, 0.8);
+  }
+  .cur-click {
+    scale: 0.7 !important;
+  }
+  /* Hide native cursor only on the landing page body — dashboard keeps native */
+  .landing * {
+    cursor: none !important;
+  }
+}
+
+/* ── Scroll-lock during page transition ────────────────────────── */
+.page-transitioning {
+  overflow: hidden;
+}
