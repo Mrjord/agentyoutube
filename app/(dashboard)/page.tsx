@@ -19,7 +19,8 @@ import { getAllArticles } from '@/lib/articles';
 import { FloatingHeader } from '@/components/landing/FloatingHeader';
 import { PageParticles } from '@/components/landing/PageParticles';
 import RadialOrbitalTimeline from '@/components/ui/radial-orbital-timeline';
-import { Search, Filter, BarChart2, Cpu, Shield, FileText } from 'lucide-react';
+import { Search, Filter, BarChart2, Cpu, Shield, FileText, Download } from 'lucide-react';
+import { BentoGrid, BentoItem } from '@/components/ui/bento-grid';
 
 const BLOG_ARTICLES = getAllArticles().slice(0, 3);
 
@@ -249,6 +250,58 @@ const FAQS = [
   { q: "Puis-je adapter mon propre texte ?", a: "Oui. L'onglet \"Adapter mon texte\" prend ton contenu brut (article, newsletter, notes, ancien script) et le restructure en format viral sans changer une seule idée. Les mots ajoutés sont signalés en bleu, les passages condensés en orange. Tu vois exactement ce qui a changé." },
   { q: 'YUBOT fonctionne-t-il pour toutes les niches ?', a: ["YUBOT est optimisé pour les niches business, entrepreneuriat, mindset, IA, argent et carrière. C'est là que notre base de patterns est la plus dense.", "Pour les sujets très éloignés — recettes, sport, jeux vidéo, fiction — YUBOT signalera que le sujet sort de son domaine plutôt que de générer quelque chose d'approximatif. Cette limitation est intentionnelle."] },
   { q: "Comment annuler mon abonnement ?", a: "En 1 clic depuis ton tableau de bord — Paramètres → Abonnement → Annuler. Aucun formulaire, aucun email, aucun appel. L'annulation prend effet à la fin de la période en cours. Tes scripts sont conservés 90 jours après l'annulation." },
+];
+
+const FEATURES_BENTO: BentoItem[] = [
+  {
+    title: 'Génération de script complet',
+    description: 'Hook, intro, 3 actes, re-hooks, conclusion. Un texte à dire mot pour mot, généré en 87 secondes à partir des patterns viraux de ta niche.',
+    icon: <Cpu size={14} className="text-[#c4302b]" />,
+    status: '87s',
+    tags: ['hook', 'structure', 'oral'],
+    cta: 'Générer un script →',
+    colSpan: 2,
+    hasPersistentHover: true,
+    meta: 'Core',
+  },
+  {
+    title: 'Filtre Anti-IA',
+    description: 'Zéro mot interdit. Rythme irrégulier, fragments assumés. Le script sonne humain parce qu\'il est conçu pour l\'être.',
+    icon: <Shield size={14} className="text-[#c4302b]" />,
+    status: '100% humain',
+    tags: ['anti-ia', 'naturel'],
+    cta: 'En savoir plus →',
+  },
+  {
+    title: '47 Patterns viraux',
+    description: 'Bibliothèque mise à jour quotidiennement. Chaque pattern : type, ton, durée optimale, score viral moyen.',
+    icon: <BarChart2 size={14} className="text-[#c4302b]" />,
+    status: 'Live',
+    tags: ['patterns', 'viral', 'analyse'],
+    cta: 'Explorer →',
+  },
+  {
+    title: 'Adapter mon texte',
+    description: 'Tu as un article ou une newsletter ? YUBOT restructure en format viral sans changer une seule idée.',
+    icon: <FileText size={14} className="text-[#c4302b]" />,
+    tags: ['adaptation', 'contenu'],
+    cta: 'Essayer →',
+  },
+  {
+    title: 'Veille YouTube',
+    description: 'Scan permanent de ta niche. Les patterns émergents sont détectés avant que ta concurrence les adopte.',
+    icon: <Search size={14} className="text-[#c4302b]" />,
+    status: 'Quotidien',
+    tags: ['veille', 'tendances'],
+    cta: 'Voir les tendances →',
+  },
+  {
+    title: 'Export Word pro',
+    description: 'Document .docx avec code couleur par section et notes créateur intégrées. Prêt pour le prompteur.',
+    icon: <Download size={14} className="text-[#c4302b]" />,
+    tags: ['export', 'word', 'prompteur'],
+    cta: 'Voir un exemple →',
+  },
 ];
 
 const INTEGRATIONS = [
@@ -628,102 +681,10 @@ export default function LandingPage() {
       <section id="features">
         <div className="max-w-6xl mx-auto px-6 py-20">
           <SectionLabel>Ce que YUBOT fait concrètement</SectionLabel>
-          <FadeUp><h2 className="font-heading text-3xl font-bold mb-16">5 outils. Un workflow complet.</h2></FadeUp>
-
-          <div className="space-y-20">
-            {/* Feature 1 */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              <FadeUp className="space-y-5">
-                <div className="w-6 h-0.5 bg-[#c4302b]" />
-                <h3 className="font-heading text-2xl font-bold">Un script complet. Basé sur ce qui marche vraiment.</h3>
-                <div className="space-y-3 text-[#888] text-sm leading-relaxed">
-                  <p>Tu donnes un thème. YUBOT génère un script entier — pas une ébauche, pas un plan, un texte à dire mot pour mot. Hook calibré pour les 6 premières secondes critiques. Intro qui pose une promesse claire. Corps structuré en 3 actes avec re-hooks intégrés. Conclusion qui ferme le loop sans tomber dans le CTA commercial.</p>
-                  <p>Chaque section est accompagnée de notes créateur : pourquoi ce hook, quel pattern est utilisé, quel type de vidéo a inspiré la structure. Tu comprends ce que tu lis.</p>
-                  <p>7 tons disponibles : viral, éducatif, storytelling, tutoriel, provocateur, inspirant, analytique.</p>
-                </div>
-                <p className="text-sm text-[#F5F5F7] font-medium">Plus besoin de passer 3 heures sur un script. Tu n&apos;as plus qu&apos;à filmer.</p>
-              </FadeUp>
-              <FadeUp delay={0.15}>
-                <TiltCard className="border border-[#1F1F25] rounded-xl overflow-hidden group relative">
-                  <div className="border-b border-[#1F1F25] px-4 py-2 bg-[#111114] flex items-center gap-2">
-                    <span className="text-xs font-mono text-[#888]">Onglet : Générer un script</span>
-                  </div>
-                  <div className="p-5 space-y-3 bg-[#0F0F12]">
-                    {[
-                      { label: '[HOOK]', color: '#DC2626', bg: '#1F0A0A', text: "T'es en train de perdre 80% de tes spectateurs dans les 30 premières secondes. Voilà pourquoi — et comment l'arrêter." },
-                      { label: '[INTRO]', color: '#2563EB', bg: '#0A0F1F', text: "Cette vidéo est basée sur 3 ans d'analyse de 10 000 vidéos YouTube. Ce que tu vas apprendre, ça prend normalement des mois à comprendre seul." },
-                      { label: '[NOTES CRÉATEUR]', color: '#6B7280', bg: '#0F0F12', text: 'Hook utilisé : Chiffre choc + promesse de solution. Score viral moyen de ce pattern : 14x.' },
-                    ].map(({ label, color, bg, text }) => (
-                      <div key={label} className="rounded border-l-2 p-3" style={{ borderLeftColor: color, backgroundColor: bg }}>
-                        <p className="text-xs font-mono font-bold mb-1.5" style={{ color }}>{label}</p>
-                        <p className="text-xs text-[#C4BFB7] leading-relaxed">{text}</p>
-                      </div>
-                    ))}
-                  </div>
-                </TiltCard>
-              </FadeUp>
-            </div>
-
-            <div className="border-t border-[#1F1F25]" />
-
-            {/* Feature 2 */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              <FadeUp delay={0.15} className="order-2 lg:order-1">
-                <TiltCard className="border border-[#1F1F25] rounded-xl overflow-hidden group relative">
-                  <div className="border-b border-[#1F1F25] px-4 py-2 bg-[#111114]">
-                    <span className="text-xs font-mono text-[#888]">Onglet : Adapter mon texte</span>
-                  </div>
-                  <div className="p-5 bg-[#0F0F12] space-y-3">
-                    <div className="p-3 rounded border border-[#1F1F25] bg-[#111114]">
-                      <p className="text-xs font-mono text-[#3A3A44] mb-1">Texte original</p>
-                      <p className="text-xs text-[#888] leading-relaxed">L&apos;intelligence artificielle transforme le marché du travail. Selon une étude récente, 40% des tâches actuelles pourront être automatisées d&apos;ici 2030...</p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="flex-1 h-px bg-[#c4302b]/30" />
-                      <span className="text-xs font-mono text-[#c4302b]">→ adapté</span>
-                      <div className="flex-1 h-px bg-[#c4302b]/30" />
-                    </div>
-                    <div className="p-3 rounded border-l-2 border-[#DC2626] bg-[#1F0A0A]">
-                      <p className="text-xs font-mono text-[#DC2626] font-bold mb-1.5">[HOOK]</p>
-                      <p className="text-xs text-[#C4BFB7] leading-relaxed">
-                        40% de ton boulot disparaît d&apos;ici 2030. Pas dans 50 ans. Dans 5 ans.{' '}
-                        <span className="px-0.5 rounded" style={{ backgroundColor: '#0D2235', color: '#93C5FD' }}>La question n&apos;est pas si ça va arriver. La question, c&apos;est ce que tu vas faire avant. [+]</span>
-                      </p>
-                    </div>
-                  </div>
-                </TiltCard>
-              </FadeUp>
-              <FadeUp className="order-1 lg:order-2 space-y-5">
-                <div className="w-6 h-0.5 bg-[#c4302b]" />
-                <h3 className="font-heading text-2xl font-bold">T&apos;as déjà un texte. On lui donne une forme qui retient.</h3>
-                <div className="space-y-3 text-[#888] text-sm leading-relaxed">
-                  <p>Tu as un article de blog, une newsletter, des notes de cours, un script existant qui n&apos;a pas fonctionné. Tu colles le texte. YUBOT restructure sans toucher au fond.</p>
-                  <p>Les faits restent les faits. Tes opinions restent tes opinions. Ce que YUBOT change : l&apos;ordre des informations, la formulation pour un rythme oral, la structure pour hook → intro → corps → conclusion. Ce qui a été ajouté est signalé en bleu. Ce qui a été condensé en orange.</p>
-                  <p>L&apos;outil calcule aussi l&apos;écart entre la longueur de ton texte et la durée cible. Tu peux autoriser YUBOT à compléter — sans inventer de faits.</p>
-                </div>
-                <p className="text-sm text-[#F5F5F7] font-medium">Ton contenu existant peut performer 3x mieux. Le fond ne change pas. La forme fait tout.</p>
-              </FadeUp>
-            </div>
-
-            <div className="border-t border-[#1F1F25]" />
-
-            {/* Feature cards */}
-            <Stagger className="grid grid-cols-1 md:grid-cols-3 gap-5" delay={0.1}>
-              {[
-                { title: '47 patterns viraux. Transparents, explorables.', desc: "YUBOT n'est pas une boîte noire. Tu peux explorer la bibliothèque de patterns — pour chaque pattern : type, ton associé, durée optimale, score viral moyen, exemples sources. Mise à jour quotidiennement." },
-                { title: 'Ce qui marche dans ta niche. Cette semaine.', desc: "Les patterns viraux ont une durée de vie. YUBOT suit leur évolution en temps réel et signale les patterns émergents. Dashboard tendances : quels hooks gagnent des parts d'attention ce mois-ci." },
-                { title: 'Prêt à imprimer. Prêt à partager. Prêt à tourner.', desc: "Export .docx avec mise en forme professionnelle. Les sections sont colorées par type. Les notes créateur sont séparées visuellement. Quelqu'un qui n'a jamais utilisé YUBOT peut prendre ce document et filmer." },
-              ].map(({ title, desc }) => (
-                <motion.div key={title} variants={fadeUpChild}>
-                  <TiltCard className="border border-[#1F1F25] rounded-xl p-6 space-y-3 bg-[#050507] group relative h-full">
-                    <div className="w-6 h-0.5 bg-[#c4302b]" />
-                    <h3 className="font-heading text-base font-semibold leading-snug">{title}</h3>
-                    <p className="text-sm text-[#888] leading-relaxed">{desc}</p>
-                  </TiltCard>
-                </motion.div>
-              ))}
-            </Stagger>
-          </div>
+          <FadeUp><h2 className="font-heading text-3xl font-bold mb-12">5 outils. Un workflow complet.</h2></FadeUp>
+          <FadeUp delay={0.15}>
+            <BentoGrid items={FEATURES_BENTO} />
+          </FadeUp>
         </div>
       </section>
 
