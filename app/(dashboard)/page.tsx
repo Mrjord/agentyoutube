@@ -476,7 +476,7 @@ export default function LandingPage() {
             pixelsPerFrame={1.2}
             rotateY={-22}
             rotateX={6}
-            fadeColor="#0D0D10"
+            fadeColor="#050507"
             background="transparent"
             height={72}
           />
@@ -850,7 +850,7 @@ export default function LandingPage() {
           </FadeUp>
           <FadeUp delay={0.15}>
             <div className="border border-[#1F1F25] rounded-xl overflow-hidden">
-              <div className="grid grid-cols-4 border-b border-[#1F1F25] bg-[#111114]">
+              <div className="grid grid-cols-4 border-b border-[#1F1F25]/30">
                 <div className="p-4 text-xs font-mono text-[#888] uppercase tracking-widest">Fonctionnalité</div>
                 <div className="p-4 text-xs font-mono text-[#c4302b] uppercase tracking-widest border-l border-[#1F1F25]">YUBOT</div>
                 <div className="p-4 text-xs font-mono text-[#888] uppercase tracking-widest border-l border-[#1F1F25]">ChatGPT</div>
@@ -859,7 +859,7 @@ export default function LandingPage() {
               {COMPARATIF.map(([feat, yubot, gpt, others], i) => (
                 <motion.div
                   key={i}
-                  className={`grid grid-cols-4 border-b border-[#1F1F25] last:border-b-0 ${i % 2 === 0 ? 'bg-[#050507]' : 'bg-[#0D0D10]'}`}
+                  className={`grid grid-cols-4 border-b border-[#1F1F25] last:border-b-0 ${i % 2 === 0 ? 'bg-transparent' : 'bg-white/[0.02]'}`}
                   initial={{ opacity: 0 }}
                   whileInView={{ opacity: 1 }}
                   viewport={{ once: true }}
