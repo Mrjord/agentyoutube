@@ -84,7 +84,11 @@ Score : <X>/100
 Justification : <2-3 phrases — points forts et points à surveiller>
 Hook utilisé : <type de hook et pourquoi il fonctionne>
 Loop ouvert : <quelle tension est posée et comment elle se ferme>
-Pattern source : <description de la vidéo virale qui a inspiré la structure>
+Vidéos de référence :
+1. "<titre>" par <chaîne> — <vues> vues, ratio viral <x>x
+   Patterns utilisés : <structure narrative / type de hook / technique de rétention>
+2. ...
+(Liste toutes les vidéos sources dont les patterns ont été appliqués dans ce script)
 
 ---
 
@@ -96,6 +100,7 @@ Pattern source : <description de la vidéo virale qui a inspiré la structure>
 4. La conclusion DOIT fermer le loop ouvert dans le hook — toujours
 5. Adapte le ton et le rythme au ton demandé par l'utilisateur
 6. ZÉRO CTA : pas de "abonne-toi", "commente", "partage", "laisse un commentaire". La conclusion finit sur l'insight final, pas sur une injonction commerciale.
+7. Dans les NOTES POUR LE CRÉATEUR, cite obligatoirement les vidéos de référence en reprenant exactement leur titre, chaîne, vues et ratio viral tels qu'indiqués dans les patterns fournis. Si une vidéo source est mentionnée dans les patterns, elle DOIT apparaître dans la liste de références.
 
 ## Règles par ton
 

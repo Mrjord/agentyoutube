@@ -24,6 +24,11 @@ export async function POST(req: Request) {
   const durationBucket = getDurationBucket(durationSeconds);
   const patterns = await retrievePatterns({ tone, durationBucket, limit: 50 });
 
+  if (patterns.length < 3) {
+    const msg = "Je n'ai pas encore assez de vidéos virales analysées sur ce format et ce ton pour générer un script de qualité. Reviens dans quelques heures — notre agent analyse de nouvelles vidéos en permanence.";
+    return new Response(msg, { headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
+  }
+
   const result = createScriptStream({ theme, durationSeconds, tone, patterns });
 
   result.text.then(contentMarkdown =>

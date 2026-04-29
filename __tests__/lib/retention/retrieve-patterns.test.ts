@@ -1,13 +1,13 @@
 import { vi, describe, it, expect } from 'vitest';
 
 vi.mock('@/lib/db/queries', () => ({
-  getPatternsByToneAndDuration: vi.fn(),
+  getPatternsByToneAndDurationWithVideo: vi.fn(),
 }));
 
 import { formatPatternsForPrompt } from '@/lib/retention/retrieve-patterns';
-import type { Pattern } from '@/lib/db/schema';
+import type { PatternWithVideo } from '@/lib/retention/retrieve-patterns';
 
-const MOCK: Pattern[] = [
+const MOCK: PatternWithVideo[] = [
   {
     id: 'p1',
     videoId: 'v1',
@@ -17,6 +17,12 @@ const MOCK: Pattern[] = [
     durationBucket: 'long',
     viralityScore: 10_000,
     createdAt: new Date(),
+    videoTitle: 'Comment faire 100K€',
+    videoChannel: 'PierreTech',
+    videoViewCount: 14_700_000,
+    videoSubscriberCount: 1_800_000,
+    videoUrl: 'https://youtube.com/watch?v=test',
+    videoAnalyzedAt: new Date(),
   },
 ];
 
@@ -28,7 +34,29 @@ describe('formatPatternsForPrompt', () => {
     expect(result).toContain('10000');
   });
 
+  it('includes video source info', () => {
+    const result = formatPatternsForPrompt(MOCK);
+    expect(result).toContain('Comment faire 100K€');
+    expect(result).toContain('PierreTech');
+    expect(result).toContain('14.7M');
+  });
+
   it('returns fallback message for empty array', () => {
     expect(formatPatternsForPrompt([])).toContain('Aucun pattern');
+  });
+
+  it('handles patterns without video source gracefully', () => {
+    const noSource: PatternWithVideo[] = [{
+      ...MOCK[0],
+      videoTitle: null,
+      videoChannel: null,
+      videoViewCount: null,
+      videoSubscriberCount: null,
+      videoUrl: null,
+      videoAnalyzedAt: null,
+    }];
+    const result = formatPatternsForPrompt(noSource);
+    expect(result).toContain('Pattern 1');
+    expect(result).not.toContain('Source :');
   });
 });

@@ -3,7 +3,7 @@ import { createAnthropic } from '@ai-sdk/anthropic';
 import { GENERATE_SYSTEM_PROMPT } from '../prompts/generate-system';
 import { formatPatternsForPrompt } from '../retention/retrieve-patterns';
 import { durationToWords } from '../constants';
-import type { Pattern } from '../db/schema';
+import type { PatternWithVideo } from '../retention/retrieve-patterns';
 
 const anthropic = createAnthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
@@ -11,7 +11,7 @@ export function createScriptStream(params: {
   theme: string;
   durationSeconds: number;
   tone: string;
-  patterns: Pattern[];
+  patterns: PatternWithVideo[];
 }) {
   const { theme, durationSeconds, tone, patterns } = params;
   const patternsText = formatPatternsForPrompt(patterns);

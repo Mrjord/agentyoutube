@@ -1,5 +1,7 @@
-import { getPatternsByToneAndDuration } from '../db/queries';
-import type { Pattern } from '../db/schema';
+import { getPatternsByToneAndDurationWithVideo } from '../db/queries';
+import type { PatternWithVideo } from '../db/queries';
+
+export type { PatternWithVideo };
 
 interface RetrieveOptions {
   tone: string;
@@ -7,9 +9,28 @@ interface RetrieveOptions {
   limit?: number;
 }
 
-export async function retrievePatterns(options: RetrieveOptions): Promise<Pattern[]> {
+function freshnessMultiplier(analyzedAt: Date | null, now: number): number {
+  if (!analyzedAt) return 0.5;
+  const days = (now - analyzedAt.getTime()) / 86_400_000;
+  if (days < 7) return 1.3;
+  if (days < 30) return 1.0;
+  if (days < 90) return 0.8;
+  return 0.5;
+}
+
+export async function retrievePatterns(options: RetrieveOptions): Promise<PatternWithVideo[]> {
   const { tone, durationBucket, limit = 50 } = options;
-  return getPatternsByToneAndDuration(tone, durationBucket, limit);
+  const raw = await getPatternsByToneAndDurationWithVideo(tone, durationBucket, Math.min(limit * 3, 150));
+  const now = Date.now();
+  const scored = raw.map(p => ({ p, score: p.viralityScore * freshnessMultiplier(p.videoAnalyzedAt, now) }));
+  scored.sort((a, b) => b.score - a.score);
+  return scored.slice(0, limit).map(x => x.p);
+}
+
+function formatViews(n: number): string {
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
+  if (n >= 1_000) return `${Math.round(n / 1_000)}k`;
+  return String(n);
 }
 
 function renderContent(patternType: string, content: Record<string, unknown>): string {
@@ -50,21 +71,36 @@ function renderContent(patternType: string, content: Record<string, unknown>): s
     ].join('\n');
   }
 
-  // Fallback for legacy pattern types
   return JSON.stringify(content, null, 2)
     .split('\n')
     .map(l => `  ${l}`)
     .join('\n');
 }
 
-export function formatPatternsForPrompt(patterns: Pattern[]): string {
+export function formatPatternsForPrompt(patterns: PatternWithVideo[]): string {
   if (patterns.length === 0) {
     return 'Aucun pattern disponible pour ce ton et cette durée.';
   }
   return patterns
-    .map(
-      (p, i) =>
-        `### Pattern ${i + 1} — ${p.patternType} [score virality: ${p.viralityScore.toFixed(0)}]\n${renderContent(p.patternType, p.content as Record<string, unknown>)}`,
-    )
+    .map((p, i) => {
+      const lines: string[] = [
+        `### Pattern ${i + 1} — ${p.patternType} [score virality: ${p.viralityScore.toFixed(0)}]`,
+      ];
+
+      if (p.videoTitle && p.videoChannel) {
+        const views = p.videoViewCount ? ` — ${formatViews(p.videoViewCount)} vues` : '';
+        const ratio =
+          p.videoViewCount && p.videoSubscriberCount && p.videoSubscriberCount > 0
+            ? `, ratio viral ${(p.videoViewCount / p.videoSubscriberCount).toFixed(1)}x`
+            : '';
+        const date = p.videoAnalyzedAt
+          ? `, analysée le ${p.videoAnalyzedAt.toISOString().split('T')[0]}`
+          : '';
+        lines.push(`Source : "${p.videoTitle}" par ${p.videoChannel}${views}${ratio}${date}`);
+      }
+
+      lines.push(renderContent(p.patternType, p.content as Record<string, unknown>));
+      return lines.join('\n');
+    })
     .join('\n\n');
 }

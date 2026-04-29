@@ -3,6 +3,15 @@ import { db } from './index';
 import { users, searchKeywords, videos, patterns, scripts } from './schema';
 import type { NewVideo, NewPattern, NewScript, Pattern, Script } from './schema';
 
+export type PatternWithVideo = Pattern & {
+  videoTitle: string | null;
+  videoChannel: string | null;
+  videoViewCount: number | null;
+  videoSubscriberCount: number | null;
+  videoUrl: string | null;
+  videoAnalyzedAt: Date | null;
+};
+
 // ── Discovery ────────────────────────────────────────────────────────────────
 
 export async function getActiveKeywords() {
@@ -59,6 +68,35 @@ export async function getPatternsByToneAndDuration(
   return db
     .select()
     .from(patterns)
+    .where(and(eq(patterns.tone, tone), eq(patterns.durationBucket, durationBucket)))
+    .orderBy(desc(patterns.viralityScore))
+    .limit(limit);
+}
+
+export async function getPatternsByToneAndDurationWithVideo(
+  tone: string,
+  durationBucket: string,
+  limit = 150,
+): Promise<PatternWithVideo[]> {
+  return db
+    .select({
+      id: patterns.id,
+      videoId: patterns.videoId,
+      patternType: patterns.patternType,
+      content: patterns.content,
+      tone: patterns.tone,
+      durationBucket: patterns.durationBucket,
+      viralityScore: patterns.viralityScore,
+      createdAt: patterns.createdAt,
+      videoTitle: videos.title,
+      videoChannel: videos.channel,
+      videoViewCount: videos.viewCount,
+      videoSubscriberCount: videos.subscriberCount,
+      videoUrl: videos.url,
+      videoAnalyzedAt: videos.analyzedAt,
+    })
+    .from(patterns)
+    .leftJoin(videos, eq(patterns.videoId, videos.id))
     .where(and(eq(patterns.tone, tone), eq(patterns.durationBucket, durationBucket)))
     .orderBy(desc(patterns.viralityScore))
     .limit(limit);
