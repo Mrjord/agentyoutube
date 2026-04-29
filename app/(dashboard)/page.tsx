@@ -10,9 +10,8 @@ import { HeroParticles } from '@/components/landing/HeroParticles';
 import { TiltCard } from '@/components/landing/TiltCard';
 import { SmoothScroll } from '@/components/landing/SmoothScroll';
 import { PerspectiveMarquee } from '@/components/ui/perspective-marquee';
-import { CreativePricing } from '@/components/ui/creative-pricing';
 import MagnifiedBento from '@/components/ui/magnified-bento';
-import { Pencil, Star, Sparkles } from 'lucide-react';
+import PricingSection from '@/components/ui/pricing-section';
 
 /* ── helpers ─────────────────────────────────────────────────────── */
 const EASE = [0.65, 0, 0.35, 1] as const;
@@ -865,69 +864,8 @@ export default function LandingPage() {
       </section>
 
       {/* ── PRICING ──────────────────────────────────────────────────── */}
-      <section id="pricing" className="border-b border-[#1F1F25] bg-[#0D0D10] relative overflow-hidden">
-        <div className="max-w-6xl mx-auto px-6 py-20">
-          <FadeUp>
-            <CreativePricing
-              tag="Simple. Transparent. Sans piège."
-              title="Choisis ton plan YUBOT"
-              description="7 jours d'essai gratuit · Sans carte bancaire · Résiliation en 1 clic"
-              tiers={[
-                {
-                  name: 'Starter',
-                  icon: <Pencil className="w-5 h-5" />,
-                  price: 19,
-                  description: 'Pour démarrer et tester les patterns viraux.',
-                  color: 'blue',
-                  features: [
-                    '10 scripts / mois',
-                    'Tous les patterns viraux actifs',
-                    'Adaptation de texte (5/mois)',
-                    'Export Word sur tous les scripts',
-                    'Support email sous 48h',
-                  ],
-                  cta: 'Commencer gratuitement',
-                  href: '/generate',
-                },
-                {
-                  name: 'Pro',
-                  icon: <Star className="w-5 h-5" />,
-                  price: 49,
-                  description: 'Pour les créateurs qui publient régulièrement.',
-                  color: 'amber',
-                  popular: true,
-                  features: [
-                    '50 scripts / mois',
-                    'Patterns viraux + analyses avancées',
-                    'Adaptation de texte illimitée',
-                    'Bibliothèque de patterns personnelle',
-                    'Tendances hebdomadaires',
-                    'Support prioritaire sous 12h',
-                  ],
-                  cta: 'Commencer gratuitement',
-                  href: '/generate',
-                },
-                {
-                  name: 'Studio',
-                  icon: <Sparkles className="w-5 h-5" />,
-                  price: 149,
-                  description: 'Pour les agences et équipes créatives.',
-                  color: 'purple',
-                  features: [
-                    'Scripts illimités',
-                    'Analyses personnalisées par niche',
-                    'Accès API',
-                    'Multi-utilisateurs (5 sièges)',
-                    'Support dédié + gestionnaire de compte',
-                    'Onboarding personnalisé (60 min)',
-                  ],
-                  cta: "Contacter l'équipe",
-                  href: '/contact',
-                },
-              ]}
-            />
-          </FadeUp>
-        </div>
+      <section id="pricing">
+        <PricingSection />
       </section>
 
       {/* ── INTÉGRATIONS ─────────────────────────────────────────────── */}
