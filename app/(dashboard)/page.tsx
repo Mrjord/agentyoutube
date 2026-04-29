@@ -13,6 +13,7 @@ import { SmoothScroll } from '@/components/landing/SmoothScroll';
 import { PerspectiveMarquee } from '@/components/ui/perspective-marquee';
 import MagnifiedBento from '@/components/ui/magnified-bento';
 import PricingSection from '@/components/ui/pricing-section';
+import { RatingInteraction } from '@/components/ui/emoji-rating';
 import { getAllArticles } from '@/lib/articles';
 
 const BLOG_ARTICLES = getAllArticles().slice(0, 3);
@@ -763,6 +764,10 @@ export default function LandingPage() {
                       <Link href="/generate" className="text-xs font-semibold text-[#c4302b] hover:text-[#c4302b]/80 transition-colors">
                         Obtenir le script complet →
                       </Link>
+                    </div>
+                    <div className="border-t border-[#1F1F25] pt-5">
+                      <p className="text-xs text-center text-[#3A3A44] mb-4 font-mono uppercase tracking-widest">Cet aperçu t&apos;a convaincu ?</p>
+                      <RatingInteraction label="Ton avis sur l'aperçu" />
                     </div>
                   </motion.div>
                 )}
