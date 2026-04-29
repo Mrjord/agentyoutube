@@ -21,6 +21,8 @@ import { PageParticles } from '@/components/landing/PageParticles';
 import RadialOrbitalTimeline from '@/components/ui/radial-orbital-timeline';
 import { Search, Filter, BarChart2, Cpu, Shield, FileText, Download } from 'lucide-react';
 import { BentoGrid, BentoItem } from '@/components/ui/bento-grid';
+import { Marquee } from '@/components/ui/marquee';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
 const BLOG_ARTICLES = getAllArticles().slice(0, 3);
 
@@ -235,9 +237,14 @@ const COMPARATIF = [
 ];
 
 const TESTIMONIALS = [
-  { quote: "YUBOT a changé ma façon de créer. Je ne passe plus mes week-ends à réécrire le même hook 15 fois. J'ai un script propre en moins de 2 heures du thème à la caméra. Et mes vidéos durent plus longtemps dans les recommandations.", author: 'Thomas L.', role: 'Chaîne finance personnelle, 91K abonnés' },
-  { quote: "En 2 mois, mes vues moyennes ont doublé. Mais ce qui m'a vraiment surprise, c'est que les commentaires ont changé. Les gens disent que mes vidéos sont plus fluides, plus naturelles. YUBOT sort des scripts qui ne sonnent pas comme une IA.", author: 'Léa M.', role: 'Créatrice mindset & business' },
-  { quote: "J'ai testé tous les générateurs de scripts du marché. Tous donnent quelque chose d'utilisable mais générique. YUBOT est le seul qui comprend que le problème n'est pas d'écrire du texte — c'est de construire une structure qui retient les gens.", author: 'Pierre D.', role: 'Directeur créatif, agence vidéo' },
+  { quote: "YUBOT a changé ma façon de créer. Je ne passe plus mes week-ends à réécrire le même hook 15 fois. J'ai un script propre en moins de 2 heures du thème à la caméra.", author: 'Thomas L.', role: 'Finance personnelle · 91K abonnés', initials: 'TL', stars: 5 },
+  { quote: "En 2 mois, mes vues moyennes ont doublé. Les gens disent que mes vidéos sont plus fluides, plus naturelles. YUBOT sort des scripts qui ne sonnent pas comme une IA.", author: 'Léa M.', role: 'Mindset & business', initials: 'LM', stars: 5 },
+  { quote: "J'ai testé tous les générateurs du marché. YUBOT est le seul qui comprend que le problème n'est pas d'écrire du texte — c'est de construire une structure qui retient les gens.", author: 'Pierre D.', role: 'Directeur créatif, agence vidéo', initials: 'PD', stars: 5 },
+  { quote: "Avant YUBOT je passais 4h sur chaque script. Maintenant c'est 45 minutes. Et les vidéos performent mieux qu'avant. Je comprends même pourquoi ça marche grâce aux notes créateur.", author: 'Sophie R.', role: 'Lifestyle minimaliste · 34K abonnés', initials: 'SR', stars: 5 },
+  { quote: "Le filtre anti-IA c'est ce qui fait la différence. Mes abonnés me demandent si j'ai un ghost-writer tellement les scripts sonnent naturels. C'est moi, juste structuré.", author: 'Kevin B.', role: 'Entrepreneuriat · 58K abonnés', initials: 'KB', stars: 5 },
+  { quote: "On génère les scripts de 8 clients par semaine avec YUBOT. Le gain de temps est réel. Et la qualité a monté d'un cran parce qu'on part de vrais patterns viraux.", author: 'Équipe MPW', role: 'Agence vidéo YouTube', initials: 'MW', stars: 5 },
+  { quote: "Ce qui m'a convaincu c'est la bibliothèque de patterns. Je comprends pourquoi chaque structure fonctionne, pas juste ce qu'il faut dire. Ça change tout pour la progression.", author: 'Antoine V.', role: 'IA & tech · 22K abonnés', initials: 'AV', stars: 5 },
+  { quote: "J'avais essayé ChatGPT avec des prompts YouTube. Résultat générique à chaque fois. YUBOT c'est différent — chaque script colle à la réalité de ma niche.", author: 'Clara M.', role: 'Développement personnel', initials: 'CM', stars: 5 },
 ];
 
 
@@ -889,36 +896,73 @@ export default function LandingPage() {
       </section>
 
       {/* ── TÉMOIGNAGES ──────────────────────────────────────────────── */}
-      <section>
-        <div className="max-w-6xl mx-auto px-6 py-20">
-          <FadeUp><p className="text-xs font-mono text-[#c4302b] tracking-widest uppercase mb-12 text-center">Ce qu&apos;ils disent</p></FadeUp>
-          <FadeUp delay={0.1}>
-            <motion.blockquote
-              className="border border-[#1F1F25] rounded-xl p-8 bg-[#0D0D10] mb-8 max-w-3xl mx-auto text-center"
-              whileHover={{ borderColor: 'rgba(196,48,43,0.2)' }}
-              transition={{ duration: 0.3 }}
-            >
-              <p className="font-heading text-xl font-semibold leading-relaxed mb-4 text-[#F5F5F7]">
-                &ldquo;{TESTIMONIALS[0].quote}&rdquo;
-              </p>
-              <p className="text-sm text-[#888]">{TESTIMONIALS[0].author} — {TESTIMONIALS[0].role}</p>
-            </motion.blockquote>
+      <section className="overflow-hidden">
+        <div className="py-20">
+          <FadeUp>
+            <p className="text-xs font-mono text-[#c4302b] tracking-widest uppercase mb-3 text-center">Ce qu&apos;ils disent</p>
+            <h2 className="font-heading text-3xl font-bold text-center mb-12">2 500 créateurs. Un seul constat.</h2>
           </FadeUp>
-          <Stagger className="grid grid-cols-1 md:grid-cols-2 gap-5" delay={0.15}>
-            {TESTIMONIALS.slice(1).map(({ quote, author, role }) => (
-              <motion.blockquote
-                key={author}
-                variants={fadeUpChild}
-                className="border border-[#1F1F25] rounded-xl p-6 bg-[#0D0D10] space-y-3"
-                whileHover={{ borderColor: 'rgba(196,48,43,0.15)' }}
-                transition={{ duration: 0.3 }}
-              >
-                <div className="w-5 h-0.5 bg-[#c4302b]" />
-                <p className="text-sm text-[#C4BFB7] leading-relaxed italic">&ldquo;{quote}&rdquo;</p>
-                <p className="text-xs text-[#888]">{author} — {role}</p>
-              </motion.blockquote>
-            ))}
-          </Stagger>
+
+          <div className="relative">
+            {/* left fade */}
+            <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-32 z-10 bg-gradient-to-r from-[#050507] to-transparent" />
+            {/* right fade */}
+            <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-32 z-10 bg-gradient-to-l from-[#050507] to-transparent" />
+
+            <Marquee pauseOnHover repeat={3} className="[--duration:50s] [--gap:1rem] mb-4">
+              {TESTIMONIALS.slice(0, 4).map(({ quote, author, role, initials, stars }) => (
+                <div
+                  key={author}
+                  className="w-80 shrink-0 rounded-xl border border-[#1F1F25] bg-[#0D0D10] p-5 space-y-4 hover:border-[#c4302b]/20 transition-colors duration-300"
+                >
+                  <div className="flex gap-0.5">
+                    {Array.from({ length: stars }).map((_, i) => (
+                      <svg key={i} width="12" height="12" viewBox="0 0 12 12" fill="#c4302b">
+                        <path d="M6 1l1.3 2.6L10 4.1 8 6l.4 2.9L6 7.6l-2.4 1.3L4 6 2 4.1l2.7-.5L6 1z"/>
+                      </svg>
+                    ))}
+                  </div>
+                  <p className="text-sm text-[#C4BFB7] leading-relaxed">&ldquo;{quote}&rdquo;</p>
+                  <div className="flex items-center gap-3 pt-1">
+                    <Avatar className="w-8 h-8">
+                      <AvatarFallback className="bg-[#1F1F25] text-[#888] text-xs">{initials}</AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className="text-xs font-semibold text-[#F5F0E8]">{author}</p>
+                      <p className="text-xs text-[#888]">{role}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </Marquee>
+
+            <Marquee pauseOnHover reverse repeat={3} className="[--duration:45s] [--gap:1rem]">
+              {TESTIMONIALS.slice(4).map(({ quote, author, role, initials, stars }) => (
+                <div
+                  key={author}
+                  className="w-80 shrink-0 rounded-xl border border-[#1F1F25] bg-[#0D0D10] p-5 space-y-4 hover:border-[#c4302b]/20 transition-colors duration-300"
+                >
+                  <div className="flex gap-0.5">
+                    {Array.from({ length: stars }).map((_, i) => (
+                      <svg key={i} width="12" height="12" viewBox="0 0 12 12" fill="#c4302b">
+                        <path d="M6 1l1.3 2.6L10 4.1 8 6l.4 2.9L6 7.6l-2.4 1.3L4 6 2 4.1l2.7-.5L6 1z"/>
+                      </svg>
+                    ))}
+                  </div>
+                  <p className="text-sm text-[#C4BFB7] leading-relaxed">&ldquo;{quote}&rdquo;</p>
+                  <div className="flex items-center gap-3 pt-1">
+                    <Avatar className="w-8 h-8">
+                      <AvatarFallback className="bg-[#1F1F25] text-[#888] text-xs">{initials}</AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className="text-xs font-semibold text-[#F5F0E8]">{author}</p>
+                      <p className="text-xs text-[#888]">{role}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </Marquee>
+          </div>
         </div>
       </section>
 
