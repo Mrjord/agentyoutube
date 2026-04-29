@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
 import { FadeUp, Stagger, fadeUpChild } from '@/components/landing/AnimIn';
@@ -8,6 +8,7 @@ import { CountUp } from '@/components/landing/CountUp';
 import { Cursor } from '@/components/landing/Cursor';
 import { HeroParticles } from '@/components/landing/HeroParticles';
 import { TiltCard } from '@/components/landing/TiltCard';
+import { FloatCard } from '@/components/landing/FloatCard';
 import { SmoothScroll } from '@/components/landing/SmoothScroll';
 import { PerspectiveMarquee } from '@/components/ui/perspective-marquee';
 import MagnifiedBento from '@/components/ui/magnified-bento';
@@ -18,6 +19,67 @@ const BLOG_ARTICLES = getAllArticles().slice(0, 3);
 
 /* ── helpers ─────────────────────────────────────────────────────── */
 const EASE = [0.65, 0, 0.35, 1] as const;
+
+function TypewriterText({ text, speed = 18 }: { text: string; speed?: number }) {
+  const [displayed, setDisplayed] = useState('');
+  useEffect(() => {
+    setDisplayed('');
+    let i = 0;
+    const id = setInterval(() => {
+      if (i < text.length) { setDisplayed(text.slice(0, i + 1)); i++; }
+      else clearInterval(id);
+    }, speed);
+    return () => clearInterval(id);
+  }, [text, speed]);
+  return (
+    <span>
+      {displayed}
+      <motion.span
+        className="inline-block w-[2px] h-[0.9em] bg-current align-middle ml-0.5"
+        animate={{ opacity: [1, 0, 1] }}
+        transition={{ duration: 0.8, repeat: Infinity }}
+        style={{ opacity: displayed.length < text.length ? 1 : 0 }}
+      />
+    </span>
+  );
+}
+
+function PulseButton({ children }: { children: React.ReactNode }) {
+  return (
+    <motion.div className="relative inline-block" whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
+      <motion.span
+        className="absolute inset-0 rounded pointer-events-none"
+        animate={{ boxShadow: ['0 0 0 0px rgba(196,48,43,0.5)', '0 0 0 10px rgba(196,48,43,0)', '0 0 0 0px rgba(196,48,43,0)'] }}
+        transition={{ duration: 2.2, repeat: Infinity, repeatDelay: 0.6 }}
+      />
+      {children}
+    </motion.div>
+  );
+}
+
+function LiveDot() {
+  return (
+    <span className="relative inline-flex h-2 w-2 mr-1.5">
+      <motion.span
+        className="absolute inline-flex h-full w-full rounded-full bg-[#c4302b] opacity-75"
+        animate={{ scale: [1, 2.2, 1], opacity: [0.75, 0, 0.75] }}
+        transition={{ duration: 1.8, repeat: Infinity, ease: 'easeOut' }}
+      />
+      <span className="relative inline-flex rounded-full h-2 w-2 bg-[#c4302b]" />
+    </span>
+  );
+}
+
+function LiveCounter({ base }: { base: number }) {
+  const [count, setCount] = useState(base);
+  useEffect(() => {
+    const id = setInterval(() => {
+      if (Math.random() > 0.55) setCount(c => c + 1);
+    }, 4000);
+    return () => clearInterval(id);
+  }, []);
+  return <>{count.toLocaleString('fr-FR')}</>;
+}
 
 function WordReveal({ text, className, delay = 0 }: { text: string; className?: string; delay?: number }) {
   const ref = useRef(null);
@@ -139,7 +201,7 @@ const STATS = [
   { n: '10 247', label: 'Vidéos virales analysées' },
   { n: '47', label: 'Patterns viraux actifs' },
   { n: '2 540', label: 'Créateurs actifs' },
-  { n: '892', label: 'Scripts cette semaine' },
+  { n: 'live', label: 'Scripts cette semaine' },
   { n: '98%', label: 'Taux de satisfaction' },
   { n: '87s', label: 'Temps de génération moyen' },
 ];
@@ -215,14 +277,14 @@ export default function LandingPage() {
               <a key={href} href={href} className="text-sm text-[#888] hover:text-[#F5F5F7] transition-colors duration-200">{label}</a>
             ))}
           </div>
-          <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
+          <PulseButton>
             <Link
               href="/generate"
               className="px-4 py-1.5 bg-[#c4302b] text-[#050507] text-sm font-semibold rounded hover:bg-[#c4302b]/90 transition-colors"
             >
               Essayer gratuitement
             </Link>
-          </motion.div>
+          </PulseButton>
         </div>
       </motion.nav>
 
@@ -231,6 +293,19 @@ export default function LandingPage() {
         {/* ambient glow */}
         <div className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 w-[700px] h-[400px] rounded-full opacity-[0.07]"
           style={{ background: 'radial-gradient(ellipse, #c4302b 0%, transparent 70%)' }} />
+        {/* floating ambient orbs */}
+        <motion.div
+          className="pointer-events-none absolute w-80 h-80 rounded-full"
+          style={{ background: 'radial-gradient(circle, rgba(196,48,43,0.07) 0%, transparent 70%)', top: '5%', right: '5%' }}
+          animate={{ x: [0, 24, 0], y: [0, -16, 0] }}
+          transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut' }}
+        />
+        <motion.div
+          className="pointer-events-none absolute w-64 h-64 rounded-full"
+          style={{ background: 'radial-gradient(circle, rgba(196,48,43,0.05) 0%, transparent 70%)', bottom: '10%', left: '0%' }}
+          animate={{ x: [0, -18, 0], y: [0, 20, 0] }}
+          transition={{ duration: 11, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
+        />
         <HeroParticles />
 
         <div className="relative grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-16 items-start">
@@ -273,7 +348,7 @@ export default function LandingPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.7 }}
             >
-              <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
+              <PulseButton>
                 <Link
                   href="/generate"
                   className="inline-flex items-center gap-2 px-6 py-3 bg-[#c4302b] text-[#050507] font-semibold rounded hover:bg-[#c4302b]/90 transition-colors"
@@ -283,7 +358,7 @@ export default function LandingPage() {
                     <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
                 </Link>
-              </motion.div>
+              </PulseButton>
               <a href="#how" className="text-sm text-[#888] hover:text-[#F5F5F7] transition-colors">
                 Voir comment ça marche →
               </a>
@@ -308,50 +383,71 @@ export default function LandingPage() {
             </motion.div>
           </div>
 
-          {/* mock script card */}
+          {/* mock script card — floating + animated border */}
           <motion.div
             initial={{ opacity: 0, x: 30, rotateY: -8 }}
             animate={{ opacity: 1, x: 0, rotateY: 0 }}
             transition={{ duration: 0.9, delay: 0.4, ease: EASE }}
             style={{ perspective: 1200 }}
           >
-            <div className="border border-[#1F1F25] rounded-xl bg-[#0F0F12] overflow-hidden shadow-2xl shadow-black/50">
-              <div className="border-b border-[#1F1F25] px-4 py-3 flex items-center gap-2">
-                <div className="w-2.5 h-2.5 rounded-full bg-[#2A2A30]" />
-                <div className="w-2.5 h-2.5 rounded-full bg-[#2A2A30]" />
-                <div className="w-2.5 h-2.5 rounded-full bg-[#2A2A30]" />
-                <span className="ml-2 text-xs text-[#3A3A44] font-mono">script_viral.docx</span>
-                <span className="ml-auto text-xs font-mono" style={{ color: '#c4302b60' }}>Généré il y a 4s</span>
-              </div>
-              <div className="px-4 py-2 bg-[#0D0D10] border-b border-[#1F1F25]">
-                <p className="text-xs text-[#888] font-mono">Thème : Comment gagner du temps avec l&apos;IA en 2026</p>
-              </div>
-              <div className="p-5 space-y-3">
-                {MOCK_SCRIPT.map(({ label, color, bg, text }, i) => (
-                  <motion.div
-                    key={label}
-                    initial={{ opacity: 0, x: -12 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.5, delay: 0.6 + i * 0.15 }}
-                    className="rounded border-l-2 p-3"
-                    style={{ borderLeftColor: color, backgroundColor: bg }}
-                  >
-                    <p className="text-xs font-mono font-bold mb-2 tracking-widest" style={{ color }}>{label}</p>
-                    <p className="text-sm text-[#C4BFB7] leading-relaxed">{text}</p>
-                  </motion.div>
-                ))}
+            <FloatCard amplitude={8} duration={5}>
+              {/* rotating gradient border */}
+              <div className="relative rounded-xl p-[1px] overflow-hidden shadow-2xl shadow-black/50">
                 <motion.div
-                  className="flex items-center gap-1.5 pt-1"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 1.1 }}
-                >
-                  <div className="h-px flex-1 bg-[#1F1F25]" />
-                  <span className="text-xs text-[#3A3A44] font-mono">+ 5 sections</span>
-                  <div className="h-px flex-1 bg-[#1F1F25]" />
-                </motion.div>
+                  className="absolute inset-0 rounded-xl"
+                  style={{ background: 'conic-gradient(from 0deg, transparent 0%, rgba(196,48,43,0.7) 18%, transparent 36%)' }}
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 5, repeat: Infinity, ease: 'linear' }}
+                />
+                <div className="relative rounded-xl bg-[#0F0F12] overflow-hidden">
+                  {/* scan line */}
+                  <motion.div
+                    className="absolute left-0 right-0 h-[2px] pointer-events-none z-20"
+                    style={{ background: 'linear-gradient(to right, transparent, rgba(196,48,43,0.5), transparent)' }}
+                    animate={{ y: [0, 260, 0] }}
+                    transition={{ duration: 4, ease: 'linear', repeat: Infinity, repeatDelay: 1.5 }}
+                  />
+                  <div className="border-b border-[#1F1F25] px-4 py-3 flex items-center gap-2">
+                    <div className="w-2.5 h-2.5 rounded-full bg-[#2A2A30]" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-[#2A2A30]" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-[#2A2A30]" />
+                    <span className="ml-2 text-xs text-[#3A3A44] font-mono">script_viral.docx</span>
+                    <span className="ml-auto text-xs font-mono flex items-center gap-1" style={{ color: '#c4302b90' }}>
+                      <LiveDot />
+                      Généré il y a 4s
+                    </span>
+                  </div>
+                  <div className="px-4 py-2 bg-[#0D0D10] border-b border-[#1F1F25]">
+                    <p className="text-xs text-[#888] font-mono">Thème : Comment gagner du temps avec l&apos;IA en 2026</p>
+                  </div>
+                  <div className="p-5 space-y-3">
+                    {MOCK_SCRIPT.map(({ label, color, bg, text }, i) => (
+                      <motion.div
+                        key={label}
+                        initial={{ opacity: 0, x: -12 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.5, delay: 0.6 + i * 0.15 }}
+                        className="rounded border-l-2 p-3"
+                        style={{ borderLeftColor: color, backgroundColor: bg }}
+                      >
+                        <p className="text-xs font-mono font-bold mb-2 tracking-widest" style={{ color }}>{label}</p>
+                        <p className="text-sm text-[#C4BFB7] leading-relaxed">{text}</p>
+                      </motion.div>
+                    ))}
+                    <motion.div
+                      className="flex items-center gap-1.5 pt-1"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 1.1 }}
+                    >
+                      <div className="h-px flex-1 bg-[#1F1F25]" />
+                      <span className="text-xs text-[#3A3A44] font-mono">+ 5 sections</span>
+                      <div className="h-px flex-1 bg-[#1F1F25]" />
+                    </motion.div>
+                  </div>
+                </div>
               </div>
-            </div>
+            </FloatCard>
           </motion.div>
         </div>
       </section>
@@ -654,10 +750,12 @@ export default function LandingPage() {
                       <span className="text-xs font-mono text-[#c4302b]">Aperçu généré</span>
                       <div className="h-px flex-1 bg-[#1F1F25]" />
                     </div>
-                    {DEMO_RESULT.map(({ label, color, bg, text }) => (
+                    {DEMO_RESULT.map(({ label, color, bg, text }, idx) => (
                       <div key={label} className="rounded border-l-2 p-3" style={{ borderLeftColor: color, backgroundColor: bg }}>
                         <p className="text-xs font-mono font-bold mb-1.5" style={{ color }}>[{label}]</p>
-                        <p className="text-sm text-[#C4BFB7] leading-relaxed">{text}</p>
+                        <p className="text-sm text-[#C4BFB7] leading-relaxed">
+                          <TypewriterText text={text} speed={idx === 0 ? 18 : 22} />
+                        </p>
                       </div>
                     ))}
                     <div className="border border-[#1F1F25] rounded-lg p-3 bg-[#111114] flex items-center justify-between">
@@ -685,8 +783,15 @@ export default function LandingPage() {
                 variants={fadeUpChild}
                 className="bg-[#0D0D10] p-8 text-center group hover:bg-[#111114] transition-colors duration-300"
               >
-                <p className="font-heading text-4xl font-bold mb-2 tabular-nums">
-                  <CountUp value={n} />
+                <p className="font-heading text-4xl font-bold mb-2 tabular-nums flex items-center justify-center gap-2">
+                  {n === 'live' ? (
+                    <>
+                      <LiveDot />
+                      <LiveCounter base={892} />
+                    </>
+                  ) : (
+                    <CountUp value={n} />
+                  )}
                 </p>
                 <p className="text-sm text-[#888]">{label}</p>
               </motion.div>
