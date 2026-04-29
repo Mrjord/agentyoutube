@@ -9,6 +9,7 @@ import { Cursor } from '@/components/landing/Cursor';
 import { HeroParticles } from '@/components/landing/HeroParticles';
 import { TiltCard } from '@/components/landing/TiltCard';
 import { SmoothScroll } from '@/components/landing/SmoothScroll';
+import { PerspectiveMarquee } from '@/components/ui/perspective-marquee';
 
 /* ── helpers ─────────────────────────────────────────────────────── */
 const EASE = [0.65, 0, 0.35, 1] as const;
@@ -356,22 +357,27 @@ export default function LandingPage() {
       </section>
 
       {/* ── SOCIAL PROOF ─────────────────────────────────────────────── */}
-      <section className="border-t border-b border-[#1F1F25] bg-[#0D0D10]">
-        <div className="max-w-6xl mx-auto px-6 py-8">
+      <section className="border-t border-b border-[#1F1F25] bg-[#0D0D10] overflow-hidden">
+        <div className="py-8">
           <FadeUp>
-            <p className="text-xs text-[#3A3A44] text-center mb-6 uppercase tracking-widest font-mono">
+            <p className="text-xs text-[#3A3A44] text-center mb-6 uppercase tracking-widest font-mono px-6">
               Utilisé par des créateurs qui prennent leurs résultats au sérieux
             </p>
           </FadeUp>
-          <Stagger className="flex flex-wrap justify-center gap-x-10 gap-y-3">
-            {['La Clé des Marchés', 'Marketing Flow', 'Mindset Business', 'Code & Café', 'Léa Creates', 'Finance Réelle', "L'Atelier Vidéo", 'Startup Stories'].map(name => (
-              <motion.span key={name} variants={fadeUpChild} className="text-sm text-[#3A3A44] font-heading font-semibold hover:text-[#888] transition-colors duration-200">
-                {name}
-              </motion.span>
-            ))}
-          </Stagger>
+          <PerspectiveMarquee
+            items={['La Clé des Marchés', 'Marketing Flow', 'Mindset Business', 'Code & Café', 'Léa Creates', 'Finance Réelle', "L'Atelier Vidéo", 'Startup Stories']}
+            fontSize={28}
+            color="#3A3A44"
+            fontWeight={700}
+            pixelsPerFrame={1.2}
+            rotateY={-22}
+            rotateX={6}
+            fadeColor="#0D0D10"
+            background="transparent"
+            height={72}
+          />
           <FadeUp delay={0.2}>
-            <p className="text-center text-xs text-[#888] mt-6">+ 2 500 créateurs font confiance à YUBOT</p>
+            <p className="text-center text-xs text-[#888] mt-6 px-6">+ 2 500 créateurs font confiance à YUBOT</p>
           </FadeUp>
         </div>
       </section>
