@@ -99,10 +99,23 @@ export async function getRecentVideos(limit = 10) {
   return db.select().from(videos).orderBy(desc(videos.discoveredAt)).limit(limit);
 }
 
-export async function getTopPatterns(limit = 20): Promise<Pattern[]> {
+export async function getTopPatterns(limit = 200) {
   return db
-    .select()
+    .select({
+      id: patterns.id,
+      patternType: patterns.patternType,
+      content: patterns.content,
+      tone: patterns.tone,
+      durationBucket: patterns.durationBucket,
+      viralityScore: patterns.viralityScore,
+      createdAt: patterns.createdAt,
+      videoTitle: videos.title,
+      videoChannel: videos.channel,
+      videoUrl: videos.url,
+      videoViewCount: videos.viewCount,
+    })
     .from(patterns)
+    .leftJoin(videos, eq(patterns.videoId, videos.id))
     .orderBy(desc(patterns.viralityScore))
     .limit(limit);
 }
