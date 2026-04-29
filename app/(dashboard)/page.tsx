@@ -11,6 +11,7 @@ import { TiltCard } from '@/components/landing/TiltCard';
 import { SmoothScroll } from '@/components/landing/SmoothScroll';
 import { PerspectiveMarquee } from '@/components/ui/perspective-marquee';
 import { CreativePricing } from '@/components/ui/creative-pricing';
+import MagnifiedBento from '@/components/ui/magnified-bento';
 import { Pencil, Star, Sparkles } from 'lucide-react';
 
 /* ── helpers ─────────────────────────────────────────────────────── */
@@ -442,22 +443,27 @@ export default function LandingPage() {
       {/* ── LA SOLUTION ──────────────────────────────────────────────── */}
       <section className="border-b border-[#1F1F25] bg-[#0D0D10]">
         <div className="max-w-6xl mx-auto px-6 py-20">
-          <div className="max-w-2xl">
-            <SectionLabel>La solution</SectionLabel>
-            <FadeUp>
-              <h2 className="font-heading text-3xl lg:text-4xl font-bold leading-tight mb-8">
-                On a lu YouTube à ta place.
-              </h2>
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_420px] gap-16 items-center">
+            <div>
+              <SectionLabel>La solution</SectionLabel>
+              <FadeUp>
+                <h2 className="font-heading text-3xl lg:text-4xl font-bold leading-tight mb-8">
+                  On a lu YouTube à ta place.
+                </h2>
+              </FadeUp>
+              <Stagger className="space-y-5 text-[#888] leading-relaxed" delay={0.1}>
+                {[
+                  "YUBOT ne génère pas des scripts à partir de rien. Il commence par analyser. Chaque jour, notre système scanne des milliers de vidéos dans les niches business, entrepreneuriat, mindset, IA et argent. Il mesure le ratio viral — vues vs abonnés — pour ne retenir que les vidéos qui ont surperformé leur base d'audience.",
+                  "Ensuite, il décortique. Structure du hook. Longueur de l'intro. Nombre de re-hooks dans le corps. Technique de conclusion. Rythme des phrases. On identifie les patterns qui se répètent dans les vidéos qui fonctionnent — et seulement celles-là.",
+                  "Enfin, il génère. Tu donnes un thème. YUBOT sélectionne les patterns les plus adaptés à ton sujet, à ta durée cible, à ton ton. Et il produit un script complet — hook, intro, 3 actes, re-hook, conclusion — avec le rythme oral qui correspond à ce que les spectateurs restent à regarder.",
+                ].map((p, i) => (
+                  <motion.p key={i} variants={fadeUpChild}>{p}</motion.p>
+                ))}
+              </Stagger>
+            </div>
+            <FadeUp delay={0.2}>
+              <MagnifiedBento />
             </FadeUp>
-            <Stagger className="space-y-5 text-[#888] leading-relaxed" delay={0.1}>
-              {[
-                "YUBOT ne génère pas des scripts à partir de rien. Il commence par analyser. Chaque jour, notre système scanne des milliers de vidéos dans les niches business, entrepreneuriat, mindset, IA et argent. Il mesure le ratio viral — vues vs abonnés — pour ne retenir que les vidéos qui ont surperformé leur base d'audience.",
-                "Ensuite, il décortique. Structure du hook. Longueur de l'intro. Nombre de re-hooks dans le corps. Technique de conclusion. Rythme des phrases. On identifie les patterns qui se répètent dans les vidéos qui fonctionnent — et seulement celles-là.",
-                "Enfin, il génère. Tu donnes un thème. YUBOT sélectionne les patterns les plus adaptés à ton sujet, à ta durée cible, à ton ton. Et il produit un script complet — hook, intro, 3 actes, re-hook, conclusion — avec le rythme oral qui correspond à ce que les spectateurs restent à regarder.",
-              ].map((p, i) => (
-                <motion.p key={i} variants={fadeUpChild}>{p}</motion.p>
-              ))}
-            </Stagger>
           </div>
         </div>
       </section>
