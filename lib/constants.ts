@@ -1,6 +1,8 @@
 export const V1_USER_ID = '00000000-0000-0000-0000-000000000001';
 export const V1_USER_EMAIL = 'ethanjordan06@gmail.com';
 
+export const WORDS_PER_MINUTE = 130;
+
 export const DURATION_TO_SECONDS: Record<string, number> = {
   '30s': 30,
   '60s': 60,
@@ -9,10 +11,15 @@ export const DURATION_TO_SECONDS: Record<string, number> = {
   '10min': 600,
   '15min': 900,
   '20min': 1200,
+  '30min': 1800,
 };
 
-export const DURATION_OPTIONS = ['30s', '60s', '5min', '8min', '10min', '15min', '20min'] as const;
+export const DURATION_OPTIONS = ['30s', '60s', '5min', '8min', '10min', '15min', '20min', '30min'] as const;
 export type DurationOption = typeof DURATION_OPTIONS[number];
+
+export function durationToWords(seconds: number): number {
+  return Math.round((seconds / 60) * WORDS_PER_MINUTE);
+}
 
 export const TONE_OPTIONS = [
   'viral',

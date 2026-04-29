@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { AnalyzeReport } from './AnalyzeReport';
 import { generateDocxBlob } from '@/lib/export/generateDocx';
 import { useLocalStorage } from '@/lib/hooks/useLocalStorage';
+import { WORDS_PER_MINUTE } from '@/lib/constants';
 
 const VIDEO_TYPES = [
   { value: 'long', label: 'YouTube long format (5–30 min)' },
@@ -26,8 +27,6 @@ const DEPTHS = [
   { value: 'standard', label: 'Standard (~30 sec)', desc: 'Analyse complète section par section' },
   { value: 'approfondie', label: 'Approfondie (~1 min)', desc: 'Analyse + suggestions de réécriture détaillées' },
 ];
-
-const WORDS_PER_MINUTE = 130;
 
 export function AnalyzeScriptStream() {
   const { value: text, set: setText, saved: textSaved } = useLocalStorage('yubot_analyze_text', '');

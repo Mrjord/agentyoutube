@@ -5,11 +5,9 @@ import { useState, useMemo } from 'react';
 import { ScriptPreview } from './ScriptPreview';
 import { Button } from '@/components/ui/button';
 import { generateDocxBlob } from '@/lib/export/generateDocx';
-import { DURATION_OPTIONS, DURATION_TO_SECONDS } from '@/lib/constants';
+import { DURATION_OPTIONS, DURATION_TO_SECONDS, WORDS_PER_MINUTE } from '@/lib/constants';
 import type { DurationOption } from '@/lib/constants';
 import { useLocalStorage } from '@/lib/hooks/useLocalStorage';
-
-const WORDS_PER_MINUTE = 130;
 
 function countWords(text: string): number {
   return text.trim().split(/\s+/).filter(Boolean).length;
