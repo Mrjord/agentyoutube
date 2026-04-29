@@ -105,16 +105,24 @@ function WordReveal({ text, className, delay = 0 }: { text: string; className?: 
 }
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: '-40px' });
   return (
-    <motion.p
-      className="text-xs font-mono text-[#c4302b] tracking-widest uppercase mb-4"
+    <motion.div
+      ref={ref}
+      className="mb-4"
       initial={{ opacity: 0, x: -12 }}
-      whileInView={{ opacity: 1, x: 0 }}
-      viewport={{ once: true }}
+      animate={inView ? { opacity: 1, x: 0 } : {}}
       transition={{ duration: 0.5, ease: EASE }}
     >
-      {children}
-    </motion.p>
+      <TextScramble
+        text={String(children)}
+        textClassName="text-xs font-mono tracking-widest uppercase"
+        restCharClassName="text-[#c4302b]"
+        scrambleCharClassName="text-[#F5F0E8] scale-110"
+        autoScrambleDelay={inView ? 300 : undefined}
+      />
+    </motion.div>
   );
 }
 
@@ -329,6 +337,7 @@ export default function LandingPage() {
                 textClassName="text-xs font-mono tracking-widest uppercase"
                 restCharClassName="text-[#c4302b]"
                 scrambleCharClassName="text-[#F5F0E8] scale-110"
+                autoScrambleDelay={900}
               />
             </motion.div>
 
@@ -778,7 +787,7 @@ export default function LandingPage() {
                       </Link>
                     </div>
                     <div className="border-t border-[#1F1F25] pt-5">
-                      <p className="text-xs text-center text-[#3A3A44] mb-4 font-mono uppercase tracking-widest">Cet aperçu t&apos;a convaincu ?</p>
+                      <p className="text-xs text-center text-[#888] mb-3 font-mono uppercase tracking-widest">Cet aperçu t&apos;a convaincu ?</p>
                       <RatingInteraction label="Ton avis sur l'aperçu" />
                     </div>
                   </motion.div>

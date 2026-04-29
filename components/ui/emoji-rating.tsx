@@ -56,7 +56,7 @@ export function RatingInteraction({ onChange, className, label = "Ton avis" }: R
                     "text-3xl transition-all duration-300 ease-out select-none",
                     isActive
                       ? "grayscale-0 drop-shadow-lg"
-                      : "grayscale opacity-40 group-hover:opacity-70 group-hover:grayscale-[0.3]",
+                      : "grayscale opacity-65 group-hover:opacity-90 group-hover:grayscale-0",
                   )}
                 >
                   {item.emoji}

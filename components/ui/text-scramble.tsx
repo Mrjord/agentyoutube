@@ -14,6 +14,8 @@ interface TextScrambleProps {
   scrambleCharClassName?: string
   /** className for a char at rest / already revealed (default: text-foreground) */
   restCharClassName?: string
+  /** fire the scramble automatically once after this delay (ms) */
+  autoScrambleDelay?: number
 }
 
 export function TextScramble({
@@ -22,6 +24,7 @@ export function TextScramble({
   textClassName,
   scrambleCharClassName = "text-primary scale-110",
   restCharClassName = "text-foreground",
+  autoScrambleDelay,
 }: TextScrambleProps) {
   const [displayText, setDisplayText] = useState(text)
   const [isHovering, setIsHovering] = useState(false)
@@ -68,6 +71,13 @@ export function TextScramble({
   const handleMouseLeave = () => {
     setIsHovering(false)
   }
+
+  useEffect(() => {
+    if (autoScrambleDelay !== undefined) {
+      const t = setTimeout(() => scramble(), autoScrambleDelay)
+      return () => clearTimeout(t)
+    }
+  }, [autoScrambleDelay, scramble])
 
   useEffect(() => {
     return () => {
