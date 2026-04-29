@@ -306,10 +306,16 @@ export default function LandingPage() {
       </motion.nav>
 
       {/* ── HERO ─────────────────────────────────────────────────────── */}
-      <section className="relative max-w-6xl mx-auto px-6 pt-20 pb-28 overflow-hidden">
-        {/* ambient glow */}
-        <div className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 w-[700px] h-[400px] rounded-full opacity-[0.07]"
+      <section className="relative w-full px-6 pt-24 pb-28 overflow-hidden flex flex-col items-center">
+        {/* CSS grid background */}
+        <div className="pointer-events-none absolute inset-0 [background-image:linear-gradient(rgba(196,48,43,0.04)_1px,transparent_1px),linear-gradient(to_right,rgba(196,48,43,0.04)_1px,transparent_1px)] [background-size:80px_80px]" />
+        {/* vignette fade over grid */}
+        <div className="pointer-events-none absolute inset-0 [background:radial-gradient(ellipse_80%_60%_at_50%_0%,transparent_40%,#050507_100%)]" />
+
+        {/* ambient glow — stronger, wider */}
+        <div className="pointer-events-none absolute -top-32 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] rounded-full opacity-[0.14]"
           style={{ background: 'radial-gradient(ellipse, #c4302b 0%, transparent 70%)' }} />
+
         {/* floating ambient orbs */}
         <motion.div
           className="pointer-events-none absolute w-80 h-80 rounded-full"
@@ -325,95 +331,106 @@ export default function LandingPage() {
         />
         <HeroParticles />
 
-        <div className="relative grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-16 items-start">
-          <div className="space-y-8">
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
+        <div className="relative max-w-4xl mx-auto text-center space-y-8 w-full">
+
+          {/* announcement badge */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+          >
+            <a
+              href="#features"
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#c4302b]/30 bg-[#c4302b]/10 text-sm text-[#C4BFB7] hover:border-[#c4302b]/60 hover:bg-[#c4302b]/15 transition-all"
             >
-              <TextScramble
-                text="Agent YouTube IA"
-                textClassName="text-xs font-mono tracking-widest uppercase"
-                restCharClassName="text-[#c4302b]"
-                scrambleCharClassName="text-[#F5F0E8] scale-110"
-                autoScrambleDelay={900}
-              />
-            </motion.div>
+              <LiveDot />
+              <span>47 patterns viraux actifs · mis à jour aujourd&apos;hui</span>
+              <span className="text-[#c4302b] font-medium">Explorer →</span>
+            </a>
+          </motion.div>
 
-            <h1 className="font-heading text-5xl lg:text-6xl font-bold leading-[1.05] tracking-tight">
-              <WordReveal text="Le script qui retient." delay={0.2} />
-              <br />
-              <WordReveal text="La structure qui" delay={0.35} />{' '}
-              <motion.span
-                className="text-[#c4302b]"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.5, delay: 0.7 }}
-              >
-                convertit.
-              </motion.span>
-            </h1>
-
-            <motion.p
-              className="text-[#888] text-lg leading-relaxed max-w-lg"
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.55 }}
-            >
-              YUBOT scanne YouTube en permanence, extrait les patterns des vidéos qui explosent, et génère des scripts qui répliquent exactement ce qui fonctionne — dans ta niche, pour ton audience.
-            </motion.p>
-
-            <motion.div
-              className="flex flex-wrap items-center gap-4"
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.7 }}
-            >
-              <PulseButton>
-                <Link
-                  href="/generate"
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-[#c4302b] text-[#050507] font-semibold rounded hover:bg-[#c4302b]/90 transition-colors"
-                >
-                  Essayer gratuitement
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                    <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </Link>
-              </PulseButton>
-              <a href="#how" className="text-sm text-[#888] hover:text-[#F5F5F7] transition-colors">
-                Voir comment ça marche →
-              </a>
-            </motion.div>
-
-            <motion.div
-              className="flex items-center gap-10 pt-2"
+          {/* h1 */}
+          <h1 className="font-heading text-5xl lg:text-7xl font-bold leading-[1.05] tracking-tight">
+            <WordReveal text="Le script qui retient." delay={0.2} />
+            <br />
+            <WordReveal text="La structure qui" delay={0.35} />{' '}
+            <motion.span
+              className="text-[#c4302b]"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.9 }}
+              transition={{ duration: 0.5, delay: 0.7 }}
             >
-              {[
-                { n: '10 247', label: 'vidéos analysées' },
-                { n: '47', label: 'patterns actifs' },
-                { n: '2 540', label: 'créateurs actifs' },
-              ].map(({ n, label }) => (
-                <div key={label}>
-                  <p className="font-heading text-2xl font-bold"><CountUp value={n} /></p>
-                  <p className="text-xs text-[#888]">{label}</p>
-                </div>
-              ))}
-            </motion.div>
-          </div>
+              convertit.
+            </motion.span>
+          </h1>
 
-          {/* mock script card — floating + animated border */}
+          {/* sub */}
+          <motion.p
+            className="text-[#888] text-lg leading-relaxed max-w-2xl mx-auto"
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.55 }}
+          >
+            YUBOT scanne YouTube en permanence, extrait les patterns des vidéos qui explosent, et génère des scripts qui répliquent exactement ce qui fonctionne — dans ta niche, pour ton audience.
+          </motion.p>
+
+          {/* CTAs */}
           <motion.div
-            initial={{ opacity: 0, x: 30, rotateY: -8 }}
-            animate={{ opacity: 1, x: 0, rotateY: 0 }}
+            className="flex flex-wrap items-center justify-center gap-4"
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.7 }}
+          >
+            <PulseButton>
+              <Link
+                href="/generate"
+                className="inline-flex items-center gap-2 px-8 py-3.5 bg-[#c4302b] text-[#050507] font-semibold rounded-full hover:bg-[#c4302b]/90 transition-colors"
+              >
+                Essayer gratuitement
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </Link>
+            </PulseButton>
+            <a
+              href="#how"
+              className="inline-flex items-center gap-2 px-8 py-3.5 border border-[#1F1F25] rounded-full text-sm text-[#888] hover:text-[#F5F0E8] hover:border-[#3A3A44] transition-colors"
+            >
+              Voir comment ça marche
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </a>
+          </motion.div>
+
+          {/* stats */}
+          <motion.div
+            className="flex items-center justify-center gap-10 pt-2"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.9 }}
+          >
+            {[
+              { n: '10 247', label: 'vidéos analysées' },
+              { n: '47', label: 'patterns actifs' },
+              { n: '2 540', label: 'créateurs actifs' },
+            ].map(({ n, label }) => (
+              <div key={label}>
+                <p className="font-heading text-2xl font-bold"><CountUp value={n} /></p>
+                <p className="text-xs text-[#888]">{label}</p>
+              </div>
+            ))}
+          </motion.div>
+
+          {/* mock script card — centered below CTAs */}
+          <motion.div
+            className="mt-8 max-w-lg mx-auto"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 0.4, ease: EASE }}
             style={{ perspective: 1200 }}
           >
             <FloatCard amplitude={8} duration={5}>
-              {/* rotating gradient border */}
               <div className="relative rounded-xl p-[1px] overflow-hidden shadow-2xl shadow-black/50">
                 <motion.div
                   className="absolute inset-0 rounded-xl"
@@ -422,7 +439,6 @@ export default function LandingPage() {
                   transition={{ duration: 5, repeat: Infinity, ease: 'linear' }}
                 />
                 <div className="relative rounded-xl bg-[#0F0F12] overflow-hidden">
-                  {/* scan line */}
                   <motion.div
                     className="absolute left-0 right-0 h-[2px] pointer-events-none z-20"
                     style={{ background: 'linear-gradient(to right, transparent, rgba(196,48,43,0.5), transparent)' }}
@@ -442,7 +458,7 @@ export default function LandingPage() {
                   <div className="px-4 py-2 bg-[#0D0D10] border-b border-[#1F1F25]">
                     <p className="text-xs text-[#888] font-mono">Thème : Comment gagner du temps avec l&apos;IA en 2026</p>
                   </div>
-                  <div className="p-5 space-y-3">
+                  <div className="p-5 space-y-3 text-left">
                     {MOCK_SCRIPT.map(({ label, color, bg, text }, i) => (
                       <motion.div
                         key={label}
@@ -471,6 +487,7 @@ export default function LandingPage() {
               </div>
             </FloatCard>
           </motion.div>
+
         </div>
       </section>
 
