@@ -12,6 +12,9 @@ import { SmoothScroll } from '@/components/landing/SmoothScroll';
 import { PerspectiveMarquee } from '@/components/ui/perspective-marquee';
 import MagnifiedBento from '@/components/ui/magnified-bento';
 import PricingSection from '@/components/ui/pricing-section';
+import { getAllArticles } from '@/lib/articles';
+
+const BLOG_ARTICLES = getAllArticles().slice(0, 3);
 
 /* ── helpers ─────────────────────────────────────────────────────── */
 const EASE = [0.65, 0, 0.35, 1] as const;
@@ -160,11 +163,6 @@ const TESTIMONIALS = [
   { quote: "J'ai testé tous les générateurs de scripts du marché. Tous donnent quelque chose d'utilisable mais générique. YUBOT est le seul qui comprend que le problème n'est pas d'écrire du texte — c'est de construire une structure qui retient les gens.", author: 'Pierre D.', role: 'Directeur créatif, agence vidéo' },
 ];
 
-const BLOG_ARTICLES = [
-  { title: 'Les 7 hooks qui cartonnent en 2026 sur YouTube', date: '12 jan. 2026', read: '9 min', excerpt: "Un hook n'est pas une phrase d'ouverture. C'est un mécanisme psychologique précis. Voici les 7 structures qui déclenchent l'attention en moins de 6 secondes.", slug: 'hooks-youtube-2026' },
-  { title: "Pourquoi 90% des vidéos n'atteignent jamais 1 000 vues", date: '3 jan. 2026', read: '11 min', excerpt: "Ce n'est pas une question de talent, de niche, ni même de SEO. C'est une question de 5 erreurs structurelles que commettent presque tous les créateurs.", slug: 'pourquoi-videos-peu-vues' },
-  { title: "L'algorithme YouTube en 2026 : tout ce qui a vraiment changé", date: '28 déc. 2025', read: '13 min', excerpt: "Le watch time n'est plus le seul signal qui compte. En 2026, YouTube mesure des dizaines d'autres indicateurs que la plupart des créateurs ignorent.", slug: 'algorithme-youtube-2026' },
-];
 
 const FAQS = [
   { q: 'Comment YUBOT analyse-t-il les vidéos virales ?', a: ["YUBOT utilise un système d'analyse automatisé qui scanne des milliers de vidéos YouTube chaque semaine dans les niches business, entrepreneuriat, mindset et IA. L'analyse porte sur le ratio viral — vues divisées par le nombre d'abonnés — pour identifier les vidéos qui ont surperformé leur base normale.", "Chaque vidéo retenue est analysée en profondeur : structure du hook, type de promesse dans l'intro, techniques de re-hook, style de conclusion, rythme narratif. Ces éléments sont classifiés en patterns stockés avec leur score de performance. La base est mise à jour quotidiennement."] },
