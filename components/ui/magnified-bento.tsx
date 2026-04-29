@@ -18,7 +18,7 @@ import {
   LockIcon,
   UserIcon,
 } from "@hugeicons/core-free-icons";
-import { motion, useMotionValue, useMotionTemplate } from "motion/react";
+import { motion, useMotionValue, useMotionTemplate } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 const TAG_ROWS = [
