@@ -22,7 +22,7 @@ function readItem<T>(key: string): T | null {
 function writeItem<T>(key: string, value: T) {
   try {
     const payload = JSON.stringify({ v: value, ts: Date.now() });
-    if (payload.length > 4 * 1024 * 1024) return; // skip if > 4MB
+    if (payload.length > 4 * 1024 * 1024) return; // skip if > 4 MB
     localStorage.setItem(key, payload);
   } catch {
     // localStorage disabled or full — fail silently
@@ -32,48 +32,55 @@ function writeItem<T>(key: string, value: T) {
 export function useLocalStorage<T>(
   key: string,
   defaultValue: T,
-  debounceMs = 500,
 ): {
   value: T;
   set: (v: T | ((prev: T) => T)) => void;
   clear: () => void;
   saved: boolean;
 } {
-  const [value, setInner] = useState<T>(defaultValue);
+  const [value, setValue] = useState<T>(defaultValue);
   const [saved, setSaved] = useState(false);
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Track latest value in a ref so `set` doesn't need a functional setState updater
+  const currentRef = useRef<T>(defaultValue);
+  const indicatorTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const savedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // hydrate from localStorage after mount (avoids SSR mismatch)
+  // Hydrate from localStorage after mount (avoids SSR mismatch)
   useEffect(() => {
     const stored = readItem<T>(key);
-    if (stored !== null) setInner(stored);
+    if (stored !== null) {
+      currentRef.current = stored;
+      setValue(stored);
+    }
   }, [key]);
 
   const set = useCallback(
     (v: T | ((prev: T) => T)) => {
-      setInner(prev => {
-        const next = typeof v === 'function' ? (v as (p: T) => T)(prev) : v;
+      const next = typeof v === 'function' ? (v as (p: T) => T)(currentRef.current) : v;
+      currentRef.current = next;
+      setValue(next);
 
-        if (debounceRef.current) clearTimeout(debounceRef.current);
-        debounceRef.current = setTimeout(() => {
-          writeItem(key, next);
-          setSaved(true);
-          if (savedTimerRef.current) clearTimeout(savedTimerRef.current);
-          savedTimerRef.current = setTimeout(() => setSaved(false), 2000);
-        }, debounceMs);
+      // Write immediately — guarantees data survives tab switches before debounce fires
+      writeItem(key, next);
 
-        return next;
-      });
+      // Debounce only the visual "Sauvegardé" indicator
+      if (indicatorTimerRef.current) clearTimeout(indicatorTimerRef.current);
+      if (savedTimerRef.current) clearTimeout(savedTimerRef.current);
+      indicatorTimerRef.current = setTimeout(() => {
+        setSaved(true);
+        savedTimerRef.current = setTimeout(() => setSaved(false), 2000);
+      }, 300);
     },
-    [key, debounceMs],
+    [key],
   );
 
   const clear = useCallback(() => {
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-    setInner(defaultValue);
-    try { localStorage.removeItem(key); } catch { /* ignore */ }
+    currentRef.current = defaultValue;
+    setValue(defaultValue);
+    if (indicatorTimerRef.current) clearTimeout(indicatorTimerRef.current);
+    if (savedTimerRef.current) clearTimeout(savedTimerRef.current);
     setSaved(false);
+    try { localStorage.removeItem(key); } catch { /* ignore */ }
   }, [key, defaultValue]);
 
   return { value, set, clear, saved };
