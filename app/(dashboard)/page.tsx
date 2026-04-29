@@ -461,7 +461,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── SOCIAL PROOF ─────────────────────────────────────────────── */}
-      <section className="border-t border-b border-[#1F1F25] overflow-hidden">
+      <section className=" overflow-hidden">
         <div className="py-8">
           <FadeUp>
             <p className="text-xs text-[#3A3A44] text-center mb-6 uppercase tracking-widest font-mono px-6">
@@ -487,7 +487,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── LE PROBLÈME ──────────────────────────────────────────────── */}
-      <section className="border-b border-[#1F1F25]">
+      <section>
         <div className="max-w-6xl mx-auto px-6 py-20">
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_420px] gap-16 items-start">
             <div className="space-y-6">
@@ -542,7 +542,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── LA SOLUTION ──────────────────────────────────────────────── */}
-      <section className="border-b border-[#1F1F25]">
+      <section>
         <div className="max-w-6xl mx-auto px-6 py-20">
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_420px] gap-16 items-center">
             <div>
@@ -570,7 +570,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── COMMENT ÇA MARCHE ────────────────────────────────────────── */}
-      <section id="how" className="border-b border-[#1F1F25] overflow-hidden">
+      <section id="how" className=" overflow-hidden">
         <div className="max-w-6xl mx-auto px-6 py-20 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
 
           {/* left — texte */}
@@ -625,7 +625,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── FEATURES ─────────────────────────────────────────────────── */}
-      <section id="features" className="border-b border-[#1F1F25]">
+      <section id="features">
         <div className="max-w-6xl mx-auto px-6 py-20">
           <SectionLabel>Ce que YUBOT fait concrètement</SectionLabel>
           <FadeUp><h2 className="font-heading text-3xl font-bold mb-16">5 outils. Un workflow complet.</h2></FadeUp>
@@ -728,7 +728,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── DÉMO INTERACTIVE ─────────────────────────────────────────── */}
-      <section className="border-b border-[#1F1F25]">
+      <section>
         <div className="max-w-3xl mx-auto px-6 py-20">
           <SectionLabel>Démo interactive</SectionLabel>
           <FadeUp>
@@ -813,7 +813,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── STATS ────────────────────────────────────────────────────── */}
-      <section className="border-b border-[#1F1F25]">
+      <section>
         <div className="max-w-6xl mx-auto px-6 py-20">
           <FadeUp><p className="text-xs font-mono text-[#c4302b] tracking-widest uppercase mb-12 text-center">YUBOT en chiffres</p></FadeUp>
           <Stagger className="grid grid-cols-2 md:grid-cols-3 gap-px bg-[#1F1F25]" delay={0.05}>
@@ -841,7 +841,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── COMPARATIF ───────────────────────────────────────────────── */}
-      <section className="border-b border-[#1F1F25]">
+      <section>
         <div className="max-w-6xl mx-auto px-6 py-20">
           <SectionLabel>Comparatif</SectionLabel>
           <FadeUp>
@@ -885,7 +885,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── CAS CLIENTS ──────────────────────────────────────────────── */}
-      <section className="border-b border-[#1F1F25]">
+      <section>
         <div className="max-w-6xl mx-auto px-6 py-20">
           <SectionLabel>Résultats réels</SectionLabel>
           <FadeUp><h2 className="font-heading text-3xl font-bold mb-12">Ce que des créateurs ont accompli avec YUBOT</h2></FadeUp>
@@ -927,7 +927,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── TÉMOIGNAGES ──────────────────────────────────────────────── */}
-      <section className="border-b border-[#1F1F25]">
+      <section>
         <div className="max-w-6xl mx-auto px-6 py-20">
           <FadeUp><p className="text-xs font-mono text-[#c4302b] tracking-widest uppercase mb-12 text-center">Ce qu&apos;ils disent</p></FadeUp>
           <FadeUp delay={0.1}>
@@ -961,7 +961,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── BLOG ─────────────────────────────────────────────────────── */}
-      <section className="border-b border-[#1F1F25]">
+      <section>
         <div className="max-w-6xl mx-auto px-6 py-20">
           <div className="flex items-end justify-between mb-12">
             <FadeUp>
@@ -996,7 +996,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── FAQ ──────────────────────────────────────────────────────── */}
-      <section id="faq" className="border-b border-[#1F1F25]">
+      <section id="faq">
         <div className="max-w-2xl mx-auto px-6 py-20">
           <SectionLabel>Questions fréquentes</SectionLabel>
           <FadeUp><h2 className="font-heading text-3xl font-bold mb-10">FAQ</h2></FadeUp>
@@ -1007,12 +1007,12 @@ export default function LandingPage() {
       </section>
 
       {/* ── PRICING ──────────────────────────────────────────────────── */}
-      <section id="pricing" className="">
+      <section id="pricing">
         <PricingSection />
       </section>
 
       {/* ── INTÉGRATIONS ─────────────────────────────────────────────── */}
-      <section className="border-b border-[#1F1F25]">
+      <section>
         <div className="max-w-6xl mx-auto px-6 py-20">
           <SectionLabel>Intégrations</SectionLabel>
           <FadeUp>
@@ -1038,7 +1038,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── FINAL CTA ────────────────────────────────────────────────── */}
-      <section className="border-b border-[#1F1F25] relative overflow-hidden">
+      <section className=" relative overflow-hidden">
         {/* ambient */}
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
           <div className="w-[600px] h-[300px] rounded-full opacity-[0.05]"
@@ -1072,7 +1072,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── FOOTER ───────────────────────────────────────────────────── */}
-      <footer className="border-t border-[#1F1F25] ">
+      <footer>
         <div className="max-w-6xl mx-auto px-6 py-16">
           <div className="grid grid-cols-2 md:grid-cols-5 gap-10 mb-12">
             <div className="col-span-2 md:col-span-1 space-y-4">
