@@ -2,6 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
+import { ChatBot } from '@/components/ChatBot';
 
 const NAV = [
   { href: '/dashboard', label: 'Dashboard' },
@@ -50,7 +51,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const pathname = usePathname();
 
   if (pathname === '/') {
-    return <>{children}</>;
+    return <>{children}<ChatBot /></>;
   }
 
   return (
@@ -59,6 +60,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <main className="flex-1 overflow-y-auto">
         <div className="px-8 py-8 max-w-5xl">{children}</div>
       </main>
+      <ChatBot />
     </div>
   );
 }
