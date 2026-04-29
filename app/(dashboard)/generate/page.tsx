@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
 import { ScriptStream } from '@/components/ScriptStream';
 import { AdaptStream } from '@/components/AdaptStream';
 import { AnalyzeScriptStream } from '@/components/AnalyzeScriptStream';
+import { useLocalStorage } from '@/lib/hooks/useLocalStorage';
 
 type Tab = 'generate' | 'adapt' | 'analyze';
 
@@ -14,7 +14,7 @@ const TABS: { id: Tab; label: string }[] = [
 ];
 
 export default function GeneratePage() {
-  const [tab, setTab] = useState<Tab>('generate');
+  const { value: tab, set: setTab } = useLocalStorage<Tab>('yubot_active_tab', 'generate');
 
   return (
     <div className="max-w-3xl space-y-6">

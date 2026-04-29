@@ -4,6 +4,7 @@ import { useCompletion } from '@ai-sdk/react';
 import { useState } from 'react';
 import { AnalyzeReport } from './AnalyzeReport';
 import { generateDocxBlob } from '@/lib/export/generateDocx';
+import { useLocalStorage } from '@/lib/hooks/useLocalStorage';
 
 const VIDEO_TYPES = [
   { value: 'long', label: 'YouTube long format (5–30 min)' },
@@ -29,10 +30,10 @@ const DEPTHS = [
 const WORDS_PER_MINUTE = 130;
 
 export function AnalyzeScriptStream() {
-  const [text, setText] = useState('');
-  const [videoType, setVideoType] = useState('long');
-  const [niche, setNiche] = useState('business');
-  const [depth, setDepth] = useState('standard');
+  const { value: text, set: setText, saved: textSaved } = useLocalStorage('yubot_analyze_text', '');
+  const { value: videoType, set: setVideoType } = useLocalStorage('yubot_analyze_videoType', 'long');
+  const { value: niche, set: setNiche } = useLocalStorage('yubot_analyze_niche', 'business');
+  const { value: depth, set: setDepth } = useLocalStorage('yubot_analyze_depth', 'standard');
   const [isExporting, setIsExporting] = useState(false);
 
   const { complete, completion, isLoading, stop } = useCompletion({
@@ -69,13 +70,24 @@ export function AnalyzeScriptStream() {
     complete('', { body: { text, videoType, niche, depth: 'approfondie' } });
   };
 
+  const handleReset = () => {
+    if (!confirm('Réinitialiser tous les champs ?')) return;
+    setText('');
+    setVideoType('long');
+    setNiche('business');
+    setDepth('standard');
+  };
+
   return (
     <div className="space-y-6">
       {!completion && (
         <>
           {/* textarea */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-[#F5F0E8]">Colle ton script complet ici</label>
+            <div className="flex items-center justify-between">
+              <label className="text-sm font-medium text-[#F5F0E8]">Colle ton script complet ici</label>
+              {textSaved && <span className="text-xs text-[#6B6560]">Sauvegardé</span>}
+            </div>
             <textarea
               value={text}
               onChange={e => setText(e.target.value)}
@@ -161,13 +173,22 @@ export function AnalyzeScriptStream() {
             </div>
           </div>
 
-          <button
-            onClick={handleSubmit}
-            disabled={isLoading || wordCount < 20}
-            className="w-full py-3 bg-[#FFE600] text-[#0A0A0A] font-semibold text-sm rounded hover:bg-[#FFE600]/90 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-          >
-            {isLoading ? 'Analyse en cours...' : 'Analyser mon texte'}
-          </button>
+          <div className="flex gap-3">
+            <button
+              onClick={handleSubmit}
+              disabled={isLoading || wordCount < 20}
+              className="flex-1 py-3 bg-[#FFE600] text-[#0A0A0A] font-semibold text-sm rounded hover:bg-[#FFE600]/90 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+            >
+              {isLoading ? 'Analyse en cours...' : 'Analyser mon texte'}
+            </button>
+            <button
+              type="button"
+              onClick={handleReset}
+              className="px-4 py-3 border border-[#1E1E1E] text-[#6B6560] text-sm rounded hover:border-[#2E2E2E] hover:text-[#F5F0E8] transition-colors"
+            >
+              Réinitialiser
+            </button>
+          </div>
         </>
       )}
 

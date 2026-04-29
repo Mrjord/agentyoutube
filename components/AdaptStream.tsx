@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { generateDocxBlob } from '@/lib/export/generateDocx';
 import { DURATION_OPTIONS, DURATION_TO_SECONDS } from '@/lib/constants';
 import type { DurationOption } from '@/lib/constants';
+import { useLocalStorage } from '@/lib/hooks/useLocalStorage';
 
 const WORDS_PER_MINUTE = 130;
 
@@ -15,9 +16,9 @@ function countWords(text: string): number {
 }
 
 export function AdaptStream() {
-  const [text, setText] = useState('');
-  const [duration, setDuration] = useState<DurationOption>('10min');
-  const [allowCompletion, setAllowCompletion] = useState(false);
+  const { value: text, set: setText, saved: textSaved } = useLocalStorage('yubot_adapt_text', '');
+  const { value: duration, set: setDuration } = useLocalStorage<DurationOption>('yubot_adapt_duration', '10min');
+  const { value: allowCompletion, set: setAllowCompletion } = useLocalStorage('yubot_adapt_complete', false);
   const [isExporting, setIsExporting] = useState(false);
 
   const { complete, completion, isLoading, stop } = useCompletion({
@@ -52,6 +53,13 @@ export function AdaptStream() {
     }
   };
 
+  const handleReset = () => {
+    if (!confirm('Réinitialiser tous les champs ?')) return;
+    setText('');
+    setDuration('10min');
+    setAllowCompletion(false);
+  };
+
   const tooShort = wordCount > 0 && gap > 50 && !allowCompletion;
   const tooLong = wordCount > 0 && gap < -50;
 
@@ -59,7 +67,10 @@ export function AdaptStream() {
     <div className="space-y-6">
       {/* Textarea */}
       <div className="space-y-2">
-        <label className="text-sm font-medium text-[#F5F0E8]">Colle ton texte ici</label>
+        <div className="flex items-center justify-between">
+          <label className="text-sm font-medium text-[#F5F0E8]">Colle ton texte ici</label>
+          {textSaved && <span className="text-xs text-[#6B6560]">Sauvegardé</span>}
+        </div>
         <textarea
           className="w-full h-48 p-3 text-sm border border-[#1E1E1E] rounded resize-y font-mono bg-[#111111] text-[#F5F0E8] placeholder-[#3A3A3A] focus:outline-none focus:border-[#FFE600]/40 focus:ring-1 focus:ring-[#FFE600]/20 transition-colors"
           placeholder="Colle ton texte brut ici..."
@@ -131,9 +142,14 @@ export function AdaptStream() {
         </div>
       )}
 
-      <Button onClick={handleSubmit} disabled={!text.trim() || isLoading} className="w-full">
-        {isLoading ? 'Adaptation en cours...' : 'Adapter en script viral'}
-      </Button>
+      <div className="flex gap-3">
+        <Button onClick={handleSubmit} disabled={!text.trim() || isLoading} className="flex-1">
+          {isLoading ? 'Adaptation en cours...' : 'Adapter en script viral'}
+        </Button>
+        <Button variant="outline" size="sm" onClick={handleReset} className="shrink-0">
+          Réinitialiser
+        </Button>
+      </div>
 
       {isLoading && (
         <div className="flex items-center justify-between">

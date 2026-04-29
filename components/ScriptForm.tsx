@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Select,
@@ -10,6 +9,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { DURATION_OPTIONS, TONE_OPTIONS } from '@/lib/constants';
+import { useLocalStorage } from '@/lib/hooks/useLocalStorage';
 
 interface Props {
   onSubmit: (theme: string, duration: string, tone: string) => void;
@@ -17,9 +17,9 @@ interface Props {
 }
 
 export function ScriptForm({ onSubmit, isLoading }: Props) {
-  const [theme, setTheme] = useState('');
-  const [duration, setDuration] = useState('10min');
-  const [tone, setTone] = useState('viral');
+  const { value: theme, set: setTheme, saved: themeSaved } = useLocalStorage('yubot_generate_theme', '');
+  const { value: duration, set: setDuration } = useLocalStorage('yubot_generate_duration', '10min');
+  const { value: tone, set: setTone } = useLocalStorage('yubot_generate_tone', 'viral');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,10 +27,20 @@ export function ScriptForm({ onSubmit, isLoading }: Props) {
     onSubmit(theme.trim(), duration, tone);
   };
 
+  const handleReset = () => {
+    if (!confirm('Réinitialiser tous les champs ?')) return;
+    setTheme('');
+    setDuration('10min');
+    setTone('viral');
+  };
+
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="block text-sm font-medium mb-1.5 text-[#F5F0E8]">Thème de la vidéo</label>
+        <div className="flex items-center justify-between mb-1.5">
+          <label className="block text-sm font-medium text-[#F5F0E8]">Thème de la vidéo</label>
+          {themeSaved && <span className="text-xs text-[#6B6560]">Sauvegardé</span>}
+        </div>
         <textarea
           value={theme}
           onChange={e => setTheme(e.target.value)}
@@ -72,13 +82,18 @@ export function ScriptForm({ onSubmit, isLoading }: Props) {
         </div>
       </div>
 
-      <Button
-        type="submit"
-        disabled={isLoading || !theme.trim()}
-        className="w-full"
-      >
-        {isLoading ? 'Génération en cours...' : 'Générer le script'}
-      </Button>
+      <div className="flex gap-3">
+        <Button
+          type="submit"
+          disabled={isLoading || !theme.trim()}
+          className="flex-1"
+        >
+          {isLoading ? 'Génération en cours...' : 'Générer le script'}
+        </Button>
+        <Button type="button" variant="outline" size="sm" onClick={handleReset} className="shrink-0">
+          Réinitialiser
+        </Button>
+      </div>
     </form>
   );
 }
