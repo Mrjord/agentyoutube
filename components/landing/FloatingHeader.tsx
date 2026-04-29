@@ -29,7 +29,7 @@ export function FloatingHeader() {
       transition={{ duration: 0.6, ease: EASE }}
     >
       <header className={cn(
-        'mx-auto w-full max-w-3xl rounded-xl border border-[#1F1F25]',
+        'mx-auto w-full max-w-3xl rounded-2xl border border-[#1F1F25] overflow-hidden',
         'bg-[#050507]/90 backdrop-blur-lg shadow-2xl shadow-black/50',
       )}>
         <nav className="flex items-center justify-between p-1.5">
