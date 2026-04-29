@@ -73,8 +73,8 @@ export function SaveGuardProvider({ children }: { children: React.ReactNode }) {
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={handleCancel} />
           <div className="relative bg-[#0D0D0D] border border-[#1E1E1E] rounded-2xl p-6 w-full max-w-sm mx-4 mb-4 sm:mb-0 space-y-4 shadow-2xl">
             <div className="text-center space-y-2">
-              <div className="w-11 h-11 rounded-full bg-[#FFE600]/10 flex items-center justify-center mx-auto">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFE600" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <div className="w-11 h-11 rounded-full bg-[#c4302b]/10 flex items-center justify-center mx-auto">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c4302b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
                   <line x1="12" y1="9" x2="12" y2="13"/>
                   <line x1="12" y1="17" x2="12.01" y2="17"/>
@@ -111,7 +111,7 @@ export function SaveGuardProvider({ children }: { children: React.ReactNode }) {
               </button>
               <button
                 onClick={handleCancel}
-                className="w-full px-4 py-3 rounded-xl bg-[#FFE600]/10 hover:bg-[#FFE600]/15 border border-[#FFE600]/20 text-[#FFE600] text-sm font-medium transition-colors"
+                className="w-full px-4 py-3 rounded-xl bg-[#c4302b]/10 hover:bg-[#c4302b]/15 border border-[#c4302b]/20 text-[#c4302b] text-sm font-medium transition-colors"
               >
                 Annuler
               </button>

@@ -92,7 +92,7 @@ export function AnalyzeScriptStream() {
               onChange={e => setText(e.target.value)}
               placeholder="Colle ton script, tes notes, ton brouillon..."
               rows={10}
-              className="w-full p-3 text-sm border border-[#1E1E1E] rounded resize-y bg-[#111111] text-[#F5F0E8] placeholder-[#3A3A3A] focus:outline-none focus:border-[#FFE600]/40 focus:ring-1 focus:ring-[#FFE600]/20 transition-colors font-mono"
+              className="w-full p-3 text-sm border border-[#1E1E1E] rounded resize-y bg-[#111111] text-[#F5F0E8] placeholder-[#3A3A3A] focus:outline-none focus:border-[#c4302b]/40 focus:ring-1 focus:ring-[#c4302b]/20 transition-colors font-mono"
             />
             {wordCount > 0 && (
               <p className="text-xs text-[#6B6560]">
@@ -114,7 +114,7 @@ export function AnalyzeScriptStream() {
                       value={value}
                       checked={videoType === value}
                       onChange={() => setVideoType(value)}
-                      className="accent-[#FFE600]"
+                      className="accent-[#c4302b]"
                     />
                     <span className={`text-sm transition-colors ${videoType === value ? 'text-[#F5F0E8]' : 'text-[#6B6560] group-hover:text-[#F5F0E8]'}`}>
                       {label}
@@ -135,7 +135,7 @@ export function AnalyzeScriptStream() {
                       value={value}
                       checked={niche === value}
                       onChange={() => setNiche(value)}
-                      className="accent-[#FFE600]"
+                      className="accent-[#c4302b]"
                     />
                     <span className={`text-sm transition-colors ${niche === value ? 'text-[#F5F0E8]' : 'text-[#6B6560] group-hover:text-[#F5F0E8]'}`}>
                       {label}
@@ -151,7 +151,7 @@ export function AnalyzeScriptStream() {
                 {DEPTHS.map(({ value, label, desc }) => (
                   <label
                     key={value}
-                    className={`flex items-start gap-3 p-3 rounded border cursor-pointer transition-colors ${depth === value ? 'border-[#FFE600]/30 bg-[#FFE600]/5' : 'border-[#1E1E1E] hover:border-[#2E2E2E]'}`}
+                    className={`flex items-start gap-3 p-3 rounded border cursor-pointer transition-colors ${depth === value ? 'border-[#c4302b]/30 bg-[#c4302b]/5' : 'border-[#1E1E1E] hover:border-[#2E2E2E]'}`}
                     onClick={() => setDepth(value)}
                   >
                     <input
@@ -160,10 +160,10 @@ export function AnalyzeScriptStream() {
                       value={value}
                       checked={depth === value}
                       onChange={() => setDepth(value)}
-                      className="accent-[#FFE600] mt-0.5"
+                      className="accent-[#c4302b] mt-0.5"
                     />
                     <div>
-                      <p className={`text-sm font-medium ${depth === value ? 'text-[#FFE600]' : 'text-[#F5F0E8]'}`}>{label}</p>
+                      <p className={`text-sm font-medium ${depth === value ? 'text-[#c4302b]' : 'text-[#F5F0E8]'}`}>{label}</p>
                       <p className="text-xs text-[#6B6560] mt-0.5">{desc}</p>
                     </div>
                   </label>
@@ -176,7 +176,7 @@ export function AnalyzeScriptStream() {
             <button
               onClick={handleSubmit}
               disabled={isLoading || wordCount < 20}
-              className="flex-1 py-3 bg-[#FFE600] text-[#0A0A0A] font-semibold text-sm rounded hover:bg-[#FFE600]/90 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+              className="flex-1 py-3 bg-[#c4302b] text-[#0A0A0A] font-semibold text-sm rounded hover:bg-[#c4302b]/90 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
             >
               {isLoading ? 'Analyse en cours...' : 'Analyser mon texte'}
             </button>

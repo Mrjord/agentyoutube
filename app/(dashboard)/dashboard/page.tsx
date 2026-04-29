@@ -14,7 +14,7 @@ export default async function DashboardPage() {
   return (
     <div className="space-y-10">
       <div>
-        <p className="text-xs font-mono text-[#FFE600] tracking-widest uppercase mb-2">Vue d'ensemble</p>
+        <p className="text-xs font-mono text-[#c4302b] tracking-widest uppercase mb-2">Vue d'ensemble</p>
         <h1 className="font-heading text-3xl font-bold">Dashboard</h1>
       </div>
 
@@ -60,7 +60,7 @@ export default async function DashboardPage() {
           {recentScripts.length === 0 ? (
             <p className="text-sm text-[#6B6560]">
               Aucun script.{' '}
-              <Link href="/generate" className="text-[#FFE600] hover:underline">
+              <Link href="/generate" className="text-[#c4302b] hover:underline">
                 Générer maintenant →
               </Link>
             </p>
@@ -86,7 +86,7 @@ export default async function DashboardPage() {
       <div className="pt-4 border-t border-[#1E1E1E]">
         <Link
           href="/generate"
-          className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#FFE600] text-[#0A0A0A] text-sm font-semibold rounded hover:bg-[#FFE600]/90 transition-colors"
+          className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#c4302b] text-[#0A0A0A] text-sm font-semibold rounded hover:bg-[#c4302b]/90 transition-colors"
         >
           Générer un script
           <svg width="14" height="14" viewBox="0 0 16 16" fill="none">

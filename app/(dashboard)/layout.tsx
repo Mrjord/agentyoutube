@@ -19,7 +19,7 @@ function Sidebar() {
     <aside className="w-[220px] shrink-0 h-screen sticky top-0 flex flex-col border-r border-[#1E1E1E] bg-[#0A0A0A]">
       <div className="px-5 py-5 border-b border-[#1E1E1E]">
         <button onClick={() => navigate(() => router.push('/'))} className="flex items-center gap-2.5">
-          <span className="w-7 h-7 rounded bg-[#FFE600] flex items-center justify-center text-[#0A0A0A] font-heading font-bold text-sm">Y</span>
+          <span className="w-7 h-7 rounded bg-[#c4302b] flex items-center justify-center text-[#0A0A0A] font-heading font-bold text-sm">Y</span>
           <span className="font-heading font-semibold text-[#F5F0E8] tracking-tight">YUBOT</span>
         </button>
       </div>
@@ -33,7 +33,7 @@ function Sidebar() {
               onClick={() => navigate(() => router.push(href))}
               className={`flex items-center w-full px-3 py-2 rounded text-sm transition-colors ${
                 active
-                  ? 'bg-[#FFE600]/10 text-[#FFE600] font-medium'
+                  ? 'bg-[#c4302b]/10 text-[#c4302b] font-medium'
                   : 'text-[#6B6560] hover:text-[#F5F0E8] hover:bg-[#161616]'
               }`}
             >

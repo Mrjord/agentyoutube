@@ -37,7 +37,7 @@ const TYPE_COLORS: Record<string, { bg: string; text: string; border: string }> 
 };
 
 const TONE_COLORS: Record<string, string> = {
-  viral:       '#FFE600',
+  viral:       '#c4302b',
   éducatif:    '#4ADE80',
   storytelling:'#A78BFA',
   tutoriel:    '#60A5FA',
@@ -76,7 +76,7 @@ function Bullet({ items }: { items: string[] }) {
     <ul className="space-y-1">
       {items.map((item, i) => (
         <li key={i} className="flex items-start gap-2 text-sm text-[#C4BFB7] leading-relaxed">
-          <span className="text-[#FFE600] mt-0.5 shrink-0">›</span>
+          <span className="text-[#c4302b] mt-0.5 shrink-0">›</span>
           {item}
         </li>
       ))}
@@ -92,7 +92,7 @@ function HookCard({ c }: { c: Record<string, string> }) {
     contradiction: '#FB923C',
     'promesse directe': '#4ADE80',
     histoire: '#A78BFA',
-    défi: '#FFE600',
+    défi: '#c4302b',
   };
   const hColor = hookTypeColors[c.hook_type?.toLowerCase()] ?? '#6B6560';
 
@@ -111,7 +111,7 @@ function HookCard({ c }: { c: Record<string, string> }) {
       </div>
 
       {c.opening_phrase && (
-        <div className="border-l-2 border-[#FFE600]/50 pl-4 py-1">
+        <div className="border-l-2 border-[#c4302b]/50 pl-4 py-1">
           <p className="text-[10px] font-mono text-[#3A3A3A] uppercase tracking-widest mb-1.5">Phrase d'ouverture</p>
           <p className="text-sm text-[#F5F0E8] italic leading-relaxed">&ldquo;{c.opening_phrase}&rdquo;</p>
         </div>
@@ -150,7 +150,7 @@ function NarrativeCard({ c }: { c: Record<string, string> }) {
         {acts.map(({ key, label, pct }) => c[key] && (
           <div key={key} className="flex gap-3">
             <div className="flex flex-col items-center shrink-0">
-              <div className="w-2 h-2 rounded-full bg-[#FFE600] mt-1.5" />
+              <div className="w-2 h-2 rounded-full bg-[#c4302b] mt-1.5" />
               <div className="w-px flex-1 bg-[#1E1E1E] mt-1" />
             </div>
             <div className="pb-4 space-y-0.5">
@@ -180,8 +180,8 @@ function NarrativeCard({ c }: { c: Record<string, string> }) {
       </div>
 
       {c.open_loop && (
-        <div className="border border-[#FFE600]/20 rounded-lg p-3 bg-[#FFE600]/5">
-          <p className="text-[10px] font-mono text-[#FFE600]/60 uppercase tracking-widest mb-1.5">Loop ouvert</p>
+        <div className="border border-[#c4302b]/20 rounded-lg p-3 bg-[#c4302b]/5">
+          <p className="text-[10px] font-mono text-[#c4302b]/60 uppercase tracking-widest mb-1.5">Loop ouvert</p>
           <p className="text-sm text-[#C4BFB7] leading-relaxed">{c.open_loop}</p>
         </div>
       )}
@@ -207,7 +207,7 @@ function GlobalFormulaCard({ c }: { c: Record<string, unknown> }) {
                   {step.trim()}
                 </span>
                 {i < steps.length - 1 && (
-                  <span className="text-[#FFE600] font-bold text-lg">→</span>
+                  <span className="text-[#c4302b] font-bold text-lg">→</span>
                 )}
               </div>
             ))}
@@ -398,7 +398,7 @@ export function PatternLibrary({ patterns }: { patterns: PatternRow[] }) {
           value={search}
           onChange={e => setSearch(e.target.value)}
           placeholder="Rechercher dans les patterns…"
-          className="w-full px-4 py-2.5 text-sm border border-[#1E1E1E] rounded bg-[#111111] text-[#F5F0E8] placeholder-[#3A3A3A] focus:outline-none focus:border-[#FFE600]/40 focus:ring-1 focus:ring-[#FFE600]/10"
+          className="w-full px-4 py-2.5 text-sm border border-[#1E1E1E] rounded bg-[#111111] text-[#F5F0E8] placeholder-[#3A3A3A] focus:outline-none focus:border-[#c4302b]/40 focus:ring-1 focus:ring-[#c4302b]/10"
         />
         <div className="flex flex-wrap gap-2">
           {FILTER_TYPES.map(t => (
@@ -407,7 +407,7 @@ export function PatternLibrary({ patterns }: { patterns: PatternRow[] }) {
               onClick={() => setTypeFilter(t)}
               className={`px-3 py-1.5 text-xs rounded border transition-colors ${
                 typeFilter === t
-                  ? 'bg-[#FFE600]/10 text-[#FFE600] border-[#FFE600]/30'
+                  ? 'bg-[#c4302b]/10 text-[#c4302b] border-[#c4302b]/30'
                   : 'border-[#1E1E1E] text-[#6B6560] hover:border-[#2E2E2E] hover:text-[#F5F0E8]'
               }`}
             >
@@ -421,7 +421,7 @@ export function PatternLibrary({ patterns }: { patterns: PatternRow[] }) {
               onClick={() => setToneFilter(t)}
               className={`px-3 py-1.5 text-xs rounded border transition-colors ${
                 toneFilter === t
-                  ? 'bg-[#FFE600]/10 text-[#FFE600] border-[#FFE600]/30'
+                  ? 'bg-[#c4302b]/10 text-[#c4302b] border-[#c4302b]/30'
                   : 'border-[#1E1E1E] text-[#6B6560] hover:border-[#2E2E2E] hover:text-[#F5F0E8]'
               }`}
             >

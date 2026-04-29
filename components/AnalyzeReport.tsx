@@ -92,7 +92,7 @@ export function parseReport(raw: string): AnalysisReport {
 function scoreColor(s: number | null): string {
   if (s === null) return '#3A3A3A';
   if (s >= 8) return '#4ADE80';
-  if (s >= 6) return '#FFE600';
+  if (s >= 6) return '#c4302b';
   if (s >= 4) return '#FB923C';
   return '#F87171';
 }
@@ -100,7 +100,7 @@ function scoreColor(s: number | null): string {
 function globalScoreColor(s: number | null): string {
   if (s === null) return '#3A3A3A';
   if (s >= 80) return '#4ADE80';
-  if (s >= 60) return '#FFE600';
+  if (s >= 60) return '#c4302b';
   if (s >= 40) return '#FB923C';
   return '#F87171';
 }
@@ -134,7 +134,7 @@ function renderText(text: string) {
     if (line.startsWith('•') || line.startsWith('-')) {
       return (
         <div key={i} className="flex items-start gap-2 text-sm text-[#C4BFB7] leading-relaxed">
-          <span className="text-[#FFE600] shrink-0 mt-0.5">›</span>
+          <span className="text-[#c4302b] shrink-0 mt-0.5">›</span>
           <span>{line.replace(/^[•\-]\s*/, '')}</span>
         </div>
       );
@@ -279,7 +279,7 @@ export function AnalyzeReport({ raw, isStreaming, onRewrite, onExport }: Props) 
         <div className="flex flex-wrap gap-3 pt-2">
           <button
             onClick={onRewrite}
-            className="px-4 py-2 bg-[#FFE600] text-[#0A0A0A] text-sm font-semibold rounded hover:bg-[#FFE600]/90 transition-colors"
+            className="px-4 py-2 bg-[#c4302b] text-[#0A0A0A] text-sm font-semibold rounded hover:bg-[#c4302b]/90 transition-colors"
           >
             Appliquer les suggestions automatiquement
           </button>

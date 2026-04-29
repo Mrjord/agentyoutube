@@ -42,8 +42,8 @@ export function Cursor() {
         >
           <MousePointer2
             size={22}
-            className="text-[#FFE600] drop-shadow-[0_0_6px_rgba(255,230,0,0.5)]"
-            fill="#FFE600"
+            className="text-[#c4302b] drop-shadow-[0_0_6px_rgba(196,48,43,0.5)]"
+            fill="#c4302b"
             strokeWidth={1.5}
           />
         </motion.div>

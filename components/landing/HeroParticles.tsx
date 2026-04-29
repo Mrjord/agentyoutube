@@ -57,7 +57,7 @@ export function HeroParticles() {
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
         ctx.fillStyle = p.yellow
-          ? `rgba(255,230,0,${p.alpha})`
+          ? `rgba(196,48,43,${p.alpha})`
           : `rgba(245,240,232,${p.alpha * 0.6})`;
         ctx.fill();
       }

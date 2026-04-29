@@ -152,7 +152,7 @@ export function AdaptStream() {
           {textSaved && <span className="text-xs text-[#6B6560]">Sauvegardé</span>}
         </div>
         <textarea
-          className="w-full h-48 p-3 text-sm border border-[#1E1E1E] rounded resize-y font-mono bg-[#111111] text-[#F5F0E8] placeholder-[#3A3A3A] focus:outline-none focus:border-[#FFE600]/40 focus:ring-1 focus:ring-[#FFE600]/20 transition-colors"
+          className="w-full h-48 p-3 text-sm border border-[#1E1E1E] rounded resize-y font-mono bg-[#111111] text-[#F5F0E8] placeholder-[#3A3A3A] focus:outline-none focus:border-[#c4302b]/40 focus:ring-1 focus:ring-[#c4302b]/20 transition-colors"
           placeholder="Colle ton texte brut ici..."
           value={text}
           onChange={e => setText(e.target.value)}
@@ -174,7 +174,7 @@ export function AdaptStream() {
               onClick={() => setDuration(d)}
               className={`px-3 py-1.5 text-sm rounded border transition-colors ${
                 duration === d
-                  ? 'bg-[#FFE600]/10 text-[#FFE600] border-[#FFE600]/30'
+                  ? 'bg-[#c4302b]/10 text-[#c4302b] border-[#c4302b]/30'
                   : 'border-[#1E1E1E] text-[#6B6560] hover:text-[#F5F0E8] hover:border-[#2E2E2E]'
               }`}
             >
@@ -198,7 +198,7 @@ export function AdaptStream() {
           type="checkbox"
           checked={allowCompletion}
           onChange={e => setAllowCompletion(e.target.checked)}
-          className="mt-0.5 accent-[#FFE600]"
+          className="mt-0.5 accent-[#c4302b]"
         />
         <span className="text-sm text-[#6B6560] leading-snug">
           Autoriser l&apos;agent à compléter le texte si le contenu est insuffisant pour atteindre la durée sélectionnée
@@ -242,7 +242,7 @@ export function AdaptStream() {
         <div className="space-y-4">
           {isGeneratedThisSession && (
             !hasBeenSaved ? (
-              <div className="sticky top-0 z-10 flex items-center gap-3 px-4 py-2.5 rounded-lg bg-[#FFE600] text-[#0A0A0A] text-sm shadow-md">
+              <div className="sticky top-0 z-10 flex items-center gap-3 px-4 py-2.5 rounded-lg bg-[#c4302b] text-[#0A0A0A] text-sm shadow-md">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
                   <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
                   <line x1="12" y1="9" x2="12" y2="13"/>

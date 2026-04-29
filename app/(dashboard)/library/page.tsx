@@ -12,7 +12,7 @@ export default async function LibraryPage() {
   return (
     <div className="space-y-12">
       <div>
-        <p className="text-xs font-mono text-[#FFE600] tracking-widest uppercase mb-2">Base de données</p>
+        <p className="text-xs font-mono text-[#c4302b] tracking-widest uppercase mb-2">Base de données</p>
         <h1 className="font-heading text-3xl font-bold">Bibliothèque</h1>
       </div>
 

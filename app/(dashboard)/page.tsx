@@ -41,7 +41,7 @@ function WordReveal({ text, className, delay = 0 }: { text: string; className?: 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
     <motion.p
-      className="text-xs font-mono text-[#FFE600] tracking-widest uppercase mb-4"
+      className="text-xs font-mono text-[#c4302b] tracking-widest uppercase mb-4"
       initial={{ opacity: 0, x: -12 }}
       whileInView={{ opacity: 1, x: 0 }}
       viewport={{ once: true }}
@@ -62,7 +62,7 @@ function ProgressBar({ year, pct, s, i }: { year: string; pct: string; s: string
       <div className="flex-1 h-1 bg-[#1F1F25] rounded-full overflow-hidden" ref={barRef}>
         <motion.div
           className="h-full rounded-full"
-          style={{ background: 'rgba(255,230,0,0.6)' }}
+          style={{ background: 'rgba(196,48,43,0.6)' }}
           initial={{ width: 0 }}
           animate={inView ? { width: pct } : {}}
           transition={{ duration: 1, delay: 0.2 + i * 0.1, ease: EASE }}
@@ -81,7 +81,7 @@ function FAQ({ q, a }: { q: string; a: string | string[] }) {
     <motion.div className="border-b border-[#1E1E1E]" layout>
       <button
         onClick={() => setOpen(v => !v)}
-        className="w-full flex items-center justify-between py-5 text-left text-[#F5F0E8] hover:text-[#FFE600] transition-colors"
+        className="w-full flex items-center justify-between py-5 text-left text-[#F5F0E8] hover:text-[#c4302b] transition-colors"
       >
         <span className="font-medium">{q}</span>
         <motion.span
@@ -207,7 +207,7 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <motion.span
-              className="w-7 h-7 rounded bg-[#FFE600] flex items-center justify-center text-[#050507] font-heading font-bold text-sm"
+              className="w-7 h-7 rounded bg-[#c4302b] flex items-center justify-center text-[#050507] font-heading font-bold text-sm"
               whileHover={{ scale: 1.12, rotate: 5 }}
               transition={{ type: 'spring', stiffness: 400 }}
             >Y</motion.span>
@@ -221,7 +221,7 @@ export default function LandingPage() {
           <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
             <Link
               href="/generate"
-              className="px-4 py-1.5 bg-[#FFE600] text-[#050507] text-sm font-semibold rounded hover:bg-[#FFE600]/90 transition-colors"
+              className="px-4 py-1.5 bg-[#c4302b] text-[#050507] text-sm font-semibold rounded hover:bg-[#c4302b]/90 transition-colors"
             >
               Essayer gratuitement
             </Link>
@@ -233,13 +233,13 @@ export default function LandingPage() {
       <section className="relative max-w-6xl mx-auto px-6 pt-20 pb-28 overflow-hidden">
         {/* ambient glow */}
         <div className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 w-[700px] h-[400px] rounded-full opacity-[0.07]"
-          style={{ background: 'radial-gradient(ellipse, #FFE600 0%, transparent 70%)' }} />
+          style={{ background: 'radial-gradient(ellipse, #c4302b 0%, transparent 70%)' }} />
         <HeroParticles />
 
         <div className="relative grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-16 items-start">
           <div className="space-y-8">
             <motion.p
-              className="text-xs font-mono text-[#FFE600] tracking-widest uppercase"
+              className="text-xs font-mono text-[#c4302b] tracking-widest uppercase"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
@@ -252,7 +252,7 @@ export default function LandingPage() {
               <br />
               <WordReveal text="La structure qui" delay={0.35} />{' '}
               <motion.span
-                className="text-[#FFE600]"
+                className="text-[#c4302b]"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.5, delay: 0.7 }}
@@ -279,7 +279,7 @@ export default function LandingPage() {
               <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
                 <Link
                   href="/generate"
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-[#FFE600] text-[#050507] font-semibold rounded hover:bg-[#FFE600]/90 transition-colors"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-[#c4302b] text-[#050507] font-semibold rounded hover:bg-[#c4302b]/90 transition-colors"
                 >
                   Essayer gratuitement
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -324,7 +324,7 @@ export default function LandingPage() {
                 <div className="w-2.5 h-2.5 rounded-full bg-[#2A2A30]" />
                 <div className="w-2.5 h-2.5 rounded-full bg-[#2A2A30]" />
                 <span className="ml-2 text-xs text-[#3A3A44] font-mono">script_viral.docx</span>
-                <span className="ml-auto text-xs font-mono" style={{ color: '#FFE60060' }}>Généré il y a 4s</span>
+                <span className="ml-auto text-xs font-mono" style={{ color: '#c4302b60' }}>Généré il y a 4s</span>
               </div>
               <div className="px-4 py-2 bg-[#0D0D10] border-b border-[#1F1F25]">
                 <p className="text-xs text-[#888] font-mono">Thème : Comment gagner du temps avec l&apos;IA en 2026</p>
@@ -410,7 +410,7 @@ export default function LandingPage() {
               <FadeUp delay={0.2}>
                 <div className="border border-[#1F1F25] rounded-xl p-6 bg-[#0D0D10]">
                   <div className="flex items-center gap-2 mb-4">
-                    <div className="w-1.5 h-1.5 rounded-full bg-[#FFE600]" />
+                    <div className="w-1.5 h-1.5 rounded-full bg-[#c4302b]" />
                     <span className="text-xs font-mono text-[#888] uppercase tracking-widest">Temps d&apos;accroche critique</span>
                   </div>
                   <div className="space-y-2">
@@ -428,7 +428,7 @@ export default function LandingPage() {
               </FadeUp>
               <FadeUp delay={0.35}>
                 <blockquote className="border border-[#1F1F25] rounded-xl p-6 bg-[#0D0D10] space-y-3">
-                  <div className="w-6 h-0.5 bg-[#FFE600]" />
+                  <div className="w-6 h-0.5 bg-[#c4302b]" />
                   <p className="text-sm text-[#C4BFB7] leading-relaxed italic">
                     &ldquo;J&apos;ai passé 6 mois à créer du contenu régulièrement. Des vidéos soignées. Des sujets pertinents. Aucune ne dépassait 400 vues. C&apos;est le genre de truc qui te fait remettre en question tout ce que tu fais.&rdquo;
                   </p>
@@ -488,7 +488,7 @@ export default function LandingPage() {
                 <span className="font-heading text-5xl font-bold text-[#1F1F25] group-hover:text-[#2A2A30] transition-colors">{n}</span>
                 <h3 className="font-heading text-base font-semibold leading-snug">{title}</h3>
                 <p className="text-sm text-[#888] leading-relaxed">{desc}</p>
-                <p className="text-xs font-mono text-[#FFE600] pt-2">{stat}</p>
+                <p className="text-xs font-mono text-[#c4302b] pt-2">{stat}</p>
               </motion.div>
             ))}
           </Stagger>
@@ -505,7 +505,7 @@ export default function LandingPage() {
             {/* Feature 1 */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <FadeUp className="space-y-5">
-                <div className="w-6 h-0.5 bg-[#FFE600]" />
+                <div className="w-6 h-0.5 bg-[#c4302b]" />
                 <h3 className="font-heading text-2xl font-bold">Un script complet. Basé sur ce qui marche vraiment.</h3>
                 <div className="space-y-3 text-[#888] text-sm leading-relaxed">
                   <p>Tu donnes un thème. YUBOT génère un script entier — pas une ébauche, pas un plan, un texte à dire mot pour mot. Hook calibré pour les 6 premières secondes critiques. Intro qui pose une promesse claire. Corps structuré en 3 actes avec re-hooks intégrés. Conclusion qui ferme le loop sans tomber dans le CTA commercial.</p>
@@ -550,9 +550,9 @@ export default function LandingPage() {
                       <p className="text-xs text-[#888] leading-relaxed">L&apos;intelligence artificielle transforme le marché du travail. Selon une étude récente, 40% des tâches actuelles pourront être automatisées d&apos;ici 2030...</p>
                     </div>
                     <div className="flex items-center gap-2">
-                      <div className="flex-1 h-px bg-[#FFE600]/30" />
-                      <span className="text-xs font-mono text-[#FFE600]">→ adapté</span>
-                      <div className="flex-1 h-px bg-[#FFE600]/30" />
+                      <div className="flex-1 h-px bg-[#c4302b]/30" />
+                      <span className="text-xs font-mono text-[#c4302b]">→ adapté</span>
+                      <div className="flex-1 h-px bg-[#c4302b]/30" />
                     </div>
                     <div className="p-3 rounded border-l-2 border-[#DC2626] bg-[#1F0A0A]">
                       <p className="text-xs font-mono text-[#DC2626] font-bold mb-1.5">[HOOK]</p>
@@ -565,7 +565,7 @@ export default function LandingPage() {
                 </TiltCard>
               </FadeUp>
               <FadeUp className="order-1 lg:order-2 space-y-5">
-                <div className="w-6 h-0.5 bg-[#FFE600]" />
+                <div className="w-6 h-0.5 bg-[#c4302b]" />
                 <h3 className="font-heading text-2xl font-bold">T&apos;as déjà un texte. On lui donne une forme qui retient.</h3>
                 <div className="space-y-3 text-[#888] text-sm leading-relaxed">
                   <p>Tu as un article de blog, une newsletter, des notes de cours, un script existant qui n&apos;a pas fonctionné. Tu colles le texte. YUBOT restructure sans toucher au fond.</p>
@@ -587,7 +587,7 @@ export default function LandingPage() {
               ].map(({ title, desc }) => (
                 <motion.div key={title} variants={fadeUpChild}>
                   <TiltCard className="border border-[#1F1F25] rounded-xl p-6 space-y-3 bg-[#050507] group relative h-full">
-                    <div className="w-6 h-0.5 bg-[#FFE600]" />
+                    <div className="w-6 h-0.5 bg-[#c4302b]" />
                     <h3 className="font-heading text-base font-semibold leading-snug">{title}</h3>
                     <p className="text-sm text-[#888] leading-relaxed">{desc}</p>
                   </TiltCard>
@@ -616,7 +616,7 @@ export default function LandingPage() {
                     onClick={() => setDemoTheme(t)}
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.97 }}
-                    className={`px-3 py-1.5 text-xs rounded border transition-colors ${demoTheme === t ? 'bg-[#FFE600]/10 text-[#FFE600] border-[#FFE600]/30' : 'border-[#1F1F25] text-[#888] hover:border-[#2E2E38] hover:text-[#F5F5F7]'}`}
+                    className={`px-3 py-1.5 text-xs rounded border transition-colors ${demoTheme === t ? 'bg-[#c4302b]/10 text-[#c4302b] border-[#c4302b]/30' : 'border-[#1F1F25] text-[#888] hover:border-[#2E2E38] hover:text-[#F5F5F7]'}`}
                   >
                     {t}
                   </motion.button>
@@ -629,7 +629,7 @@ export default function LandingPage() {
                   value={demoTheme}
                   onChange={e => { setDemoTheme(e.target.value); setDemoResult(false); }}
                   placeholder="Ex : Pourquoi les riches ne travaillent pas plus dur"
-                  className="w-full px-3 py-2.5 text-sm border border-[#1F1F25] rounded-lg bg-[#111114] text-[#F5F5F7] placeholder-[#3A3A44] focus:outline-none focus:border-[#FFE600]/40 focus:ring-1 focus:ring-[#FFE600]/10 transition-colors"
+                  className="w-full px-3 py-2.5 text-sm border border-[#1F1F25] rounded-lg bg-[#111114] text-[#F5F5F7] placeholder-[#3A3A44] focus:outline-none focus:border-[#c4302b]/40 focus:ring-1 focus:ring-[#c4302b]/10 transition-colors"
                 />
               </div>
 
@@ -638,7 +638,7 @@ export default function LandingPage() {
                 disabled={!demoTheme.trim()}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="w-full py-2.5 bg-[#FFE600] text-[#050507] font-semibold text-sm rounded-lg hover:bg-[#FFE600]/90 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                className="w-full py-2.5 bg-[#c4302b] text-[#050507] font-semibold text-sm rounded-lg hover:bg-[#c4302b]/90 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
               >
                 Générer l&apos;aperçu
               </motion.button>
@@ -654,7 +654,7 @@ export default function LandingPage() {
                   >
                     <div className="flex items-center gap-2">
                       <div className="h-px flex-1 bg-[#1F1F25]" />
-                      <span className="text-xs font-mono text-[#FFE600]">Aperçu généré</span>
+                      <span className="text-xs font-mono text-[#c4302b]">Aperçu généré</span>
                       <div className="h-px flex-1 bg-[#1F1F25]" />
                     </div>
                     {DEMO_RESULT.map(({ label, color, bg, text }) => (
@@ -665,7 +665,7 @@ export default function LandingPage() {
                     ))}
                     <div className="border border-[#1F1F25] rounded-lg p-3 bg-[#111114] flex items-center justify-between">
                       <p className="text-xs text-[#888]">Script complet : 8 sections • notes créateur • export Word</p>
-                      <Link href="/generate" className="text-xs font-semibold text-[#FFE600] hover:text-[#FFE600]/80 transition-colors">
+                      <Link href="/generate" className="text-xs font-semibold text-[#c4302b] hover:text-[#c4302b]/80 transition-colors">
                         Obtenir le script complet →
                       </Link>
                     </div>
@@ -680,7 +680,7 @@ export default function LandingPage() {
       {/* ── STATS ────────────────────────────────────────────────────── */}
       <section className="border-b border-[#1F1F25] bg-[#0D0D10]">
         <div className="max-w-6xl mx-auto px-6 py-20">
-          <FadeUp><p className="text-xs font-mono text-[#FFE600] tracking-widest uppercase mb-12 text-center">YUBOT en chiffres</p></FadeUp>
+          <FadeUp><p className="text-xs font-mono text-[#c4302b] tracking-widest uppercase mb-12 text-center">YUBOT en chiffres</p></FadeUp>
           <Stagger className="grid grid-cols-2 md:grid-cols-3 gap-px bg-[#1F1F25]" delay={0.05}>
             {STATS.map(({ n, label }) => (
               <motion.div
@@ -710,7 +710,7 @@ export default function LandingPage() {
             <div className="border border-[#1F1F25] rounded-xl overflow-hidden">
               <div className="grid grid-cols-4 border-b border-[#1F1F25] bg-[#111114]">
                 <div className="p-4 text-xs font-mono text-[#888] uppercase tracking-widest">Fonctionnalité</div>
-                <div className="p-4 text-xs font-mono text-[#FFE600] uppercase tracking-widest border-l border-[#1F1F25]">YUBOT</div>
+                <div className="p-4 text-xs font-mono text-[#c4302b] uppercase tracking-widest border-l border-[#1F1F25]">YUBOT</div>
                 <div className="p-4 text-xs font-mono text-[#888] uppercase tracking-widest border-l border-[#1F1F25]">ChatGPT</div>
                 <div className="p-4 text-xs font-mono text-[#888] uppercase tracking-widest border-l border-[#1F1F25]">Autres outils</div>
               </div>
@@ -731,7 +731,7 @@ export default function LandingPage() {
                       ) : val === false ? (
                         <span className="text-[#3A3A44] text-sm">—</span>
                       ) : (
-                        <span className={`text-sm ${j === 0 ? 'text-[#FFE600]' : 'text-[#888]'}`}>{val as string}</span>
+                        <span className={`text-sm ${j === 0 ? 'text-[#c4302b]' : 'text-[#888]'}`}>{val as string}</span>
                       )}
                     </div>
                   ))}
@@ -763,17 +763,17 @@ export default function LandingPage() {
                         <span className="text-xs text-[#888]">{before}</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="text-xs font-mono text-[#FFE600] w-14">Après</span>
+                        <span className="text-xs font-mono text-[#c4302b] w-14">Après</span>
                         <span className="text-xs text-[#F5F5F7] font-medium">{after}</span>
                       </div>
                     </div>
-                    <blockquote className="border-l-2 border-[#FFE600]/40 pl-3">
+                    <blockquote className="border-l-2 border-[#c4302b]/40 pl-3">
                       <p className="text-xs text-[#888] italic leading-relaxed">{quote}</p>
                       <p className="text-xs text-[#3A3A44] mt-1">— {author}</p>
                     </blockquote>
                   </div>
                   <div className="border-t border-[#1F1F25] px-6 py-3">
-                    <Link href="/case-studies" className="text-xs text-[#888] hover:text-[#FFE600] transition-colors">
+                    <Link href="/case-studies" className="text-xs text-[#888] hover:text-[#c4302b] transition-colors">
                       Lire l&apos;étude de cas →
                     </Link>
                   </div>
@@ -787,11 +787,11 @@ export default function LandingPage() {
       {/* ── TÉMOIGNAGES ──────────────────────────────────────────────── */}
       <section className="border-b border-[#1F1F25]">
         <div className="max-w-6xl mx-auto px-6 py-20">
-          <FadeUp><p className="text-xs font-mono text-[#FFE600] tracking-widest uppercase mb-12 text-center">Ce qu&apos;ils disent</p></FadeUp>
+          <FadeUp><p className="text-xs font-mono text-[#c4302b] tracking-widest uppercase mb-12 text-center">Ce qu&apos;ils disent</p></FadeUp>
           <FadeUp delay={0.1}>
             <motion.blockquote
               className="border border-[#1F1F25] rounded-xl p-8 bg-[#0D0D10] mb-8 max-w-3xl mx-auto text-center"
-              whileHover={{ borderColor: 'rgba(255,230,0,0.2)' }}
+              whileHover={{ borderColor: 'rgba(196,48,43,0.2)' }}
               transition={{ duration: 0.3 }}
             >
               <p className="font-heading text-xl font-semibold leading-relaxed mb-4 text-[#F5F5F7]">
@@ -806,10 +806,10 @@ export default function LandingPage() {
                 key={author}
                 variants={fadeUpChild}
                 className="border border-[#1F1F25] rounded-xl p-6 bg-[#0D0D10] space-y-3"
-                whileHover={{ borderColor: 'rgba(255,230,0,0.15)' }}
+                whileHover={{ borderColor: 'rgba(196,48,43,0.15)' }}
                 transition={{ duration: 0.3 }}
               >
-                <div className="w-5 h-0.5 bg-[#FFE600]" />
+                <div className="w-5 h-0.5 bg-[#c4302b]" />
                 <p className="text-sm text-[#C4BFB7] leading-relaxed italic">&ldquo;{quote}&rdquo;</p>
                 <p className="text-xs text-[#888]">{author} — {role}</p>
               </motion.blockquote>
@@ -843,9 +843,9 @@ export default function LandingPage() {
                     <span className="text-xs text-[#3A3A44]">·</span>
                     <span className="text-xs text-[#3A3A44]">{read} de lecture</span>
                   </div>
-                  <h3 className="font-heading text-base font-semibold leading-snug group-hover:text-[#FFE600] transition-colors">{title}</h3>
+                  <h3 className="font-heading text-base font-semibold leading-snug group-hover:text-[#c4302b] transition-colors">{title}</h3>
                   <p className="text-sm text-[#888] leading-relaxed flex-1">{excerpt}</p>
-                  <p className="text-xs text-[#FFE600] opacity-0 group-hover:opacity-100 transition-opacity">Lire l&apos;article →</p>
+                  <p className="text-xs text-[#c4302b] opacity-0 group-hover:opacity-100 transition-opacity">Lire l&apos;article →</p>
                 </Link>
               </motion.div>
             ))}
@@ -961,7 +961,7 @@ export default function LandingPage() {
         {/* ambient */}
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
           <div className="w-[600px] h-[300px] rounded-full opacity-[0.05]"
-            style={{ background: 'radial-gradient(ellipse, #FFE600 0%, transparent 70%)' }} />
+            style={{ background: 'radial-gradient(ellipse, #c4302b 0%, transparent 70%)' }} />
         </div>
         <div className="relative max-w-3xl mx-auto px-6 py-28 text-center">
           <SectionLabel>Commence maintenant</SectionLabel>
@@ -977,7 +977,7 @@ export default function LandingPage() {
             <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }} className="inline-block">
               <Link
                 href="/generate"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-[#FFE600] text-[#050507] font-semibold rounded-lg hover:bg-[#FFE600]/90 transition-colors"
+                className="inline-flex items-center gap-2 px-8 py-4 bg-[#c4302b] text-[#050507] font-semibold rounded-lg hover:bg-[#c4302b]/90 transition-colors"
               >
                 Essayer YUBOT gratuitement
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -996,7 +996,7 @@ export default function LandingPage() {
           <div className="grid grid-cols-2 md:grid-cols-5 gap-10 mb-12">
             <div className="col-span-2 md:col-span-1 space-y-4">
               <div className="flex items-center gap-2.5">
-                <span className="w-7 h-7 rounded bg-[#FFE600] flex items-center justify-center text-[#050507] font-heading font-bold text-sm">Y</span>
+                <span className="w-7 h-7 rounded bg-[#c4302b] flex items-center justify-center text-[#050507] font-heading font-bold text-sm">Y</span>
                 <span className="font-heading font-semibold tracking-tight">YUBOT</span>
               </div>
               <p className="text-xs text-[#3A3A44] leading-relaxed">Agent YouTube IA pour les créateurs qui veulent des résultats.</p>

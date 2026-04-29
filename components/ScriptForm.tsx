@@ -49,7 +49,7 @@ export function ScriptForm({ onSubmit, isLoading, onReset }: Props) {
           placeholder="Ex : Comment devenir riche en 2025 avec l'IA"
           maxLength={500}
           rows={3}
-          className="w-full p-3 text-sm border border-[#1E1E1E] rounded resize-none bg-[#111111] text-[#F5F0E8] placeholder-[#3A3A3A] focus:outline-none focus:border-[#FFE600]/40 focus:ring-1 focus:ring-[#FFE600]/20 transition-colors"
+          className="w-full p-3 text-sm border border-[#1E1E1E] rounded resize-none bg-[#111111] text-[#F5F0E8] placeholder-[#3A3A3A] focus:outline-none focus:border-[#c4302b]/40 focus:ring-1 focus:ring-[#c4302b]/20 transition-colors"
         />
         <p className="text-xs text-[#3A3A3A] mt-1">{theme.length}/500</p>
       </div>

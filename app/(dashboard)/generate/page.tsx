@@ -21,7 +21,7 @@ export default function GeneratePage() {
   return (
     <div className="max-w-3xl space-y-6">
       <div>
-        <p className="text-xs font-mono text-[#FFE600] tracking-widest uppercase mb-2">Création</p>
+        <p className="text-xs font-mono text-[#c4302b] tracking-widest uppercase mb-2">Création</p>
         <h1 className="font-heading text-3xl font-bold">Scripts</h1>
         <p className="text-[#6B6560] mt-1 text-sm">
           Génère, adapte ou analyse tes scripts avec les patterns des vidéos virales.
@@ -35,7 +35,7 @@ export default function GeneratePage() {
             onClick={() => navigate(() => setTab(id))}
             className={`px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px whitespace-nowrap ${
               tab === id
-                ? 'border-[#FFE600] text-[#FFE600]'
+                ? 'border-[#c4302b] text-[#c4302b]'
                 : 'border-transparent text-[#6B6560] hover:text-[#F5F0E8]'
             }`}
           >

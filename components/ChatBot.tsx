@@ -31,9 +31,9 @@ function getWelcomeMessage(pathname: string): string {
 
 const CHAT_STYLES = `
   @keyframes yubotPulse {
-    0%, 75%, 100% { box-shadow: 0 0 0 0 rgba(255,230,0,0); }
-    85% { box-shadow: 0 0 0 10px rgba(255,230,0,0.2); }
-    90% { box-shadow: 0 0 0 14px rgba(255,230,0,0); }
+    0%, 75%, 100% { box-shadow: 0 0 0 0 rgba(196,48,43,0); }
+    85% { box-shadow: 0 0 0 10px rgba(196,48,43,0.2); }
+    90% { box-shadow: 0 0 0 14px rgba(196,48,43,0); }
   }
   .yubot-btn-pulse { animation: yubotPulse 5s ease-in-out infinite; }
 
@@ -180,7 +180,7 @@ export function ChatBot() {
         >
           {/* Header */}
           <div className="flex items-center gap-3 px-4 py-3 border-b border-[#1E1E1E] bg-[#0A0A0A] shrink-0">
-            <div className="w-8 h-8 rounded-lg bg-[#FFE600] flex items-center justify-center shrink-0">
+            <div className="w-8 h-8 rounded-lg bg-[#c4302b] flex items-center justify-center shrink-0">
               <span className="text-[#0A0A0A] font-bold text-sm font-mono">Y</span>
             </div>
             <div className="flex-1 min-w-0">
@@ -206,14 +206,14 @@ export function ChatBot() {
             {messages.map(msg => (
               <div key={msg.id} className={`flex gap-2 ${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
                 {msg.role === 'bot' && (
-                  <div className="w-6 h-6 rounded bg-[#FFE600] flex items-center justify-center shrink-0 mt-1">
+                  <div className="w-6 h-6 rounded bg-[#c4302b] flex items-center justify-center shrink-0 mt-1">
                     <span className="text-[#0A0A0A] font-bold text-[9px] font-mono">Y</span>
                   </div>
                 )}
                 <div className={`flex flex-col gap-2 ${msg.role === 'user' ? 'items-end' : 'items-start'} max-w-[82%]`}>
                   <div className={`px-3 py-2 rounded-2xl text-sm leading-relaxed ${
                     msg.role === 'user'
-                      ? 'bg-[#FFE600] text-[#0A0A0A] font-medium rounded-tr-sm'
+                      ? 'bg-[#c4302b] text-[#0A0A0A] font-medium rounded-tr-sm'
                       : 'bg-[#1A1A1A] text-[#C4BFB7] border border-[#222] rounded-tl-sm'
                   }`}>
                     {msg.content ? msg.content : (
@@ -231,7 +231,7 @@ export function ChatBot() {
                         <button
                           key={i}
                           onClick={() => sendMessage(s)}
-                          className="block w-full text-left text-xs text-[#6B6560] hover:text-[#FFE600] border border-[#1E1E1E] hover:border-[#FFE600]/20 hover:bg-[#FFE600]/5 px-2.5 py-1.5 rounded-lg transition-colors"
+                          className="block w-full text-left text-xs text-[#6B6560] hover:text-[#c4302b] border border-[#1E1E1E] hover:border-[#c4302b]/20 hover:bg-[#c4302b]/5 px-2.5 py-1.5 rounded-lg transition-colors"
                         >
                           › {s}
                         </button>
@@ -256,13 +256,13 @@ export function ChatBot() {
                 rows={1}
                 maxLength={500}
                 disabled={isStreaming}
-                className="flex-1 bg-[#111111] border border-[#1E1E1E] rounded-xl px-3 py-2 text-sm text-[#F5F0E8] placeholder-[#3A3A3A] focus:outline-none focus:border-[#FFE600]/30 focus:ring-1 focus:ring-[#FFE600]/10 resize-none transition-colors disabled:opacity-40 leading-relaxed"
+                className="flex-1 bg-[#111111] border border-[#1E1E1E] rounded-xl px-3 py-2 text-sm text-[#F5F0E8] placeholder-[#3A3A3A] focus:outline-none focus:border-[#c4302b]/30 focus:ring-1 focus:ring-[#c4302b]/10 resize-none transition-colors disabled:opacity-40 leading-relaxed"
                 style={{ minHeight: '38px', maxHeight: '100px', overflowY: 'auto' }}
               />
               <button
                 type="submit"
                 disabled={!input.trim() || isStreaming}
-                className="w-9 h-9 rounded-xl bg-[#FFE600] text-[#0A0A0A] flex items-center justify-center hover:bg-[#FFE600]/90 transition-all disabled:opacity-30 disabled:cursor-not-allowed shrink-0 active:scale-95"
+                className="w-9 h-9 rounded-xl bg-[#c4302b] text-[#0A0A0A] flex items-center justify-center hover:bg-[#c4302b]/90 transition-all disabled:opacity-30 disabled:cursor-not-allowed shrink-0 active:scale-95"
                 aria-label="Envoyer"
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -284,7 +284,7 @@ export function ChatBot() {
         className={`yubot-btn-pulse fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full flex items-center justify-center transition-all duration-200 shadow-lg active:scale-95 ${
           isOpen
             ? 'bg-[#1A1A1A] border border-[#2E2E2E] text-[#F5F0E8] hover:bg-[#222]'
-            : 'bg-[#FFE600] text-[#0A0A0A] hover:scale-105 shadow-[0_0_24px_rgba(255,230,0,0.2)]'
+            : 'bg-[#c4302b] text-[#0A0A0A] hover:scale-105 shadow-[0_0_24px_rgba(196,48,43,0.2)]'
         }`}
         aria-label={isOpen ? 'Fermer le chat' : 'Ouvrir YUBOT Assistant'}
       >
