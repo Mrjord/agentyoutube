@@ -4,8 +4,8 @@ import { getRecentVideos, getTopPatterns } from '@/lib/db/queries';
 
 export default async function LibraryPage() {
   const [recentVideos, topPatterns] = await Promise.all([
-    getRecentVideos(20),
-    getTopPatterns(20),
+    getRecentVideos(200),
+    getTopPatterns(200),
   ]);
 
   return (
