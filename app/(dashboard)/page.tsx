@@ -10,6 +10,8 @@ import { HeroParticles } from '@/components/landing/HeroParticles';
 import { TiltCard } from '@/components/landing/TiltCard';
 import { SmoothScroll } from '@/components/landing/SmoothScroll';
 import { PerspectiveMarquee } from '@/components/ui/perspective-marquee';
+import { CreativePricing } from '@/components/ui/creative-pricing';
+import { Pencil, Star, Sparkles } from 'lucide-react';
 
 /* ── helpers ─────────────────────────────────────────────────────── */
 const EASE = [0.65, 0, 0.35, 1] as const;
@@ -857,95 +859,67 @@ export default function LandingPage() {
       </section>
 
       {/* ── PRICING ──────────────────────────────────────────────────── */}
-      <section id="pricing" className="border-b border-[#1F1F25] bg-[#0D0D10]">
+      <section id="pricing" className="border-b border-[#1F1F25] bg-[#0D0D10] relative overflow-hidden">
         <div className="max-w-6xl mx-auto px-6 py-20">
-          <SectionLabel>Tarifs</SectionLabel>
           <FadeUp>
-            <h2 className="font-heading text-3xl font-bold mb-3 text-center">Simple. Transparent. Sans piège.</h2>
-            <p className="text-[#888] text-center mb-14">7 jours d&apos;essai gratuit sur tous les plans. Sans carte bancaire.</p>
-          </FadeUp>
-
-          <Stagger className="grid grid-cols-1 md:grid-cols-3 gap-5" delay={0.1}>
-            {/* Starter */}
-            <motion.div variants={fadeUpChild}>
-              <TiltCard className="border border-[#1F1F25] rounded-xl p-7 bg-[#050507] space-y-6 relative group h-full">
-                <div>
-                  <p className="text-xs font-mono text-[#888] uppercase tracking-widest mb-2">Starter</p>
-                  <div className="flex items-end gap-1">
-                    <span className="font-heading text-4xl font-bold">19€</span>
-                    <span className="text-sm text-[#888] mb-1">/mois</span>
-                  </div>
-                  <p className="text-xs text-[#888] mt-2">Idéal pour démarrer et tester les patterns viraux.</p>
-                </div>
-                <ul className="space-y-2.5">
-                  {['10 scripts générés par mois', 'Accès à tous les patterns viraux actifs', 'Adaptation de texte (5 par mois)', 'Export Word sur tous les scripts', 'Support email sous 48h'].map(f => (
-                    <li key={f} className="flex items-start gap-2.5 text-sm text-[#C4BFB7]">
-                      <span className="text-[#FFE600] mt-0.5 shrink-0">✓</span>{f}
-                    </li>
-                  ))}
-                </ul>
-                <Link href="/generate" className="block w-full py-2.5 border border-[#1F1F25] text-center text-sm font-semibold text-[#F5F5F7] rounded-lg hover:border-[#FFE600]/40 hover:text-[#FFE600] transition-colors">
-                  Commencer gratuitement
-                </Link>
-              </TiltCard>
-            </motion.div>
-
-            {/* Pro */}
-            <motion.div variants={fadeUpChild} className="relative">
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
-                <span className="px-3 py-1 bg-[#FFE600] text-[#050507] text-xs font-semibold rounded-full">Le plus populaire</span>
-              </div>
-              <TiltCard className="border border-[#FFE600]/30 rounded-xl p-7 bg-[#050507] space-y-6 relative group h-full" intensity={6}>
-                <div>
-                  <p className="text-xs font-mono text-[#FFE600] uppercase tracking-widest mb-2">Pro</p>
-                  <div className="flex items-end gap-1">
-                    <span className="font-heading text-4xl font-bold">49€</span>
-                    <span className="text-sm text-[#888] mb-1">/mois</span>
-                  </div>
-                  <p className="text-xs text-[#888] mt-2">Pour les créateurs qui publient régulièrement.</p>
-                </div>
-                <ul className="space-y-2.5">
-                  {['50 scripts générés par mois', 'Patterns viraux + analyses avancées', 'Adaptation de texte illimitée', 'Bibliothèque de patterns personnelle', 'Accès aux tendances hebdomadaires', 'Support prioritaire sous 12h'].map(f => (
-                    <li key={f} className="flex items-start gap-2.5 text-sm text-[#C4BFB7]">
-                      <span className="text-[#FFE600] mt-0.5 shrink-0">✓</span>{f}
-                    </li>
-                  ))}
-                </ul>
-                <Link href="/generate" className="block w-full py-2.5 bg-[#FFE600] text-center text-sm font-semibold text-[#050507] rounded-lg hover:bg-[#FFE600]/90 transition-colors">
-                  Commencer gratuitement
-                </Link>
-              </TiltCard>
-            </motion.div>
-
-            {/* Studio */}
-            <motion.div variants={fadeUpChild}>
-              <TiltCard className="border border-[#1F1F25] rounded-xl p-7 bg-[#050507] space-y-6 relative group h-full">
-                <div>
-                  <p className="text-xs font-mono text-[#888] uppercase tracking-widest mb-2">Studio</p>
-                  <div className="flex items-end gap-1">
-                    <span className="font-heading text-4xl font-bold">149€</span>
-                    <span className="text-sm text-[#888] mb-1">/mois</span>
-                  </div>
-                  <p className="text-xs text-[#888] mt-2">Pour les agences et équipes créatives.</p>
-                </div>
-                <ul className="space-y-2.5">
-                  {['Scripts illimités', 'Analyses personnalisées par niche', 'Accès API', 'Multi-utilisateurs — 5 sièges inclus', 'Support dédié + gestionnaire de compte', 'Onboarding personnalisé (60 min)'].map(f => (
-                    <li key={f} className="flex items-start gap-2.5 text-sm text-[#C4BFB7]">
-                      <span className="text-[#FFE600] mt-0.5 shrink-0">✓</span>{f}
-                    </li>
-                  ))}
-                </ul>
-                <Link href="/contact" className="block w-full py-2.5 border border-[#1F1F25] text-center text-sm font-semibold text-[#F5F5F7] rounded-lg hover:border-[#FFE600]/40 hover:text-[#FFE600] transition-colors">
-                  Contacter l&apos;équipe
-                </Link>
-              </TiltCard>
-            </motion.div>
-          </Stagger>
-
-          <FadeUp delay={0.3}>
-            <p className="text-center text-xs text-[#3A3A44] mt-8">
-              Toutes les offres incluent 7 jours d&apos;essai gratuit · Aucune carte bancaire requise · Résiliation en 1 clic
-            </p>
+            <CreativePricing
+              tag="Simple. Transparent. Sans piège."
+              title="Choisis ton plan YUBOT"
+              description="7 jours d'essai gratuit · Sans carte bancaire · Résiliation en 1 clic"
+              tiers={[
+                {
+                  name: 'Starter',
+                  icon: <Pencil className="w-5 h-5" />,
+                  price: 19,
+                  description: 'Pour démarrer et tester les patterns viraux.',
+                  color: 'blue',
+                  features: [
+                    '10 scripts / mois',
+                    'Tous les patterns viraux actifs',
+                    'Adaptation de texte (5/mois)',
+                    'Export Word sur tous les scripts',
+                    'Support email sous 48h',
+                  ],
+                  cta: 'Commencer gratuitement',
+                  href: '/generate',
+                },
+                {
+                  name: 'Pro',
+                  icon: <Star className="w-5 h-5" />,
+                  price: 49,
+                  description: 'Pour les créateurs qui publient régulièrement.',
+                  color: 'amber',
+                  popular: true,
+                  features: [
+                    '50 scripts / mois',
+                    'Patterns viraux + analyses avancées',
+                    'Adaptation de texte illimitée',
+                    'Bibliothèque de patterns personnelle',
+                    'Tendances hebdomadaires',
+                    'Support prioritaire sous 12h',
+                  ],
+                  cta: 'Commencer gratuitement',
+                  href: '/generate',
+                },
+                {
+                  name: 'Studio',
+                  icon: <Sparkles className="w-5 h-5" />,
+                  price: 149,
+                  description: 'Pour les agences et équipes créatives.',
+                  color: 'purple',
+                  features: [
+                    'Scripts illimités',
+                    'Analyses personnalisées par niche',
+                    'Accès API',
+                    'Multi-utilisateurs (5 sièges)',
+                    'Support dédié + gestionnaire de compte',
+                    'Onboarding personnalisé (60 min)',
+                  ],
+                  cta: "Contacter l'équipe",
+                  href: '/contact',
+                },
+              ]}
+            />
           </FadeUp>
         </div>
       </section>

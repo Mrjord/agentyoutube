@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Bricolage_Grotesque, DM_Sans, JetBrains_Mono } from 'next/font/google';
+import { Bricolage_Grotesque, Caveat, DM_Sans, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 
 const bricolage = Bricolage_Grotesque({
@@ -21,6 +21,12 @@ const jetbrainsMono = JetBrains_Mono({
   weight: ['400', '500'],
 });
 
+const caveat = Caveat({
+  subsets: ['latin'],
+  variable: '--font-caveat',
+  display: 'swap',
+});
+
 export const metadata: Metadata = {
   title: 'YUBOT — Agent YouTube IA',
   description: 'Génère des scripts YouTube viraux optimisés pour la rétention — en 30 secondes.',
@@ -28,7 +34,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr" className={`${bricolage.variable} ${dmSans.variable} ${jetbrainsMono.variable}`}>
+    <html lang="fr" className={`dark ${bricolage.variable} ${dmSans.variable} ${jetbrainsMono.variable} ${caveat.variable}`}>
       <body className="antialiased">{children}</body>
     </html>
   );
